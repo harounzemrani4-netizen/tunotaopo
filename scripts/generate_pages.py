@@ -15,6 +15,24 @@ SITE = "https://tunotaopo.es"
 DATA_DIR = ROOT / "data" / "oposiciones"
 
 
+def with_historical(cfg: dict) -> dict:
+    packed = json.loads(json.dumps(cfg))
+    hist = packed.get("historical")
+    if not hist:
+        return packed
+    rel = hist.pop("scores_file", None)
+    if rel:
+        payload = json.loads((ROOT / rel).read_text(encoding="utf-8"))
+        hist["scores"] = payload["scores"]
+        hist["n"] = payload.get("n") or len(payload["scores"])
+        hist["cut"] = payload.get("cut", payload["scores"][-1] if payload.get("scores") else None)
+        hist["source_identifier"] = hist.get("source_identifier") or payload.get("source_identifier")
+        hist["source_url"] = hist.get("source_url") or payload.get("source_url")
+        hist["label"] = hist.get("label") or payload.get("label")
+        hist["year"] = hist.get("year") or payload.get("year")
+    return packed
+
+
 def load_oposiciones() -> list[dict]:
     items = []
     for path in sorted(DATA_DIR.glob("*.json")):
@@ -103,7 +121,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819h">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819i">
 </head>"""
 
 
@@ -250,8 +268,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819h" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819h" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819i" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819i" defer></script>')
     return "\n".join(tags)
 
 
@@ -503,6 +521,7 @@ def calculator_form(cfg: dict) -> str:
   </div>
   <div id="result-breakdown" class="score-list"></div>
   <div id="result-scenarios" class="result-scenarios"></div>
+  <div id="result-historical" class="result-historical"></div>
   <div class="actions result-actions">
     <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
     <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
@@ -658,7 +677,7 @@ def calculator_page(
       {affiliate_slot()}
       {related_cards(cfg, all_items, prefix)}
     </section>
-    <script type="application/json" id="oposicion-config">{json.dumps(cfg, ensure_ascii=False)}</script>
+    <script type="application/json" id="oposicion-config">{json.dumps(with_historical(cfg), ensure_ascii=False)}</script>
     """
     return page_shell(cfg["title"], cfg["meta_description"], canonical_path, depth, body, calculator=True)
 

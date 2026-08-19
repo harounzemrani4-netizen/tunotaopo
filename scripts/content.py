@@ -33,7 +33,7 @@ PAGES = {
         "faqs": [
             ("¿Qué significa superar el mínimo?", "Que la puntuación de esa prueba alcanza el umbral de las bases 7.6, 7.7 o 7.8, o que ortografía/gramática no llegan a 6 errores. No significa que hayas superado la oposición completa ni que tengas plaza."),
             ("¿Las preguntas de reserva suman siempre?", "No. Solo sustituyen, por su orden, a las anuladas. Por eso T puede dejar de ser 100, 20 u 80."),
-            ("¿Puedo estimar el corte de plaza?", "No en esta herramienta. La base 7.9 ordena a quienes ya son aptos; el corte depende del resto de aspirantes y se publica después.")
+            ("¿Puedo estimar el corte de plaza?", "El corte de esta convocatoria lo marca el resto de aspirantes y se publica después. Lo que sí se puede es colocar tu total en la lista oficial de quienes sacaron plaza el año pasado (BOE-A-2025-21403, turno libre). Eso no es tu puesto de este año."),
         ]
     },
     "ayudantes-iipp-2026": {
@@ -144,6 +144,7 @@ PAGES = {
             ("¿Cada error cuánto resta?", "Medio acierto. n = 3, así que E/(n−1) = E/2."),
             ("¿Y si anulan preguntas?", "P deja de ser 100. Indica las preguntas válidas."),
             ("¿Suma una carrera o un grado superior?", "No en Escala Básica. El título para presentarte es Bachiller o equivalente. Tener más estudios no añade puntos al test. Lo que sí suma, si ya eres apto, son idiomas por encima del A2 (hasta 2 puntos), servicios en las Fuerzas Armadas y deportista de alto nivel (bases 6.12 a 6.14)."),
+            ("¿Qué puesto habría tenido el año pasado?", "No se publica la lista de todos los que se examinaron, así que no hay un número de orden real. Sí se compara tu nota de conocimientos con el corte aproximado que el Portal del Aspirante dio el 3 de noviembre de 2025 (7,17). Eso no es el corte de este año."),
         ]
     }
 }

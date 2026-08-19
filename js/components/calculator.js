@@ -218,6 +218,76 @@
     return "<h3>Qué implican estos números</h3><ul>" + items.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>";
   }
 
+  function historicalScore(config, result) {
+    var hist = config.historical || {};
+    if (hist.metric === "process_total" && typeof result.process_total === "number") return result.process_total;
+    return result.opposition_total;
+  }
+
+  function rankInList(scores, value) {
+    var better = 0;
+    var equal = 0;
+    var i;
+    for (i = 0; i < scores.length; i += 1) {
+      if (scores[i] > value) better += 1;
+      else if (scores[i] === value) equal += 1;
+    }
+    return {
+      position: better + 1,
+      equal: equal,
+      n: scores.length,
+      cut: scores.length ? scores[scores.length - 1] : null
+    };
+  }
+
+  function renderHistorical(config, result) {
+    var hist = config.historical;
+    if (!hist) return "";
+    var score = historicalScore(config, result);
+    if (typeof score !== "number" || Number.isNaN(score)) return "";
+    var title = escapeHtml(hist.title || "Comparación con el año pasado");
+    var disc = hist.disclaimer ? "<p class=\"historical-note\">" + escapeHtml(hist.disclaimer) + "</p>" : "";
+    var source = "";
+    if (hist.source_url && hist.source_identifier) {
+      source = '<p class="historical-source"><a href="' + escapeHtml(hist.source_url) + '">' + escapeHtml(hist.source_identifier) + "</a></p>";
+    } else if (hist.source_identifier) {
+      source = '<p class="historical-source">' + escapeHtml(hist.source_identifier) + "</p>";
+    }
+    if (hist.kind === "cut" && typeof hist.cut === "number") {
+      var above = score + 1e-9 >= hist.cut;
+      var gap = Math.abs(score - hist.cut);
+      var verdict = above
+        ? "Con " + fmt(score, 4) + " habrías superado ese corte (por " + fmt(gap, 4) + " puntos)."
+        : "Con " + fmt(score, 4) + " no habrías alcanzado ese corte (te faltarían " + fmt(gap, 4) + " puntos).";
+      return (
+        "<h3>" + title + "</h3>" +
+        "<p>" + escapeHtml(hist.what || "Corte de la convocatoria anterior") + ": <strong>" + fmt(hist.cut, 4) + "</strong>" +
+        (hist.cut_label ? " (" + escapeHtml(hist.cut_label) + ")" : "") + ".</p>" +
+        "<p>" + verdict + "</p>" +
+        disc + source
+      );
+    }
+    if (hist.kind === "selected_list" && hist.scores && hist.scores.length) {
+      var ranked = rankInList(hist.scores, score);
+      var body;
+      if (score + 1e-9 < ranked.cut) {
+        body = "Con un total de " + fmt(score, 4) + " no habrías entrado en esa lista. El último con plaza tuvo " + fmt(ranked.cut, 5) + " puntos.";
+      } else {
+        body = "Con un total de " + fmt(score, 4) + " habrías ocupado el puesto <strong>" + ranked.position + "</strong> de " + ranked.n + " propuestos a alumno en turno libre.";
+        if (ranked.equal > 1) {
+          body += " " + ranked.equal + " personas tuvieron exactamente esa puntuación.";
+        }
+      }
+      return (
+        "<h3>" + title + "</h3>" +
+        "<p>" + escapeHtml(hist.label || "Lista oficial de quienes obtuvieron plaza") + ".</p>" +
+        "<p>" + body + "</p>" +
+        disc + source
+      );
+    }
+    return "";
+  }
+
   function resultText(config, result) {
     var lines = [config.h1, "Oposición: " + fmt(result.opposition_total, 4)];
     if (result.merits) {
@@ -252,6 +322,7 @@
     $("result-note").textContent = interpretation(result);
     $("result-breakdown").innerHTML = '<h3 class="score-list-title">Desglose de cada prueba</h3>' + renderBreakdown(result);
     $("result-scenarios").innerHTML = renderScenarios(config, result);
+    if ($("result-historical")) $("result-historical").innerHTML = renderHistorical(config, result);
     box.dataset.text = resultText(config, result);
     if (typeof box.scrollIntoView === "function") {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -138,6 +138,15 @@
     "help": "Si ya tienes el total del concurso según el apéndice I, escríbelo aquí (de 0 a 45). Esta casilla no calcula ítem a ítem. Si no tienes concurso o no quieres sumarlo, déjalo vacío."
   },
   "process_rounding": 4,
+  "historical": {
+    "kind": "selected_list",
+    "metric": "process_total",
+    "scores_file": "data/historico/guardia-civil-2025-libre.json",
+    "source_identifier": "BOE-A-2025-21403",
+    "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21403",
+    "title": "Si este total se hubiera colocado en 2025",
+    "disclaimer": "Es la lista de quienes obtuvieron plaza en turno libre, publicada en el BOE. No es el ranking de todos los que se examinaron, ni tu puesto en esta convocatoria. Hay que haber superado también el resto de pruebas (físicas, etc.)."
+  },
   "requirements": [
     {
       "type": "all_passed",

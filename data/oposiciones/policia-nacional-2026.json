@@ -76,6 +76,18 @@
   },
   "merit_note": "En Escala Básica, una carrera o un grado superior no suben la nota. El título exigido es Bachiller: si tienes más estudios, te sirve para presentarte, no para sumar puntos al test. El BOE solo suma, si ya eres apto: idiomas por encima del A2 (hasta 2), servicios en las Fuerzas Armadas y deportista de alto nivel.",
   "process_rounding": 4,
+  "historical": {
+    "kind": "cut",
+    "metric": "opposition_total",
+    "year": 2025,
+    "cut": 7.17,
+    "cut_label": "aproximada",
+    "title": "Si esta nota de conocimientos se hubiera dado en 2025",
+    "what": "Corte aproximado de la prueba de conocimientos (promoción 42, octubre de 2025)",
+    "source_identifier": "Portal del Aspirante, 3 de noviembre de 2025",
+    "source_url": "https://www.policia.es/portalaspirantes/web/escala-basica-ejecutiva/-/escala-b%C3%A1sica-informaci%C3%B3n-sobre-prueba-conocimientos",
+    "disclaimer": "El tribunal lo publicó como aproximado. No hay lista pública de todos los examinados, así que no se puede dar un número de orden. Tampoco es el corte de esta convocatoria: en 2026 solo siguen 1,75 aspirantes por plaza de turno libre."
+  },
   "requirements": [
     {
       "type": "all_passed",
