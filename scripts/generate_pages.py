@@ -13,6 +13,20 @@ from content import DISCLAIMER, PAGES, UPCOMING
 ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 DATA_DIR = ROOT / "data" / "oposiciones"
+MONTHS_ES = (
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+)
 
 
 def with_historical(cfg: dict) -> dict:
@@ -44,6 +58,22 @@ def load_oposiciones() -> list[dict]:
 
 def rel_prefix(depth: int) -> str:
     return "" if depth == 0 else "../" * depth
+
+
+def es_date(iso: str) -> str:
+    if not iso:
+        return ""
+    year, month, day = iso.split("-")
+    return f"{int(day)} de {MONTHS_ES[int(month) - 1]} de {year}"
+
+
+def boe_pdf_url(identifier: str, published_date: str) -> str:
+    year, month, day = published_date.split("-")
+    return f"https://www.boe.es/boe/dias/{year}/{month}/{day}/pdfs/{identifier}.pdf"
+
+
+def ext_a(url: str, label: str) -> str:
+    return f'<a href="{escape(url)}" rel="noopener noreferrer">{escape(label)}</a>'
 
 
 def write(path: Path, text: str) -> None:
@@ -121,7 +151,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819i">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819k">
 </head>"""
 
 
@@ -268,8 +298,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819i" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819i" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819k" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819k" defer></script>')
     return "\n".join(tags)
 
 
@@ -584,7 +614,11 @@ def calc_kind(item: dict) -> str:
     if "pass_fail_errors" in models or "pass_fail" in models:
         parts.append("Apto / no apto")
     if item.get("merits"):
-        parts.append("Concurso opcional")
+        merit_label = (item["merits"].get("label") or "").lower()
+        if "idioma" in merit_label:
+            parts.append("Idiomas opcionales")
+        else:
+            parts.append("Concurso opcional")
     return " · ".join(parts) or (item.get("formula_human") or "")
 
 
@@ -755,6 +789,378 @@ def calculadoras_index(all_items: list[dict]) -> str:
     )
 
 
+def ordered_opos(opos: list[dict]) -> list[dict]:
+    rank = {family: index for index, family in enumerate(FEATURED_FAMILIES)}
+    return sorted(opos, key=lambda item: (rank.get(item.get("family", ""), 99), item.get("short_name", "")))
+
+
+def source_facts(rows: list[tuple[str, str]]) -> str:
+    items = "".join(
+        f"<div><dt>{escape(label)}</dt><dd>{value}</dd></div>" for label, value in rows if value
+    )
+    return f'<dl class="source-facts">{items}</dl>' if items else ""
+
+
+def source_links(links: list[tuple[str, str]]) -> str:
+    parts = []
+    for url, label in links:
+        if not url:
+            continue
+        if url.startswith("http"):
+            parts.append(ext_a(url, label))
+        else:
+            parts.append(f'<a href="{escape(url)}">{escape(label)}</a>')
+    return f'<p class="source-links">{" · ".join(parts)}</p>' if parts else ""
+
+
+def formula_card(item: dict, prefix: str) -> str:
+    fuente = item.get("fuente_oficial") or {}
+    identifier = item.get("source_identifier") or ""
+    html_url = item.get("source_url") or fuente.get("url") or ""
+    published = fuente.get("published_date") or item.get("source_date") or ""
+    calc_href = f"{prefix}{live_path(item)}index.html"
+    rows = [
+        ("Cuerpo", escape(item.get("name") or item["short_name"])),
+        ("Organismo", escape(item.get("administracion", ""))),
+        ("Convocatoria", escape(item.get("convocatoria", ""))),
+        ("Apartado usado", escape(item.get("source_section", ""))),
+        ("Qué controla el cálculo", escape(fuente.get("used_for") or item.get("formula_human", ""))),
+        ("Fórmula", escape(item.get("formula_human", ""))),
+        ("Fecha de la norma", escape(es_date(fuente.get("source_date", "")))),
+        ("Publicación en el BOE", escape(es_date(published))),
+        ("Consultado / verificado", escape(es_date(fuente.get("reviewed_at") or item.get("last_verified", "")))),
+    ]
+    links = [(html_url, "Texto en el BOE")]
+    if identifier and published:
+        links.append((boe_pdf_url(identifier, published), "PDF del BOE"))
+    links.append((calc_href, "Calculadora"))
+    return f"""<article class="source-entry" id="fuente-{escape(item.get("family") or item["slug"])}">
+      <p class="source-kicker">Convocatoria en vigor</p>
+      <h3>{escape(item.get("family_name") or item["short_name"])}</h3>
+      <p class="source-id">{escape(identifier)}</p>
+      {source_facts(rows)}
+      {source_links(links)}
+    </article>"""
+
+
+def historical_cards(item: dict) -> str:
+    hist = item.get("historical") or {}
+    if not hist:
+        return ""
+    identifier = hist.get("source_identifier") or ""
+    url = hist.get("source_url") or ""
+    kind = hist.get("kind")
+    if kind == "cut":
+        cut = str(hist.get("cut")).replace(".", ",")
+        used = (
+            f"El tribunal publicó un corte aproximado de {cut} en la prueba de conocimientos del año pasado. "
+            "No es el corte de esta convocatoria ni un puesto en el ranking de todos los examinados."
+        )
+        published = ""
+        pdf = ""
+    else:
+        used = (
+            hist.get("disclaimer")
+            or "Lista oficial de quienes obtuvieron plaza el año pasado. No es el ranking de todos los opositores."
+        )
+        published = "2025-10-24" if identifier == "BOE-A-2025-21403" else ""
+        pdf = boe_pdf_url(identifier, published) if identifier.startswith("BOE-") and published else ""
+    rows = [
+        ("Qué es", escape(hist.get("what") or hist.get("title") or "")),
+        ("Identificador", escape(identifier)),
+        ("Para qué se usa aquí", escape(used)),
+        ("Año de referencia", escape(str(hist.get("year") or ""))),
+    ]
+    links = [(url, "Fuente oficial")]
+    if pdf:
+        links.append((pdf, "PDF del BOE"))
+    return f"""<article class="source-entry" id="historico-{escape(item.get("family") or item["slug"])}">
+      <p class="source-kicker">Histórico del año pasado</p>
+      <h3>{escape(item.get("family_name") or item["short_name"])}</h3>
+      <p class="source-id">{escape(identifier)}</p>
+      {source_facts(rows)}
+      {source_links(links)}
+    </article>"""
+
+
+def fuentes_page(opos: list[dict]) -> str:
+    prefix = rel_prefix(1)
+    items = ordered_opos(opos)
+    formula_html = "".join(formula_card(item, prefix) for item in items)
+    hist_html = "".join(historical_cards(item) for item in items)
+    extra_hist = f"""<article class="source-entry" id="historico-gc-convocatoria-2025">
+      <p class="source-kicker">Contexto histórico</p>
+      <h3>Guardia Civil 2025 — convocatoria</h3>
+      <p class="source-id">BOE-A-2025-10521</p>
+      {source_facts([
+        ("Norma", escape("Resolución 160/38240/2025, de 23 de mayo, Dirección General de la Guardia Civil")),
+        ("Publicación en el BOE", escape("28 de mayo de 2025")),
+        ("Para qué se cita", escape(
+            "Es la convocatoria que produjo la lista de propuestos a alumno de 2025 (BOE-A-2025-21403). "
+            "No es la fórmula de la calculadora en vigor; esa es BOE-A-2026-9982."
+        )),
+      ])}
+      {source_links([
+        ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10521", "Texto en el BOE"),
+        (boe_pdf_url("BOE-A-2025-10521", "2025-05-28"), "PDF del BOE"),
+      ])}
+    </article>"""
+    portals = [
+        (
+            "Boletín Oficial del Estado",
+            "https://www.boe.es/",
+            "Diario oficial donde se publican las convocatorias y las listas que usa esta web.",
+        ),
+        (
+            "Portal del Aspirante (Policía Nacional)",
+            "https://www.policia.es/portalaspirantes",
+            "Canal oficial de la Dirección General de la Policía para procesos de ingreso. De ahí sale el comunicado del corte aproximado de conocimientos de 2025.",
+        ),
+        (
+            "Procesos de Cabos y Guardias (Ministerio del Interior)",
+            "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/empleo-publico/oposiciones/cuerpo-de-la-guardia-civil/escala-de-cabos-y-guardias/",
+            "Página del Ministerio del Interior sobre el ingreso en la Escala de Cabos y Guardias. No sustituye el apartado del BOE que fija la fórmula.",
+        ),
+        (
+            "Oferta de empleo público 2026 — Fuerzas y Cuerpos de Seguridad",
+            "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/empleo-publico/procesos-selectivos/oferta-de-empleo-publico-2026-fuerzas-y-cuerpos-de-seguridad-del-estado/",
+            "Comunicación oficial del Ministerio del Interior sobre la oferta 2026 de Policía Nacional y Guardia Civil.",
+        ),
+        (
+            "Sede electrónica de la Guardia Civil",
+            "https://sede.guardiacivil.gob.es/",
+            "Sede oficial citada en las convocatorias para la solicitud de ingreso. No sustituye al BOE como fuente de la fórmula.",
+        ),
+    ]
+    portal_html = "".join(
+        f"""<article class="source-entry">
+      <h3>{escape(name)}</h3>
+      <p>{escape(note)}</p>
+      {source_links([(url, "Abrir portal")])}
+    </article>"""
+        for name, url, note in portals
+    )
+    toc = "".join(
+        f'<li><a href="#fuente-{escape(item.get("family") or item["slug"])}">{escape(item.get("family_name") or item["short_name"])}</a></li>'
+        for item in items
+    )
+    body = f"""
+    {crumbs([("Inicio", prefix + "index.html"), ("Fuentes oficiales", "")])}
+    <div class="hero">
+      <h1>Fuentes oficiales</h1>
+      <p class="lede">Normas, listas y portales que sustentan las calculadoras. Cada fórmula sale de un boletín concreto, no de una academia ni de un vídeo. Verificado el 19 de agosto de 2026.</p>
+    </div>
+    <section class="content">
+      <p>Si el tribunal anula preguntas, publica un corte o cambia la convocatoria, prevalece el documento oficial. Esta página no inventa plazas, puestos ni méritos que el boletín no liste.</p>
+      <nav class="source-toc" aria-label="En esta página">
+        <p class="source-kicker">En esta página</p>
+        <ul>
+          <li><a href="#formulas">Fórmulas en vigor</a></li>
+          {toc}
+          <li><a href="#historico">Histórico del año pasado</a></li>
+          <li><a href="#portales">Portales institucionales</a></li>
+        </ul>
+      </nav>
+      <h2 id="formulas">Fórmulas en vigor</h2>
+      <p>Estas cinco normas controlan el cálculo publicado. El enlace HTML y el PDF son del BOE; la calculadora es la URL estable de cada oposición.</p>
+      <div class="source-catalog">{formula_html}</div>
+      <h2 id="historico">Histórico del año pasado</h2>
+      <p>Solo hay comparación cuando existe un dato oficial: un comunicado de corte o una lista de quienes sacaron plaza. No hay ranking de todos los examinados si el organismo no lo publica.</p>
+      <div class="source-catalog">{hist_html}{extra_hist}</div>
+      <h2 id="portales">Portales institucionales</h2>
+      <p>Sitios del Estado relacionados con estos procesos. Un portal no sustituye el apartado de la convocatoria que fija la fórmula.</p>
+      <div class="source-catalog">{portal_html}</div>
+      <h2>Qué no es fuente</h2>
+      <p>Blogs de academias, resúmenes de YouTube, foros o calculadoras genéricas no mandan sobre el BOE. Si una cifra no está en las normas o portales de esta página, NotaOpo no la usa.</p>
+    </section>
+    """
+    return page_shell(
+        "Fuentes oficiales de las calculadoras",
+        "Boletines del BOE, PDFs, listas históricas y portales oficiales que controlan las fórmulas de NotaOpo. Verificado el 19 de agosto de 2026.",
+        "fuentes/",
+        1,
+        body,
+    )
+
+
+def html_ul(items: list[str]) -> str:
+    return "<ul>" + "".join(f"<li>{escape(x)}</li>" for x in items) + "</ul>"
+
+
+def metodologia_card(item: dict, prefix: str) -> str:
+    copy = PAGES.get(item["slug"]) or {}
+    how = "".join(f"<p>{escape(p)}</p>" for p in copy.get("how") or [])
+    example = html_ul(copy["example"]) if copy.get("example") else ""
+    mistakes = html_ul(copy["mistakes"]) if copy.get("mistakes") else ""
+    limits = html_ul(copy["limits"]) if copy.get("limits") else ""
+    hist = item.get("historical") or {}
+    hist_p = ""
+    if hist.get("kind") == "cut":
+        hist_p = (
+            "<p>Si hay comparación histórica, se contrasta tu nota de conocimientos con el corte "
+            "oficial aproximado del año pasado. No hay lista pública de todos los examinados, "
+            "así que no se da un número de orden.</p>"
+        )
+    elif hist.get("kind") == "selected_list":
+        hist_p = (
+            "<p>Si hay comparación histórica, se coloca tu total en la lista oficial de quienes "
+            "obtuvieron plaza el año pasado. No es el ranking de todos los que se examinaron "
+            "ni tu puesto en esta convocatoria.</p>"
+        )
+    calc_href = f"{prefix}{live_path(item)}index.html"
+    fuente_href = f"{prefix}fuentes/index.html#fuente-{escape(item.get('family') or item['slug'])}"
+    return f"""<article class="source-entry" id="metodo-{escape(item.get('family') or item['slug'])}">
+      <p class="source-kicker">{escape(calc_kind(item))}</p>
+      <h3>{escape(item.get("family_name") or item["short_name"])}</h3>
+      <p class="source-id">{escape(item.get("source_identifier", ""))} · {escape(item.get("source_section", ""))}</p>
+      <p><strong>Fórmula:</strong> {escape(item.get("formula_human", ""))}</p>
+      {how}
+      {"<h4>Un ejemplo con números</h4>" + example if example else ""}
+      {"<h4>Errores frecuentes</h4>" + mistakes if mistakes else ""}
+      {"<h4>Qué no calcula</h4>" + limits if limits else ""}
+      {hist_p}
+      <p class="source-links"><a href="{escape(calc_href)}">Calculadora</a> · <a href="{fuente_href}">Fuente oficial</a></p>
+    </article>"""
+
+
+def metodologia_page(opos: list[dict]) -> str:
+    prefix = rel_prefix(1)
+    items = ordered_opos(opos)
+    cards = "".join(metodologia_card(item, prefix) for item in items)
+    toc = "".join(
+        f'<li><a href="#metodo-{escape(item.get("family") or item["slug"])}">{escape(item.get("family_name") or item["short_name"])}</a></li>'
+        for item in items
+    )
+    upcoming = "".join(
+        f"<li><strong>{escape(item['name'])}</strong> — {escape(item['reason'])}</li>"
+        for item in UPCOMING
+    )
+    models = [
+        (
+            "Puntuación neta",
+            "Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.",
+        ),
+        (
+            "Escala oficial",
+            "La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.",
+        ),
+        (
+            "Valor fijo",
+            "Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.",
+        ),
+        (
+            "Apto / no apto",
+            "No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.",
+        ),
+        (
+            "Transformada",
+            "Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, NotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».",
+        ),
+        (
+            "Suma y concurso",
+            "Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.",
+        ),
+    ]
+    models_html = "".join(
+        f"<div><dt>{escape(name)}</dt><dd>{escape(text)}</dd></div>" for name, text in models
+    )
+    body = f"""
+    {crumbs([("Inicio", prefix + "index.html"), ("Metodología", "")])}
+    <div class="hero">
+      <h1>Metodología</h1>
+      <p class="lede">Cómo se calcula cada nota: de qué archivo sale la fórmula, qué significa cada casilla y qué queda fuera. El motor no tiene un «si es Guardia Civil»: lee el boletín modelado en datos. Verificado el 19 de agosto de 2026.</p>
+    </div>
+    <section class="content">
+      <nav class="source-toc" aria-label="En esta página">
+        <p class="source-kicker">En esta página</p>
+        <ul>
+          <li><a href="#principios">Principios</a></li>
+          <li><a href="#glosario">Tres ideas que no son lo mismo</a></li>
+          <li><a href="#casillas">Qué haces en el formulario</a></li>
+          <li><a href="#motor">Cómo calcula el motor</a></li>
+          <li><a href="#oposiciones">Por oposición</a></li>
+          {toc}
+          <li><a href="#historico-metodo">Histórico del año pasado</a></li>
+          <li><a href="#limites">Qué no se inventa</a></li>
+          <li><a href="#pruebas">Cómo se comprueba</a></li>
+        </ul>
+      </nav>
+
+      <h2 id="principios">Principios</h2>
+      <p>Cada oposición tiene una <strong>página estable</strong>. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, se actualiza esa misma dirección y la convocatoria anterior queda en una URL de archivo. No se mezcla la fórmula de un año con la de otro.</p>
+      <p>La fórmula sale del boletín enlazado en cada página y en <a href="{prefix}fuentes/index.html">Fuentes oficiales</a>, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.</p>
+      <p>No hay cuenta. El cálculo se ejecuta en tu navegador: aciertos y errores no se envían a un servidor. Si usas «Compartir URL», los números van en la dirección, no en una cookie, y se descartan al cambiar de página.</p>
+      <p>Ante cualquier discrepancia prevalece la convocatoria oficial. NotaOpo es independiente: no está afiliada ni respaldada por el organismo convocante.</p>
+
+      <h2 id="glosario">Tres ideas que no son lo mismo</h2>
+      <aside class="glossary" role="note">
+        <dl>
+          <div><dt>Puntuación</dt><dd>Lo que sale de tus aciertos, errores y blancos con la fórmula de esa prueba. Es tu nota de ese ejercicio, no una plaza.</dd></div>
+          <div><dt>Mínimo oficial</dt><dd>El umbral de las bases para no ser eliminado en esa prueba (50/8/12 en Guardia Civil, 3 en Policía Nacional, 30 y 20 en Auxilio Judicial). Superarlo no es corte ni plaza.</dd></div>
+          <div><dt>Nota de corte</dt><dd>La marca el resto de aspirantes cuando el tribunal publica la lista. Depende de plazas y de quién se examinó. Esta web no la inventa.</dd></div>
+          <div><dt>Plaza</dt><dd>Sale de la lista final, tras el resto de pruebas (físicas, entrevista, médico, etc.). Superar un mínimo no es obtener plaza.</dd></div>
+          <div><dt>Puntuación directa</dt><dd>Aciertos menos penalización, sin pasar aún a una escala 0–10, 0–20 o 0–50. En Auxiliar AGE e IIPP el BOE cierra la directa; la transformada exige un umbral del tribunal de esa convocatoria.</dd></div>
+          <div><dt>Calificación transformada</dt><dd>La interpolación a la escala del tribunal. Sin el umbral publicado para <em>esta</em> convocatoria, no se afirma un 10 sobre 20 ni un 25 sobre 50.</dd></div>
+        </dl>
+      </aside>
+
+      <h2 id="casillas">Qué haces en el formulario</h2>
+      <ol class="how-steps">
+        <li><strong>Aciertos y errores.</strong> Las correctas van en aciertos y los fallos en errores. Los blancos se calculan solos: preguntas válidas menos aciertos menos errores. En las convocatorias publicadas aquí las blancas no restan (valen 0).</li>
+        <li><strong>Preguntas válidas.</strong> Viene relleno con el T o P del boletín. Solo se cambia si el tribunal anuló preguntas y entra reserva. La reserva no suma siempre: sustituye, por su orden, a las anuladas. El recuadro no puede superar cuestionario más reserva.</li>
+        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil es un total ya baremado (0 a 45), no el apéndice ítem a ítem.</li>
+        <li><strong>Calcular.</strong> Verás cada prueba, blancos, penalización, si llegas al mínimo de las bases y, si el dato existe, una comparación con el año pasado. Si un número es imposible (más aciertos que preguntas, decimales donde toca entero), se marca la casilla y no se finge un resultado.</li>
+      </ol>
+      <p>Si la puntuación bruta sale negativa, se deja en 0: las convocatorias publicadas aquí no admiten nota negativa en esas pruebas.</p>
+
+      <h2 id="motor">Cómo calcula el motor</h2>
+      <p>Cada calculadora arranca de un archivo de datos con la convocatoria, la fórmula, la fuente y la fecha de verificación. El motor (notaopo-engine-2.0) interpreta modelos; no hay lógica del tipo «si la oposición es Guardia Civil haz esto».</p>
+      <dl class="source-facts">{models_html}</dl>
+      <p>Cuando la prueba tiene un mínimo, el motor también puede decir, con tus aciertos, cuántos errores te puedes permitir, o cuántos aciertos harían falta para un objetivo. Solo si la cuenta es resoluble con esa fórmula.</p>
+
+      <h2 id="oposiciones">Por oposición</h2>
+      <p>La misma penalización no vale para todos los cuerpos. Guardia Civil y AGE restan un tercio; Policía Nacional, con tres opciones, resta medio acierto; Auxilio Judicial usa 0,60 y 0,15. Abre la calculadora de tu oposición.</p>
+      <div class="source-catalog">{cards}</div>
+
+      <h2 id="historico-metodo">Histórico del año pasado</h2>
+      <p>Solo se compara cuando hay un dato oficial. No se fabrica un ranking de todos los opositores si el organismo no lo publica.</p>
+      <ul>
+        <li><strong>Policía Nacional:</strong> se compara la nota de conocimientos con el corte aproximado 7,17 que el Portal del Aspirante dio el 3 de noviembre de 2025. No da puesto.</li>
+        <li><strong>Guardia Civil:</strong> se coloca el total en la lista BOE de propuestos a alumno, turno libre 2025 (BOE-A-2025-21403). Si no llegarías al último de esa lista, se dice así. Hay que haber superado también el resto de pruebas.</li>
+        <li><strong>IIPP, Auxilio Judicial y Auxiliar AGE:</strong> no hay corte ni lista comparable publicada aquí. No se inventa.</li>
+      </ul>
+
+      <h2 id="limites">Qué no se inventa</h2>
+      <ul>
+        <li>Físicas sin la tabla de esa convocatoria, entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
+        <li>Baremo ítem a ítem de méritos (apéndice I de Guardia Civil, Fuerzas Armadas o deportista de alto nivel en Policía Nacional).</li>
+        <li>Una carrera o un grado superior como puntos extra en Escala Básica: el título exigido es Bachiller.</li>
+        <li>La transformada de Auxiliar AGE 0–50 sin el PDF de criterios CPS de esta convocatoria.</li>
+        <li>El umbral directo de IIPP tomado de 2025 como si ya valiera para 2026.</li>
+        <li>Un corte de plaza de esta convocatoria, el número de convocados a psicofísicas o cuántos caben en el 1,75 por plaza de Policía Nacional.</li>
+        <li>Policía Local / Municipal: no hay una fórmula única de España. Hace falta ciudad y boletín.</li>
+      </ul>
+
+      <h2 id="pruebas">Cómo se comprueba</h2>
+      <p>Antes de publicar una calculadora se ejecutan casos independientes: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto, desbordes (más aciertos que preguntas) y valores no enteros donde toca entero. Si el BOE y el motor no coinciden, prevalece el BOE y no se publica esa cuenta.</p>
+      <p>Última revisión de estas reglas: 19 de agosto de 2026. Las normas concretas están en <a href="{prefix}fuentes/index.html">Fuentes oficiales</a>.</p>
+
+      <h2>Próximas calculadoras</h2>
+      <p>No se abre una URL de cálculo hasta que hay convocatoria y fórmula cerradas.</p>
+      <ul>{upcoming}</ul>
+
+      <p class="notice">{escape(DISCLAIMER)}</p>
+    </section>
+    """
+    return page_shell(
+        "Metodología de cálculo NotaOpo",
+        "Cómo NotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.",
+        "metodologia/",
+        1,
+        body,
+    )
+
+
 def simple_page(
     slug_title: str,
     h1: str,
@@ -815,43 +1221,9 @@ def build() -> None:
                 calculator_page(cfg, opos, year_path, year_path, "archive"),
             )
 
-    write(
-        ROOT / "metodologia" / "index.html",
-        simple_page(
-            "Metodología de cálculo NotaOpo",
-            "Metodología",
-            "Cómo NotaOpo calcula la nota de cada oposición: fórmula del BOE, qué significa cada casilla y qué queda fuera.",
-            "metodologia/",
-            [
-                "Cada oposición tiene una página estable. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, actualizamos esa misma página y dejamos la convocatoria anterior en una URL de archivo. No se mezcla la fórmula de un año con la de otro.",
-                "Escribes aciertos y errores. Los blancos se calculan solos (preguntas válidas menos aciertos menos errores). En las convocatorias publicadas aquí, las blancas no restan.",
-                "La fórmula sale del boletín oficial enlazado en cada página, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.",
-                "Tres ideas que no son lo mismo: la puntuación que sacas con tus aciertos; el mínimo oficial de esa prueba en las bases; y la nota de corte, que depende del resto de aspirantes y se publica después. Superar un mínimo no es plaza.",
-                "Si el tribunal anula preguntas y entra reserva, cambia el recuadro de preguntas válidas. El valor que viene relleno es el del boletín.",
-                "Lo que no está en la norma de esa URL no se inventa: físicas sin tabla, baremo ítem a ítem, entrevista, reconocimiento médico o un corte de plaza.",
-                "Antes de publicar una calculadora se prueban casos: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto y números imposibles.",
-                DISCLAIMER,
-            ],
-        ),
-    )
+    write(ROOT / "metodologia" / "index.html", metodologia_page(opos))
 
-    fuente_items = "".join(
-        f'<li><a href="{escape(o.get("source_url") or o["fuente_oficial"]["url"])}">{escape(o.get("source_identifier", o["short_name"]))}</a> — {escape(o.get("family_name") or o["short_name"])} ({escape(o.get("source_section", ""))})</li>'
-        for o in opos
-    )
-    write(
-        ROOT / "fuentes" / "index.html",
-        simple_page(
-            "Fuentes oficiales de las calculadoras",
-            "Fuentes oficiales",
-            "Boletines oficiales usados como fuente de las fórmulas de NotaOpo, con fecha de verificación.",
-            "fuentes/",
-            [
-                "Listado de las normas que controlan el cálculo. Cada calculadora enlaza el boletín y el apartado concreto. Verificado el 19 de agosto de 2026.",
-            ],
-            extra=f"<ul>{fuente_items}</ul>",
-        ),
-    )
+    write(ROOT / "fuentes" / "index.html", fuentes_page(opos))
 
     write(
         ROOT / "aviso-legal" / "index.html",

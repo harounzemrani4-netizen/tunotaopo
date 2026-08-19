@@ -9,16 +9,16 @@
   <meta name="color-scheme" content="light">
   
   <title>Metodología de cálculo NotaOpo</title>
-  <meta name="description" content="Cómo NotaOpo calcula la nota de cada oposición: fórmula del BOE, qué significa cada casilla y qué queda fuera.">
+  <meta name="description" content="Cómo NotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <link rel="canonical" href="https://tunotaopo.es/metodologia/">
   <meta property="og:title" content="Metodología de cálculo NotaOpo">
-  <meta property="og:description" content="Cómo NotaOpo calcula la nota de cada oposición: fórmula del BOE, qué significa cada casilla y qué queda fuera.">
+  <meta property="og:description" content="Cómo NotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tunotaopo.es/metodologia/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/app.css?v=20260819i">
+  <link rel="stylesheet" href="../css/app.css?v=20260819k">
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -39,11 +39,145 @@
   <main id="contenido" class="wrap">
     
     <nav class="crumbs" aria-label="Migas de pan"><ol><li><a href="../index.html">Inicio</a></li><li>Metodología</li></ol></nav><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio"}, {"@type": "ListItem", "position": 2, "name": "Metodología"}]}</script>
-    <div class="hero"><h1>Metodología</h1></div>
+    <div class="hero">
+      <h1>Metodología</h1>
+      <p class="lede">Cómo se calcula cada nota: de qué archivo sale la fórmula, qué significa cada casilla y qué queda fuera. El motor no tiene un «si es Guardia Civil»: lee el boletín modelado en datos. Verificado el 19 de agosto de 2026.</p>
+    </div>
     <section class="content">
+      <nav class="source-toc" aria-label="En esta página">
+        <p class="source-kicker">En esta página</p>
+        <ul>
+          <li><a href="#principios">Principios</a></li>
+          <li><a href="#glosario">Tres ideas que no son lo mismo</a></li>
+          <li><a href="#casillas">Qué haces en el formulario</a></li>
+          <li><a href="#motor">Cómo calcula el motor</a></li>
+          <li><a href="#oposiciones">Por oposición</a></li>
+          <li><a href="#metodo-guardia-civil">Guardia Civil</a></li><li><a href="#metodo-policia-nacional">Policía Nacional</a></li><li><a href="#metodo-ayudantes-iipp">Ayudantes IIPP</a></li><li><a href="#metodo-auxilio-judicial">Auxilio Judicial</a></li><li><a href="#metodo-auxiliar-age">Auxiliar AGE</a></li>
+          <li><a href="#historico-metodo">Histórico del año pasado</a></li>
+          <li><a href="#limites">Qué no se inventa</a></li>
+          <li><a href="#pruebas">Cómo se comprueba</a></li>
+        </ul>
+      </nav>
+
+      <h2 id="principios">Principios</h2>
+      <p>Cada oposición tiene una <strong>página estable</strong>. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, se actualiza esa misma dirección y la convocatoria anterior queda en una URL de archivo. No se mezcla la fórmula de un año con la de otro.</p>
+      <p>La fórmula sale del boletín enlazado en cada página y en <a href="../fuentes/index.html">Fuentes oficiales</a>, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.</p>
+      <p>No hay cuenta. El cálculo se ejecuta en tu navegador: aciertos y errores no se envían a un servidor. Si usas «Compartir URL», los números van en la dirección, no en una cookie, y se descartan al cambiar de página.</p>
+      <p>Ante cualquier discrepancia prevalece la convocatoria oficial. NotaOpo es independiente: no está afiliada ni respaldada por el organismo convocante.</p>
+
+      <h2 id="glosario">Tres ideas que no son lo mismo</h2>
+      <aside class="glossary" role="note">
+        <dl>
+          <div><dt>Puntuación</dt><dd>Lo que sale de tus aciertos, errores y blancos con la fórmula de esa prueba. Es tu nota de ese ejercicio, no una plaza.</dd></div>
+          <div><dt>Mínimo oficial</dt><dd>El umbral de las bases para no ser eliminado en esa prueba (50/8/12 en Guardia Civil, 3 en Policía Nacional, 30 y 20 en Auxilio Judicial). Superarlo no es corte ni plaza.</dd></div>
+          <div><dt>Nota de corte</dt><dd>La marca el resto de aspirantes cuando el tribunal publica la lista. Depende de plazas y de quién se examinó. Esta web no la inventa.</dd></div>
+          <div><dt>Plaza</dt><dd>Sale de la lista final, tras el resto de pruebas (físicas, entrevista, médico, etc.). Superar un mínimo no es obtener plaza.</dd></div>
+          <div><dt>Puntuación directa</dt><dd>Aciertos menos penalización, sin pasar aún a una escala 0–10, 0–20 o 0–50. En Auxiliar AGE e IIPP el BOE cierra la directa; la transformada exige un umbral del tribunal de esa convocatoria.</dd></div>
+          <div><dt>Calificación transformada</dt><dd>La interpolación a la escala del tribunal. Sin el umbral publicado para <em>esta</em> convocatoria, no se afirma un 10 sobre 20 ni un 25 sobre 50.</dd></div>
+        </dl>
+      </aside>
+
+      <h2 id="casillas">Qué haces en el formulario</h2>
+      <ol class="how-steps">
+        <li><strong>Aciertos y errores.</strong> Las correctas van en aciertos y los fallos en errores. Los blancos se calculan solos: preguntas válidas menos aciertos menos errores. En las convocatorias publicadas aquí las blancas no restan (valen 0).</li>
+        <li><strong>Preguntas válidas.</strong> Viene relleno con el T o P del boletín. Solo se cambia si el tribunal anuló preguntas y entra reserva. La reserva no suma siempre: sustituye, por su orden, a las anuladas. El recuadro no puede superar cuestionario más reserva.</li>
+        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil es un total ya baremado (0 a 45), no el apéndice ítem a ítem.</li>
+        <li><strong>Calcular.</strong> Verás cada prueba, blancos, penalización, si llegas al mínimo de las bases y, si el dato existe, una comparación con el año pasado. Si un número es imposible (más aciertos que preguntas, decimales donde toca entero), se marca la casilla y no se finge un resultado.</li>
+      </ol>
+      <p>Si la puntuación bruta sale negativa, se deja en 0: las convocatorias publicadas aquí no admiten nota negativa en esas pruebas.</p>
+
+      <h2 id="motor">Cómo calcula el motor</h2>
+      <p>Cada calculadora arranca de un archivo de datos con la convocatoria, la fórmula, la fuente y la fecha de verificación. El motor (notaopo-engine-2.0) interpreta modelos; no hay lógica del tipo «si la oposición es Guardia Civil haz esto».</p>
+      <dl class="source-facts"><div><dt>Puntuación neta</dt><dd>Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.</dd></div><div><dt>Escala oficial</dt><dd>La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.</dd></div><div><dt>Valor fijo</dt><dd>Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.</dd></div><div><dt>Apto / no apto</dt><dd>No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.</dd></div><div><dt>Transformada</dt><dd>Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, NotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».</dd></div><div><dt>Suma y concurso</dt><dd>Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.</dd></div></dl>
+      <p>Cuando la prueba tiene un mínimo, el motor también puede decir, con tus aciertos, cuántos errores te puedes permitir, o cuántos aciertos harían falta para un objetivo. Solo si la cuenta es resoluble con esa fórmula.</p>
+
+      <h2 id="oposiciones">Por oposición</h2>
+      <p>La misma penalización no vale para todos los cuerpos. Guardia Civil y AGE restan un tercio; Policía Nacional, con tres opciones, resta medio acierto; Auxilio Judicial usa 0,60 y 0,15. Abre la calculadora de tu oposición.</p>
+      <div class="source-catalog"><article class="source-entry" id="metodo-guardia-civil">
+      <p class="source-kicker">Escala oficial · Apto / no apto · Concurso opcional</p>
+      <h3>Guardia Civil</h3>
+      <p class="source-id">BOE-A-2026-9982 · 6.1.1-6.1.2 y 7.3-7.9</p>
+      <p><strong>Fórmula:</strong> Px = Y × (A − E/(N−1)) / T, con N = 4. Ortografía y gramática: no apto con 6 o más errores.</p>
+      <p>La base 7.3 fija la puntuación de cada prueba que suma como Px = Y × (A − E/(N−1)) / T. En esta convocatoria, N = 4, así que cada error resta un tercio de acierto. Las preguntas en blanco no restan.</p><p>Conocimientos: Y = 100 y T = 100 (mínimo 50). Inglés: Y = 20 y T = 20 (mínimo 8). Psicotécnico de aptitudes intelectuales: Y = 30 y T = 80 (mínimo 12). T es el número de preguntas válidas del cuestionario: si el tribunal anula alguna y entra reserva, T cambia.</p><p>Ortografía y gramática no puntúan. La base 7.4 y 7.5 las califica como apto o no apto: seis o más errores excluyen del proceso. Superar el mínimo de una prueba no equivale a obtener plaza ni a un corte publicado después.</p><p>La fase de oposición es la suma de las tres pruebas que puntúan (máximo 150). El concurso, si lo introduces, es un total ya baremado entre 0 y 45 (base 7.1). El total del proceso es la suma de ambas fases (base 7.9).</p>
+      <h4>Un ejemplo con números</h4><ul><li>70 aciertos y 15 errores en conocimientos: 100 × (70 − 15/3) / 100 = 65 puntos.</li><li>14 aciertos y 3 errores en inglés: 20 × (14 − 1) / 20 = 13 puntos.</li><li>55 aciertos y 9 errores en psicotécnico: 30 × (55 − 3) / 80 = 19,5 puntos.</li><li>Suma de oposición: 97,5. Con 45 de concurso el total del proceso sería 142,5. Eso no dice si hay plaza.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Usar 0,33 en lugar de E/3. No es lo mismo en todos los redondeos.</li><li>Poner el psicotécnico sobre 80 puntos: el máximo oficial es 30.</li><li>Tratar 5 errores de ortografía como no apto. El umbral es 6 o más.</li><li>Llamar «nota de corte» al mínimo 50/8/12. Esos son mínimos de la prueba, no el corte para plaza.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No calcula el baremo ítem a ítem del apéndice I.</li><li>No evalúa físicas, entrevista ni reconocimiento médico.</li><li>No inventa el número de convocados a psicofísicas ni un corte de plaza.</li><li>Si hay anulaciones, debes indicar las preguntas válidas. El valor por defecto es el T de la tabla 7.3.</li></ul>
+      <p>Si hay comparación histórica, se coloca tu total en la lista oficial de quienes obtuvieron plaza el año pasado. No es el ranking de todos los que se examinaron ni tu puesto en esta convocatoria.</p>
+      <p class="source-links"><a href="../calculadoras/guardia-civil/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-guardia-civil">Fuente oficial</a></p>
+    </article><article class="source-entry" id="metodo-policia-nacional">
+      <p class="source-kicker">Escala oficial · Idiomas opcionales</p>
+      <h3>Policía Nacional</h3>
+      <p class="source-id">BOE-A-2026-15055 · 6.1.1, 6.11 y 6.14</p>
+      <p><strong>Fórmula:</strong> [A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra. Carrera o grado superior no suman.</p>
+      <p>La base 6.1.1 corrige el cuestionario de conocimientos con [A − E/(n−1)] × 10/P. Hay 100 preguntas y 3 alternativas, así que n = 3 y cada error resta medio acierto. Las preguntas en blanco no restan. El resultado va de 0 a 10.</p><p>Hace falta un mínimo de 3 puntos. Eso no basta para seguir: solo continúan quienes, habiendo llegado a 3, obtienen las mejores notas hasta 1,75 aspirantes por cada una de las 2.163 plazas de turno libre. Esa nota de corte la marca el resto de opositores, no esta calculadora.</p><p>La calificación final de la oposición es conocimientos más la media de las físicas (base 6.11). Aquí se calcula el test. Si acreditas un idioma prioritario o de interés policial superior a A2, puedes sumar hasta 2 puntos (B1 0,50; B2 1; C1 1,50; C2 2). Eso se suma a quienes ya son aptos, no al test suelto.</p>
+      <h4>Un ejemplo con números</h4><ul><li>70 aciertos y 20 errores: [70 − 20/2] × 10 / 100 = 6 puntos.</li><li>30 aciertos y 0 errores: 3 puntos, el mínimo oficial. No implica pasar el corte del 1,75.</li><li>80 aciertos y 4 errores: [80 − 2] × 10 / 100 = 7,8 puntos. Con un B2 (1 punto) el total orientativo sería 8,8 si superas la fase.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Aplicar −1/3 como en Guardia Civil. Aquí hay 3 opciones: se resta E/2.</li><li>Tratar el 3 como nota de corte de plaza. Es el suelo legal, no el corte real.</li><li>Sumar el psicotécnico a esta nota. Se califica apto/no apto y el tribunal fija su mínimo después.</li><li>Meter físicas como si fueran aciertos de test. Van en el anexo II, de 0 a 10 por ejercicio.</li><li>Meter una carrera o un grado superior como si subieran la nota. En Escala Básica el título exigido es Bachiller; esos estudios no puntúan.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No convierte marcas de circuito, dominadas o carrera en puntos del anexo II.</li><li>No califica el psicotécnico: P y el mínimo los fija el tribunal.</li><li>No convierte una carrera, un máster o un grado superior en puntos: no están en el baremo de esta Escala Básica.</li><li>No evalúa entrevista, reconocimiento médico ni méritos de Fuerzas Armadas o deportista de alto nivel ítem a ítem.</li><li>No inventa cuántos aspirantes caben en el 1,75 por plaza.</li></ul>
+      <p>Si hay comparación histórica, se contrasta tu nota de conocimientos con el corte oficial aproximado del año pasado. No hay lista pública de todos los examinados, así que no se da un número de orden.</p>
+      <p class="source-links"><a href="../calculadoras/policia-nacional/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-policia-nacional">Fuente oficial</a></p>
+    </article><article class="source-entry" id="metodo-ayudantes-iipp">
+      <p class="source-kicker">Puntuación directa</p>
+      <h3>Ayudantes IIPP</h3>
+      <p class="source-id">BOE-A-2026-13226 · Primer ejercicio, primera y segunda parte</p>
+      <p><strong>Fórmula:</strong> Puntuación directa = A − E/3 por parte. Calificación 0–20 solo con umbral del tribunal de esta convocatoria.</p>
+      <p>El primer ejercicio tiene dos partes. Todas las preguntas valen igual. Cada error resta un tercio de un acierto. Las preguntas en blanco no restan.</p><p>La primera parte tiene 120 preguntas y 3 de reserva. La segunda, 8 supuestos de 5 preguntas (40) y solo se corrige si se superó la primera. Eso se decide sobre la calificación transformada de 0 a 20, no sobre la puntuación directa.</p><p>Esta calculadora muestra siempre la puntuación directa (aciertos − errores/3), que sí está cerrada en el BOE. La transformada 0–20 depende de un umbral que debe publicar el órgano de selección de esta convocatoria. Sin ese dato no se afirma el mínimo de 10 puntos ni se corrige o no la segunda parte.</p>
+      <h4>Un ejemplo con números</h4><ul><li>80 aciertos y 12 errores en la primera parte: 80 − 12/3 = 76 de puntuación directa.</li><li>28 aciertos y 6 errores en la segunda: 28 − 2 = 26 de puntuación directa.</li><li>Esas cifras no son 10 ni 20. Convertirlas exige el umbral directo que fije el tribunal de 2026.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Tratar 76 directos como si fueran 76 sobre 20.</li><li>Usar el umbral de la convocatoria anterior como si ya valiera para junio de 2026.</li><li>Decir que la segunda parte «se corrige» sin haber superado los 10 transformados de la primera.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No calcula el reconocimiento médico.</li><li>No inventa la interpolación transformada ni un corte de plaza.</li><li>Si indicas un umbral, debe ser el publicado para esta Resolución, no un recuerdo de 2025.</li></ul>
       
-      <p>Cada oposición tiene una página estable. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, actualizamos esa misma página y dejamos la convocatoria anterior en una URL de archivo. No se mezcla la fórmula de un año con la de otro.</p><p>Escribes aciertos y errores. Los blancos se calculan solos (preguntas válidas menos aciertos menos errores). En las convocatorias publicadas aquí, las blancas no restan.</p><p>La fórmula sale del boletín oficial enlazado en cada página, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.</p><p>Tres ideas que no son lo mismo: la puntuación que sacas con tus aciertos; el mínimo oficial de esa prueba en las bases; y la nota de corte, que depende del resto de aspirantes y se publica después. Superar un mínimo no es plaza.</p><p>Si el tribunal anula preguntas y entra reserva, cambia el recuadro de preguntas válidas. El valor que viene relleno es el del boletín.</p><p>Lo que no está en la norma de esa URL no se inventa: físicas sin tabla, baremo ítem a ítem, entrevista, reconocimiento médico o un corte de plaza.</p><p>Antes de publicar una calculadora se prueban casos: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto y números imposibles.</p><p>Herramienta independiente de cálculo orientativo basada en la convocatoria indicada. No está afiliada ni respaldada por el organismo convocante. Ante cualquier discrepancia prevalece siempre la convocatoria oficial.</p>
+      <p class="source-links"><a href="../calculadoras/ayudantes-iipp/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-ayudantes-iipp">Fuente oficial</a></p>
+    </article><article class="source-entry" id="metodo-auxilio-judicial">
+      <p class="source-kicker">Valores fijos de la convocatoria</p>
+      <h3>Auxilio Judicial</h3>
+      <p class="source-id">BOE-A-2025-27053 · Anexo V.a) 1.1-1.3</p>
+      <p><strong>Fórmula:</strong> Ejercicio 1: 0,60×A − 0,15×E (mín. 30). Ejercicio 2: 1×A − 0,25×E (mín. 20).</p>
+      <p>El Anexo V.a) no usa la penalización 1/3 de la AGE. El primer ejercicio vale 0,60 por acierto y resta 0,15 por error, sobre 100 preguntas (máximo 60, mínimo 30). Hay 4 de reserva.</p><p>El segundo ejercicio vale 1 punto por acierto y resta 0,25 por error, sobre 40 preguntas (máximo 40, mínimo 20). Hay 2 de reserva.</p><p>La puntuación final de quien supera ambos es la suma. Superar 30 y 20 no es lo mismo que entrar en la lista limitada al número de plazas.</p>
+      <h4>Un ejemplo con números</h4><ul><li>70 aciertos y 20 errores en el teórico: 70×0,60 − 20×0,15 = 39. Blancos: 10.</li><li>28 aciertos y 8 errores en el práctico: 28 − 8×0,25 = 26.</li><li>Total: 65. Ambos ejercicios superan su mínimo.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Aplicar −1/3 como en la AGE.</li><li>Contar las 4 de reserva como si siempre sumaran a las 100.</li><li>Sumar lengua oficial o Derecho Civil Vasco a esta nota estatal: van en otro anexo y otro efecto.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No calcula destinos autonómicos ni lengua cooficial.</li><li>No afirma plaza por superar 30+20.</li><li>Si hay anulaciones, indica las preguntas válidas.</li></ul>
       
+      <p class="source-links"><a href="../calculadoras/auxilio-judicial/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-auxilio-judicial">Fuente oficial</a></p>
+    </article><article class="source-entry" id="metodo-auxiliar-age">
+      <p class="source-kicker">Puntuación directa</p>
+      <h3>Auxiliar AGE</h3>
+      <p class="source-id">BOE-A-2025-26262 · Anexo I 2.1-2.3</p>
+      <p><strong>Fórmula:</strong> Puntuación directa = aciertos − errores/3 por parte. Sin transformada 0–50 hasta vincular criterios CPS de esta convocatoria.</p>
+      <p>El Anexo I distingue puntuación directa y calificación transformada. La directa de cada parte es A − E/3. Los blancos no restan. Primera parte: hasta 60 preguntas y 5 de reserva. Segunda: hasta 50 y 5 de reserva.</p><p>La CPS transforma cada parte a 0–50 y fija el umbral directo, que no puede ser inferior al 30 % del máximo directo. Esa interpolación solo se aplicaría con los criterios publicados para esta convocatoria.</p><p>En esta versión no se implementa la transformada: el PDF de criterios de mayo de 2026 no se ha podido vincular aquí como fuente recuperable. Se muestra únicamente la puntuación directa, que sí está en el BOE.</p>
+      <h4>Un ejemplo con números</h4><ul><li>42 aciertos y 9 errores en la primera parte: 42 − 3 = 39 de puntuación directa.</li><li>34 aciertos y 6 errores en ofimática: 34 − 2 = 32 de puntuación directa.</li><li>Suma directa: 71. Eso no es una calificación sobre 100 ni un 25 sobre 50.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Leer 30 directos como 30 sobre 50.</li><li>Usar los umbrales 30 y 26,33 de 2025 como si fueran los de 2026.</li><li>Hablar de concurso 60/40 en el turno libre de Auxiliar C2.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No muestra calificación transformada ni mínimo 25 hasta que exista fuente CPS aplicable recuperada.</li><li>No afirma que una parte se haya superado en la escala 0–50.</li><li>No es una nota de corte de plaza.</li></ul>
+      
+      <p class="source-links"><a href="../calculadoras/auxiliar-administrativo-age/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-auxiliar-age">Fuente oficial</a></p>
+    </article></div>
+
+      <h2 id="historico-metodo">Histórico del año pasado</h2>
+      <p>Solo se compara cuando hay un dato oficial. No se fabrica un ranking de todos los opositores si el organismo no lo publica.</p>
+      <ul>
+        <li><strong>Policía Nacional:</strong> se compara la nota de conocimientos con el corte aproximado 7,17 que el Portal del Aspirante dio el 3 de noviembre de 2025. No da puesto.</li>
+        <li><strong>Guardia Civil:</strong> se coloca el total en la lista BOE de propuestos a alumno, turno libre 2025 (BOE-A-2025-21403). Si no llegarías al último de esa lista, se dice así. Hay que haber superado también el resto de pruebas.</li>
+        <li><strong>IIPP, Auxilio Judicial y Auxiliar AGE:</strong> no hay corte ni lista comparable publicada aquí. No se inventa.</li>
+      </ul>
+
+      <h2 id="limites">Qué no se inventa</h2>
+      <ul>
+        <li>Físicas sin la tabla de esa convocatoria, entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
+        <li>Baremo ítem a ítem de méritos (apéndice I de Guardia Civil, Fuerzas Armadas o deportista de alto nivel en Policía Nacional).</li>
+        <li>Una carrera o un grado superior como puntos extra en Escala Básica: el título exigido es Bachiller.</li>
+        <li>La transformada de Auxiliar AGE 0–50 sin el PDF de criterios CPS de esta convocatoria.</li>
+        <li>El umbral directo de IIPP tomado de 2025 como si ya valiera para 2026.</li>
+        <li>Un corte de plaza de esta convocatoria, el número de convocados a psicofísicas o cuántos caben en el 1,75 por plaza de Policía Nacional.</li>
+        <li>Policía Local / Municipal: no hay una fórmula única de España. Hace falta ciudad y boletín.</li>
+      </ul>
+
+      <h2 id="pruebas">Cómo se comprueba</h2>
+      <p>Antes de publicar una calculadora se ejecutan casos independientes: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto, desbordes (más aciertos que preguntas) y valores no enteros donde toca entero. Si el BOE y el motor no coinciden, prevalece el BOE y no se publica esa cuenta.</p>
+      <p>Última revisión de estas reglas: 19 de agosto de 2026. Las normas concretas están en <a href="../fuentes/index.html">Fuentes oficiales</a>.</p>
+
+      <h2>Próximas calculadoras</h2>
+      <p>No se abre una URL de cálculo hasta que hay convocatoria y fórmula cerradas.</p>
+      <ul><li><strong>Policía Local / Policía Municipal</strong> — No hay una fórmula única: cada ayuntamiento o convocatoria autonómica publica las suyas. Dinos ciudad y boletín y la atamos a esa convocatoria.</li><li><strong>TAI — Técnicos Auxiliares de Informática AGE</strong> — Pendiente de cerrar por completo los criterios oficiales aplicables a la convocatoria en curso.</li><li><strong>TCAE SAS</strong> — Pendiente de un proceso o convocatoria que permita vincular la herramienta al procedimiento vigente.</li></ul>
+
+      <p class="notice">Herramienta independiente de cálculo orientativo basada en la convocatoria indicada. No está afiliada ni respaldada por el organismo convocante. Ante cualquier discrepancia prevalece siempre la convocatoria oficial.</p>
     </section>
     
   </main>
