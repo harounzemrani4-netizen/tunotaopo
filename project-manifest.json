@@ -1,0 +1,146 @@
+{
+  "project": {
+    "name": "NotaOpo",
+    "vertical": "oposiciones",
+    "architecture_mode": "STATIC",
+    "locale": "es-ES",
+    "target_user": "Opositoras y opositores en España que necesitan la puntuación de una convocatoria concreta, no un test genérico.",
+    "primary_intent": "calculadora nota guardia civil 2026 aciertos errores",
+    "differentiation": "URLs atadas a fórmulas oficiales versionadas, motor declarativo por datos y desglose que separa mínimo de prueba, puntuación obtenida y corte de plaza."
+  },
+  "research": {
+    "researched_at": "2026-08-19",
+    "competitors": [
+      "https://www.opositarymas.com/calculadora-oposiciones/",
+      "https://oporuta.es/herramientas",
+      "https://www.opositatest.com/calculadora",
+      "https://atlasescuela.es/calculadora-guardia-civil/",
+      "https://testea.app/opocalculadora"
+    ],
+    "unknowns": [
+      "Volumen de búsqueda, CPC, RPM y dificultad SEO numérica: no medidos con herramienta profesional.",
+      "Umbrales CPS 2026 del Auxiliar AGE: no implementados como transformada hasta vincular el PDF aplicable.",
+      "Publisher ID AdSense, CMP y datos fiscales del titular: no suministrados."
+    ]
+  },
+  "sources": [
+    {
+      "id": "boe-gc-2026",
+      "title": "Resolución 160/38243/2026, ingreso Escala de Cabos y Guardias",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-9982",
+      "publisher": "BOE",
+      "source_date": "2026-05-05",
+      "effective_date": "2026-05-08",
+      "accessed_at": "2026-08-19",
+      "reviewed_at": "2026-08-19",
+      "license_or_terms": "Publicación oficial BOE",
+      "used_for": "Fórmula 7.3 Px=Y×(A−E/(N−1))/T, mínimos 7.6-7.8, apto/no apto 7.4-7.5, concurso 7.1/7.9"
+    },
+    {
+      "id": "boe-iipp-2026",
+      "title": "Resolución de 14 de junio de 2026, Ayudantes de Instituciones Penitenciarias",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13226",
+      "publisher": "BOE",
+      "source_date": "2026-06-14",
+      "effective_date": "2026-06-18",
+      "accessed_at": "2026-08-19",
+      "reviewed_at": "2026-08-19",
+      "license_or_terms": "Publicación oficial BOE",
+      "used_for": "Puntuación directa A−E/3 en 120+40. Transformada 0–20 no aplicada sin umbral de esta convocatoria."
+    },
+    {
+      "id": "boe-justicia-2025",
+      "title": "Orden PJC/1549/2025, Auxilio Judicial Anexo V",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053",
+      "publisher": "BOE",
+      "source_date": "2025-12-22",
+      "effective_date": "2025-12-30",
+      "accessed_at": "2026-08-19",
+      "reviewed_at": "2026-08-19",
+      "license_or_terms": "Publicación oficial BOE",
+      "used_for": "Valores 0,60/0,15 y 1,00/0,25 y mínimos 30 y 20"
+    },
+    {
+      "id": "boe-age-2025",
+      "title": "Resolución de 18 de diciembre de 2025, procesos AGE / CPS",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26262",
+      "publisher": "BOE",
+      "source_date": "2025-12-18",
+      "effective_date": "2025-12-22",
+      "accessed_at": "2026-08-19",
+      "reviewed_at": "2026-08-19",
+      "license_or_terms": "Publicación oficial BOE",
+      "used_for": "Auxiliar C2: 60+50 y −1/3. Sin transformada 2026 por falta de PDF CPS recuperable."
+    }
+  ],
+  "calculation": {
+    "formula_or_rule_version": "notaopo-engine-2.0 / mvp-4 / 2026-08-19",
+    "assumptions": [
+      "Los blancos no puntúan salvo que la norma diga lo contrario.",
+      "Las puntuaciones negativas se recortan a 0 cuando la convocatoria fija una escala desde cero.",
+      "T es valid_questions y puede cambiar por anulaciones y reserva.",
+      "El concurso se introduce como total ya baremado, no se inventan méritos.",
+      "El mínimo oficial de una prueba no es un corte de plaza."
+    ],
+    "test_cases": [
+      {
+        "name": "gc-perfect",
+        "inputs": { "cg_hits": 100, "cg_errors": 0, "en_hits": 20, "en_errors": 0, "ps_hits": 80, "ps_errors": 0 },
+        "expected": { "opposition_total": 150 }
+      },
+      {
+        "name": "gc-mix",
+        "inputs": { "cg_hits": 70, "cg_errors": 15, "en_hits": 14, "en_errors": 3, "ps_hits": 55, "ps_errors": 9 },
+        "expected": { "opposition_total": 97.5 }
+      },
+      {
+        "name": "gc-min-exact",
+        "inputs": { "cg_hits": 50, "cg_errors": 0, "en_hits": 8, "en_errors": 0, "ps_hits": 32, "ps_errors": 0 },
+        "expected": { "opposition_total": 70 }
+      },
+      {
+        "name": "iipp-mix-pd",
+        "inputs": { "p1_hits": 80, "p1_errors": 12, "p2_hits": 28, "p2_errors": 6 },
+        "expected": { "opposition_total": 102 }
+      },
+      {
+        "name": "auxilio-mix",
+        "inputs": { "e1_hits": 70, "e1_errors": 20, "e2_hits": 28, "e2_errors": 8 },
+        "expected": { "opposition_total": 65 }
+      },
+      {
+        "name": "age-mix-pd",
+        "inputs": { "p1_hits": 42, "p1_errors": 9, "p2_hits": 34, "p2_errors": 6 },
+        "expected": { "opposition_total": 71 }
+      }
+    ]
+  },
+  "monetization": {
+    "primary": "ads-later",
+    "secondary": ["affiliate-academies-later", "email-capture-later", "premium-no-ads-later"],
+    "ads_active": false,
+    "affiliate_active": false,
+    "lead_generation_active": false,
+    "premium_active": false
+  },
+  "risk": {
+    "level": "medium",
+    "professional_review_required": false,
+    "notes": [
+      "Riesgo de desactualización cuando el tribunal anule preguntas o publique cortes.",
+      "No se afirma homologación ni derecho a plaza."
+    ]
+  },
+  "status": {
+    "phase": "MVP local, no publicado",
+    "ads": "reserved-slots-inactive",
+    "last_reviewed": "2026-08-19",
+    "mvp": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026"],
+    "published_now": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026"],
+    "deploy_blockers": [
+      "Domicilio publicado solo como código postal 28981, Parla (Madrid). Sin calle ni número. El DNI no se publica.",
+      "Dominio tunotaopo.es en IONOS. Publicación prevista en Cloudflare Pages (0 €). Falta cuenta Cloudflare, repo Git y DNS.",
+      "AdSense y afiliados: huecos reservados visibles, scripts inactivos. Falta Publisher ID y CMP."
+    ]
+  }
+}

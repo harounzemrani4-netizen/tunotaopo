@@ -1,0 +1,386 @@
+{
+  "verdict": "Disk UTF-8 PASS / Windows console display issue",
+  "scanned_files": 45,
+  "errors": [],
+  "warnings": [],
+  "word_proof": [
+    {
+      "file": "calculadoras\\auxiliar-administrativo-age\\calculadora-nota-2026\\index.html",
+      "words": {
+        "teoría": {
+          "present": true,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'teoría'",
+          "on_disk_hex": "74 65 6f 72 c3 ad 61"
+        },
+        "psicotécnicos": {
+          "present": true,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'psicotécnicos'",
+          "on_disk_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73"
+        },
+        "calificación": {
+          "present": true,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'calificación'",
+          "on_disk_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e"
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "calculadoras\\guardia-civil\\calculadora-nota-2026\\index.html",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "calculadoras\\ayudantes-iipp\\calculadora-nota-2026\\index.html",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": true,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'calificación'",
+          "on_disk_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e"
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "calculadoras\\auxilio-judicial\\calculadora-nota-2026\\index.html",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "data\\oposiciones\\auxiliar-age-2026.json",
+      "words": {
+        "teoría": {
+          "present": true,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'teoría'",
+          "on_disk_hex": "74 65 6f 72 c3 ad 61"
+        },
+        "psicotécnicos": {
+          "present": true,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'psicotécnicos'",
+          "on_disk_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73"
+        },
+        "calificación": {
+          "present": true,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'calificación'",
+          "on_disk_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e"
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "data\\oposiciones\\guardia-civil-2026.json",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": false,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        }
+      }
+    },
+    {
+      "file": "data\\oposiciones\\ayudantes-iipp-2026.json",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "js\\engine\\scoring.js",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    },
+    {
+      "file": "js\\components\\calculator.js",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": false,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        }
+      }
+    },
+    {
+      "file": "project-manifest.json",
+      "words": {
+        "teoría": {
+          "present": false,
+          "repr": "'teoría'",
+          "expected_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_utf8_hex": "74 65 6f 72 c3 ad 61",
+          "literal_matches_expected": true
+        },
+        "psicotécnicos": {
+          "present": false,
+          "repr": "'psicotécnicos'",
+          "expected_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_utf8_hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73",
+          "literal_matches_expected": true
+        },
+        "calificación": {
+          "present": false,
+          "repr": "'calificación'",
+          "expected_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true
+        },
+        "puntuación": {
+          "present": true,
+          "repr": "'puntuación'",
+          "expected_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_utf8_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e",
+          "literal_matches_expected": true,
+          "on_disk_repr": "'puntuación'",
+          "on_disk_hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+        }
+      }
+    }
+  ],
+  "expected_literals": {
+    "teoría": {
+      "repr": "'teoría'",
+      "hex": "74 65 6f 72 c3 ad 61"
+    },
+    "psicotécnicos": {
+      "repr": "'psicotécnicos'",
+      "hex": "70 73 69 63 6f 74 c3 a9 63 6e 69 63 6f 73"
+    },
+    "calificación": {
+      "repr": "'calificación'",
+      "hex": "63 61 6c 69 66 69 63 61 63 69 c3 b3 6e"
+    },
+    "puntuación": {
+      "repr": "'puntuación'",
+      "hex": "70 75 6e 74 75 61 63 69 c3 b3 6e"
+    }
+  }
+}

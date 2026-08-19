@@ -1,0 +1,472 @@
+{
+  "notes": "Expected values calculated independently: Px = Y*(A-E/3)/T, clamp [0,Y], round 4. Orto/gram no apto if E>=6. Opposition = Pcg+Pli+Pps.",
+  "cases": [
+    {
+      "id": "gc-perfect",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 100,
+        "cg_errors": 0,
+        "en_hits": 20,
+        "en_errors": 0,
+        "ps_hits": 80,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.orto.passed": true,
+        "byId.orto.verdict": "apto",
+        "byId.gram.passed": true,
+        "byId.gram.verdict": "apto",
+        "byId.cg.rounded": 100,
+        "byId.en.rounded": 20,
+        "byId.ps.rounded": 30,
+        "opposition_total": 150,
+        "all_required_passed": true
+      }
+    },
+    {
+      "id": "gc-zero",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 0,
+        "cg_errors": 0,
+        "en_hits": 0,
+        "en_errors": 0,
+        "ps_hits": 0,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.cg.rounded": 0,
+        "byId.en.rounded": 0,
+        "byId.ps.rounded": 0,
+        "byId.cg.passed": false,
+        "byId.en.passed": false,
+        "byId.ps.passed": false,
+        "opposition_total": 0,
+        "all_required_passed": false
+      }
+    },
+    {
+      "id": "gc-mix",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 2,
+        "gram_errors": 1,
+        "cg_hits": 70,
+        "cg_errors": 15,
+        "en_hits": 14,
+        "en_errors": 3,
+        "ps_hits": 55,
+        "ps_errors": 9
+      },
+      "expected": {
+        "byId.cg.rounded": 65,
+        "byId.cg.blanks": 15,
+        "byId.en.rounded": 13,
+        "byId.en.blanks": 3,
+        "byId.ps.rounded": 19.5,
+        "byId.ps.blanks": 16,
+        "opposition_total": 97.5,
+        "all_required_passed": true
+      }
+    },
+    {
+      "id": "gc-min-exact",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.cg.rounded": 50,
+        "byId.cg.passed": true,
+        "byId.en.rounded": 8,
+        "byId.en.passed": true,
+        "byId.ps.rounded": 12,
+        "byId.ps.passed": true,
+        "opposition_total": 70,
+        "all_required_passed": true
+      }
+    },
+    {
+      "id": "gc-just-below-min",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 49,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.cg.rounded": 49,
+        "byId.cg.passed": false,
+        "byId.en.passed": true,
+        "byId.ps.passed": true,
+        "opposition_total": 69,
+        "all_required_passed": false
+      }
+    },
+    {
+      "id": "gc-orto-apto",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 5,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.orto.passed": true,
+        "byId.orto.verdict": "apto",
+        "all_required_passed": true
+      }
+    },
+    {
+      "id": "gc-orto-no-apto",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 6,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.orto.passed": false,
+        "byId.orto.verdict": "no_apto",
+        "all_required_passed": false
+      }
+    },
+    {
+      "id": "gc-gram-apto",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 5,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.gram.passed": true,
+        "byId.gram.verdict": "apto",
+        "all_required_passed": true
+      }
+    },
+    {
+      "id": "gc-gram-no-apto",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 6,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.gram.passed": false,
+        "byId.gram.verdict": "no_apto",
+        "all_required_passed": false
+      }
+    },
+    {
+      "id": "gc-concurso-0",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 2,
+        "gram_errors": 1,
+        "cg_hits": 70,
+        "cg_errors": 15,
+        "en_hits": 14,
+        "en_errors": 3,
+        "ps_hits": 55,
+        "ps_errors": 9,
+        "merits": 0
+      },
+      "expected": {
+        "opposition_total": 97.5,
+        "merits.value": 0,
+        "process_total": 97.5
+      }
+    },
+    {
+      "id": "gc-concurso-max",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 2,
+        "gram_errors": 1,
+        "cg_hits": 70,
+        "cg_errors": 15,
+        "en_hits": 14,
+        "en_errors": 3,
+        "ps_hits": 55,
+        "ps_errors": 9,
+        "merits": 45
+      },
+      "expected": {
+        "opposition_total": 97.5,
+        "merits.value": 45,
+        "process_total": 142.5
+      }
+    },
+    {
+      "id": "gc-all-errors-clamped",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 0,
+        "cg_errors": 100,
+        "en_hits": 0,
+        "en_errors": 20,
+        "ps_hits": 0,
+        "ps_errors": 80
+      },
+      "expected": {
+        "byId.cg.rounded": 0,
+        "byId.en.rounded": 0,
+        "byId.ps.rounded": 0,
+        "opposition_total": 0
+      }
+    },
+    {
+      "id": "gc-annulled-valid-questions",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 70,
+        "cg_errors": 15,
+        "cg_valid": 99,
+        "en_hits": 14,
+        "en_errors": 3,
+        "ps_hits": 55,
+        "ps_errors": 9
+      },
+      "expected": {
+        "byId.cg.rounded": 65.6566,
+        "byId.cg.valid_questions": 99,
+        "byId.en.rounded": 13,
+        "byId.ps.rounded": 19.5,
+        "opposition_total": 98.1566
+      }
+    },
+    {
+      "id": "gc-english-below-min",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 7,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": {
+        "byId.en.rounded": 7,
+        "byId.en.passed": false,
+        "all_required_passed": false
+      }
+    },
+    {
+      "id": "gc-hits-overflow",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 80,
+        "cg_errors": 30,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": { "error": true }
+    },
+    {
+      "id": "gc-orto-too-many",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 21,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": { "error": true }
+    },
+    {
+      "id": "gc-concurso-over",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0,
+        "merits": 46
+      },
+      "expected": { "error": true }
+    },
+    {
+      "id": "gc-non-integer",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": "3.5",
+        "cg_errors": 0,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": { "error": true }
+    },
+    {
+      "id": "gc-missing-input",
+      "config": "guardia-civil-2026",
+      "inputs": {
+        "orto_errors": 0,
+        "gram_errors": 0,
+        "cg_hits": 50,
+        "en_hits": 8,
+        "en_errors": 0,
+        "ps_hits": 32,
+        "ps_errors": 0
+      },
+      "expected": { "error": true }
+    },
+    {
+      "id": "iipp-perfect-pd",
+      "config": "ayudantes-iipp-2026",
+      "inputs": { "p1_hits": 120, "p1_errors": 0, "p2_hits": 40, "p2_errors": 0 },
+      "expected": { "byId.p1.rounded": 120, "byId.p2.rounded": 40, "opposition_total": 160, "byId.p1t.verdict": "sin_umbral" }
+    },
+    {
+      "id": "iipp-zero",
+      "config": "ayudantes-iipp-2026",
+      "inputs": { "p1_hits": 0, "p1_errors": 0, "p2_hits": 0, "p2_errors": 0 },
+      "expected": { "byId.p1.rounded": 0, "byId.p2.rounded": 0, "opposition_total": 0 }
+    },
+    {
+      "id": "iipp-mix-pd",
+      "config": "ayudantes-iipp-2026",
+      "inputs": { "p1_hits": 80, "p1_errors": 12, "p2_hits": 28, "p2_errors": 6 },
+      "expected": { "byId.p1.rounded": 76, "byId.p2.rounded": 26, "opposition_total": 102 }
+    },
+    {
+      "id": "iipp-transform-with-cut",
+      "config": "ayudantes-iipp-2026",
+      "inputs": { "p1_hits": 80, "p1_errors": 12, "p2_hits": 28, "p2_errors": 6, "p1t_cut": 36, "p2t_cut": 12 },
+      "expected": { "byId.p1t.rounded": 14.7619, "byId.p2t.rounded": 15, "byId.p1t.passed": true }
+    },
+    {
+      "id": "iipp-overflow",
+      "config": "ayudantes-iipp-2026",
+      "inputs": { "p1_hits": 100, "p1_errors": 30, "p2_hits": 0, "p2_errors": 0 },
+      "expected": { "error": true }
+    },
+    {
+      "id": "aj-perfect",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 100, "e1_errors": 0, "e2_hits": 40, "e2_errors": 0 },
+      "expected": { "byId.e1.rounded": 60, "byId.e2.rounded": 40, "opposition_total": 100, "all_required_passed": true }
+    },
+    {
+      "id": "aj-mix",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 70, "e1_errors": 20, "e2_hits": 28, "e2_errors": 8 },
+      "expected": { "byId.e1.rounded": 39, "byId.e2.rounded": 26, "opposition_total": 65, "all_required_passed": true }
+    },
+    {
+      "id": "aj-min-exact",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 50, "e1_errors": 0, "e2_hits": 20, "e2_errors": 0 },
+      "expected": { "byId.e1.rounded": 30, "byId.e2.rounded": 20, "all_required_passed": true }
+    },
+    {
+      "id": "aj-just-below",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 49, "e1_errors": 0, "e2_hits": 20, "e2_errors": 0 },
+      "expected": { "byId.e1.rounded": 29.4, "byId.e1.passed": false, "all_required_passed": false }
+    },
+    {
+      "id": "aj-errors-to-min",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 60, "e1_errors": 40, "e2_hits": 24, "e2_errors": 16 },
+      "expected": { "byId.e1.rounded": 30, "byId.e2.rounded": 20, "all_required_passed": true }
+    },
+    {
+      "id": "aj-overflow",
+      "config": "auxilio-judicial-2026",
+      "inputs": { "e1_hits": 80, "e1_errors": 25, "e2_hits": 20, "e2_errors": 0 },
+      "expected": { "error": true }
+    },
+    {
+      "id": "age-perfect-pd",
+      "config": "auxiliar-age-2026",
+      "inputs": { "p1_hits": 60, "p1_errors": 0, "p2_hits": 50, "p2_errors": 0 },
+      "expected": { "byId.p1.rounded": 60, "byId.p2.rounded": 50, "opposition_total": 110 }
+    },
+    {
+      "id": "age-zero",
+      "config": "auxiliar-age-2026",
+      "inputs": { "p1_hits": 0, "p1_errors": 0, "p2_hits": 0, "p2_errors": 0 },
+      "expected": { "opposition_total": 0 }
+    },
+    {
+      "id": "age-mix-pd",
+      "config": "auxiliar-age-2026",
+      "inputs": { "p1_hits": 42, "p1_errors": 9, "p2_hits": 34, "p2_errors": 6 },
+      "expected": { "byId.p1.rounded": 39, "byId.p2.rounded": 32, "opposition_total": 71 }
+    },
+    {
+      "id": "age-all-errors",
+      "config": "auxiliar-age-2026",
+      "inputs": { "p1_hits": 0, "p1_errors": 60, "p2_hits": 0, "p2_errors": 50 },
+      "expected": { "byId.p1.rounded": 0, "byId.p2.rounded": 0 }
+    },
+    {
+      "id": "age-overflow",
+      "config": "auxiliar-age-2026",
+      "inputs": { "p1_hits": 50, "p1_errors": 20, "p2_hits": 0, "p2_errors": 0 },
+      "expected": { "error": true }
+    }
+  ]
+}

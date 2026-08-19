@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /research/
+Disallow: /tests/
+Disallow: /scripts/
+Disallow: /release/
+Disallow: /data/
+Sitemap: https://tunotaopo.es/sitemap.xml
