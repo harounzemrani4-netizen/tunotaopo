@@ -47,7 +47,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Primera parte del primer ejercicio",
-      "help": "120 preguntas y 3 de reserva. Se muestra la puntuación directa. El mínimo 10 es de la escala transformada."
+      "help": "120 preguntas y 3 de reserva. Cada error resta un tercio. Las blancas no restan. Verás la puntuación directa. El 10 de las bases es de la escala transformada 0–20, que el tribunal publica aparte."
     },
     {
       "id": "p2",
@@ -65,7 +65,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Segunda parte del primer ejercicio",
-      "help": "8 supuestos × 5 preguntas. Solo se corrige oficialmente si se superó la primera parte en escala transformada."
+      "help": "8 supuestos de 5 preguntas (40 en total). Cada error resta un tercio. Las blancas no restan. Oficialmente esta parte solo se corrige si superaste la primera en la escala transformada."
     },
     {
       "id": "p1t",
@@ -78,7 +78,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Criterios del órgano de selección (no en el BOE de la convocatoria)",
-      "help": "Opcional. Solo si el tribunal de 2026 ha publicado el umbral directo de esta convocatoria. No uses un corte de 2025."
+      "help": "Opcional. Es el umbral directo que publica el tribunal de 2026 para pasar de puntuación directa a la nota 0–20. Si aún no ha salido, déjalo vacío. No uses el de 2025."
     },
     {
       "id": "p2t",
@@ -91,7 +91,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Criterios del órgano de selección (no en el BOE de la convocatoria)",
-      "help": "Opcional. Solo si el tribunal de 2026 ha publicado el umbral directo de la segunda parte. No uses un corte de 2025."
+      "help": "Opcional. Es el umbral directo de la segunda parte que publique el tribunal de 2026. Si aún no ha salido, déjalo vacío. No uses el de 2025."
     }
   ],
   "aggregate": {

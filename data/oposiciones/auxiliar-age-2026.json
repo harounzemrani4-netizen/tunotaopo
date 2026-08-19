@@ -47,7 +47,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Anexo I 2.1 y 2.3",
-      "help": "Hasta 60 preguntas y 5 de reserva. Se muestra solo la puntuación directa."
+      "help": "Hasta 60 preguntas y 5 de reserva. Cada error resta un tercio. Las blancas no restan. Aquí se muestra la puntuación directa, no la nota transformada de 0 a 50."
     },
     {
       "id": "p2",
@@ -65,7 +65,7 @@
       "rounding": 4,
       "eliminatory": false,
       "source_reference": "Anexo I 2.2 y 2.3",
-      "help": "Hasta 50 preguntas y 5 de reserva. Se muestra solo la puntuación directa."
+      "help": "Hasta 50 preguntas y 5 de reserva. Cada error resta un tercio. Las blancas no restan. Aquí se muestra la puntuación directa, no la nota transformada de 0 a 50."
     }
   ],
   "aggregate": {

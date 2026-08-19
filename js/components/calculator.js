@@ -163,7 +163,7 @@
       rows += (
         '<div class="score-row is-neutral">' +
         '<div class="score-row-main"><p class="score-row-label">' + escapeHtml(result.merits.label || "Méritos") + "</p>" +
-        '<p class="score-row-meta">baremo introducido</p></div>' +
+        '<p class="score-row-meta">puntos que has escrito tú, no un baremo automático</p></div>' +
         '<p class="score-row-score">' + fmt(result.merits.value, 3) +
         (typeof result.merits.maximum === "number" ? '<span class="score-max"> / ' + fmt(result.merits.maximum, 3) + "</span>" : "") +
         "</p>" +
@@ -183,14 +183,13 @@
   }
 
   function interpretation(result) {
-    var bits = [];
     if (result.all_required_passed === false) {
-      bits.push("Con estos datos no se alcanzan todos los mínimos o condiciones de apto que esta convocatoria permite comprobar.");
-    } else if (result.all_required_passed === true) {
-      bits.push("Con estos datos se alcanzan los mínimos oficiales de las pruebas comprobadas. Eso no significa plaza ni que se haya superado el proceso.");
+      return "Con estos números no llegas a todos los mínimos o al apto que esta convocatoria permite comprobar. Mira las filas en rojo: no es plaza ni un corte, es el suelo de las bases.";
     }
-    bits.push("Mínimo oficial ≠ nota de corte ≠ plaza.");
-    return bits.join(" ");
+    if (result.all_required_passed === true) {
+      return "Llegas al mínimo oficial de las pruebas que esta página puede comprobar. Eso no es plaza ni la nota de corte: el corte lo marca el resto de aspirantes cuando el tribunal publica la lista.";
+    }
+    return "Esta es la puntuación según la fórmula del boletín. Si una prueba no tiene mínimo en esta página, no se afirma apto ni no apto.";
   }
 
   function scenarioText(config, item) {
@@ -216,7 +215,7 @@
       return scenarioText(config, item);
     }).filter(Boolean);
     if (!items.length) return "";
-    return "<h3>Escenarios</h3><ul>" + items.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>";
+    return "<h3>Qué implican estos números</h3><ul>" + items.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul>";
   }
 
   function resultText(config, result) {
@@ -238,6 +237,7 @@
     var err = $("calc-error");
     err.hidden = true;
     box.hidden = false;
+    if ($("result-placeholder")) $("result-placeholder").hidden = true;
     $("result-kicker").textContent = "Puntuación de la oposición";
     $("result-value").textContent = fmt(result.opposition_total, 4);
     var maxOpp = config.aggregate && typeof config.aggregate.maximum === "number" ? config.aggregate.maximum : null;
@@ -250,7 +250,7 @@
       }
     }
     $("result-note").textContent = interpretation(result);
-    $("result-breakdown").innerHTML = renderBreakdown(result);
+    $("result-breakdown").innerHTML = '<h3 class="score-list-title">Desglose de cada prueba</h3>' + renderBreakdown(result);
     $("result-scenarios").innerHTML = renderScenarios(config, result);
     box.dataset.text = resultText(config, result);
     if (typeof box.scrollIntoView === "function") {
@@ -264,6 +264,7 @@
     var err = $("calc-error");
     err.hidden = false;
     err.textContent = message;
+    if ($("result-placeholder")) $("result-placeholder").hidden = true;
   }
 
   function bind(config) {
@@ -277,6 +278,7 @@
       form.reset();
       $("calc-result").hidden = true;
       $("calc-error").hidden = true;
+      if ($("result-placeholder")) $("result-placeholder").hidden = false;
       localStorage.removeItem("notaopo:" + config.slug);
     }
 
@@ -313,6 +315,7 @@
     form.addEventListener("reset", function () {
       $("calc-result").hidden = true;
       $("calc-error").hidden = true;
+      if ($("result-placeholder")) $("result-placeholder").hidden = false;
       localStorage.removeItem("notaopo:" + config.slug);
       history.replaceState({}, "", location.pathname);
     });

@@ -48,7 +48,7 @@
       "rounding": 4,
       "eliminatory": true,
       "source_reference": "Anexo V.a) 1.1",
-      "help": "100 preguntas y 4 de reserva. Mínimo oficial: 30 puntos."
+      "help": "100 preguntas y 4 de reserva. Cada acierto suma 0,60 y cada error resta 0,15. Las blancas no restan. El mínimo oficial es 30 puntos sobre 60."
     },
     {
       "id": "e2",
@@ -67,7 +67,7 @@
       "rounding": 4,
       "eliminatory": true,
       "source_reference": "Anexo V.a) 1.2",
-      "help": "40 preguntas y 2 de reserva. Mínimo oficial: 20 puntos."
+      "help": "40 preguntas y 2 de reserva. Cada acierto suma 1 punto y cada error resta 0,25. Las blancas no restan. El mínimo oficial es 20 puntos sobre 40."
     }
   ],
   "aggregate": {

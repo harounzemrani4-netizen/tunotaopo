@@ -49,7 +49,7 @@
       "rounding": 4,
       "eliminatory": true,
       "source_reference": "6.1.1",
-      "help": "100 preguntas, 3 alternativas, 50 minutos. Cada error resta medio acierto (n−1 = 2). Blancos no restan. P cambia si anulan preguntas."
+      "help": "100 preguntas con 3 alternativas. Cada error resta medio acierto. Las blancas no restan. El resultado va de 0 a 10 y el mínimo oficial es 3. Ese 3 no es el corte de plaza. Si anulan preguntas, cambia «preguntas válidas»."
     }
   ],
   "aggregate": {
@@ -67,7 +67,7 @@
     "maximum": 2,
     "rounding": 2,
     "optional": true,
-    "help": "Solo si acreditas un nivel superior al A2. B1 = 0,50; B2 = 1; C1 = 1,50; C2 = 2. Máximo 2 puntos aunque acredites varios idiomas (base 6.14). Se suma a quienes superan la fase de oposición."
+    "help": "Opcional. Solo si acreditas un nivel superior al A2. B1 vale 0,50; B2 vale 1; C1 vale 1,50; C2 vale 2. Aunque tengas varios idiomas, el máximo es 2 puntos. Si no aplica, déjalo vacío."
   },
   "process_rounding": 4,
   "requirements": [

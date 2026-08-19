@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819c">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819e">
 </head>"""
 
 
@@ -152,7 +152,13 @@ def ad_slot(place: str, size: str | None = None) -> str:
 
 
 def catalog_cards(items: list[dict], href_prefix: str = "") -> str:
-    featured = ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026"]
+    featured = [
+        "guardia-civil-2026",
+        "policia-nacional-2026",
+        "ayudantes-iipp-2026",
+        "auxilio-judicial-2026",
+        "auxiliar-age-2026",
+    ]
     order = {slug: i for i, slug in enumerate(featured)}
     cards = []
     for item in sorted(items, key=lambda x: order.get(x["slug"], 99)):
@@ -162,7 +168,7 @@ def catalog_cards(items: list[dict], href_prefix: str = "") -> str:
             f'<div class="card-meta"><span class="badge">{escape(str(item["anio"]))}</span>'
             f'<span class="card-org">{escape(org)}</span></div>'
             f"<h2>{escape(item['short_name'])}</h2>"
-            f'<p class="card-kind">{escape(calc_kind(item))}</p>'
+            f'<p class="card-kind">{escape(item.get("formula_human") or calc_kind(item))}</p>'
             f'<p class="card-source">{escape(item.get("source_identifier", ""))}</p>'
             f'<span class="card-cta">Calcular nota</span></a>'
         )
@@ -208,8 +214,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819e" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819e" defer></script>')
     return "\n".join(tags)
 
 
@@ -241,6 +247,23 @@ def page_shell(
 """
 
 
+def example_count(questions: int | None, kind: str) -> str:
+    q = questions or 100
+    if kind == "hits":
+        if q <= 20:
+            return "Ej. 14"
+        if q <= 50:
+            return "Ej. 34"
+        if q <= 80:
+            return "Ej. 55"
+        return "Ej. 70"
+    if q <= 20:
+        return "Ej. 3"
+    if q <= 50:
+        return "Ej. 6"
+    return "Ej. 10"
+
+
 def number_input(
     name: str,
     label: str,
@@ -249,41 +272,107 @@ def number_input(
     step: str = "1",
     hint: str | None = None,
     placeholder: str | None = None,
+    value: int | float | str | None = None,
 ) -> str:
     max_attr = f' max="{maximum}"' if maximum is not None else ""
     req = " required" if required else ""
     ph = f' placeholder="{escape(placeholder)}"' if placeholder is not None else ""
+    val = f' value="{escape(str(value))}"' if value is not None and value != "" else ""
     hint_html = f'<span class="input-hint">{escape(hint)}</span>' if hint else ""
     return (
         f'<div class="input-group"><label for="{name}">{escape(label)}{hint_html}</label>'
-        f'<input class="input" id="{name}" name="{name}" type="number" inputmode="{"numeric" if step == "1" else "decimal"}" min="0"{max_attr} step="{step}"{req}{ph}></div>'
+        f'<input class="input" id="{name}" name="{name}" type="number" inputmode="{"numeric" if step == "1" else "decimal"}" min="0"{max_attr} step="{step}"{req}{ph}{val}></div>'
+    )
+
+
+def form_guide(cfg: dict) -> str:
+    parts = []
+    for stage in cfg.get("stages") or []:
+        if stage.get("model") in {"aggregate", "multi_stage", "transform"}:
+            continue
+        q = stage.get("questions")
+        if q:
+            extra = ""
+            if stage.get("minimum") is not None:
+                extra = f", mínimo {stage['minimum']}"
+            elif stage.get("fail_if_errors_gte") is not None:
+                extra = f", no apto con {stage['fail_if_errors_gte']} errores o más"
+            parts.append(f"{stage['label']}: {q} preguntas{extra}")
+    summary = "; ".join(parts)
+    return (
+        '<aside class="form-guide">'
+        "<h2>Cómo usarla</h2>"
+        "<ol>"
+        "<li><strong>Aciertos y errores.</strong> Las correctas van en aciertos y los fallos en errores. "
+        "No hace falta apuntar los blancos: salen solos (preguntas válidas menos aciertos menos errores). "
+        "En estas convocatorias las blancas no restan.</li>"
+        "<li><strong>Preguntas válidas.</strong> Viene relleno con el número del boletín. "
+        "Solo cámbialo si el tribunal anuló preguntas y entró alguna de reserva.</li>"
+        "<li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: "
+        "si no aplica, déjalo como está. Vacío significa que no se suma ni se usa.</li>"
+        "<li><strong>Calcular nota.</strong> Verás la puntuación de cada prueba y si llegas al mínimo de las bases. "
+        "Ese mínimo no es la nota de corte ni una plaza.</li>"
+        "</ol>"
+        f'<p class="form-guide-note"><strong>Esta convocatoria:</strong> {escape(summary)}</p>'
+        "</aside>"
     )
 
 
 def calculator_form(cfg: dict) -> str:
-    blocks = []
+    blocks = [form_guide(cfg)]
     editable = set(cfg.get("valid_questions_editable") or [])
     for stage in cfg.get("stages") or []:
         fields = []
         model = stage.get("model")
         if model in {"pass_fail_errors"}:
-            fields.append(number_input(f"{stage['id']}_errors", "Errores", stage.get("questions")))
+            fail_at = stage.get("fail_if_errors_gte")
+            hint = (
+                f"Solo los fallos. Con {fail_at} o más quedas no apto. Esta prueba no suma puntos"
+                if fail_at
+                else "Solo los fallos. Esta prueba no suma puntos"
+            )
+            fields.append(
+                number_input(
+                    f"{stage['id']}_errors",
+                    "Errores",
+                    stage.get("questions"),
+                    hint=hint,
+                    placeholder="Ej. 2",
+                )
+            )
         elif model == "transform":
             fields.append(
                 number_input(
                     f"{stage['id']}_cut",
-                    "Umbral directo oficial",
+                    "Umbral directo publicado",
                     None,
                     required=False,
                     step="0.01",
-                    hint="Solo el publicado para esta convocatoria",
+                    hint="Solo si el tribunal de esta convocatoria ya lo ha publicado. Si no, déjalo vacío",
+                    placeholder="Ej. 76,50",
                 )
             )
         elif model in {"aggregate", "multi_stage"}:
             continue
         else:
-            fields.append(number_input(f"{stage['id']}_hits", "Aciertos", stage.get("questions")))
-            fields.append(number_input(f"{stage['id']}_errors", "Errores", stage.get("questions")))
+            fields.append(
+                number_input(
+                    f"{stage['id']}_hits",
+                    "Aciertos",
+                    stage.get("questions"),
+                    hint="Preguntas que has acertado",
+                    placeholder=example_count(stage.get("questions"), "hits"),
+                )
+            )
+            fields.append(
+                number_input(
+                    f"{stage['id']}_errors",
+                    "Errores",
+                    stage.get("questions"),
+                    hint="Fallos. Las blancas no restan y no las pongas aquí",
+                    placeholder=example_count(stage.get("questions"), "errors"),
+                )
+            )
             if stage["id"] in editable:
                 default_valid = stage.get("valid_questions", stage.get("questions"))
                 fields.append(
@@ -292,16 +381,24 @@ def calculator_form(cfg: dict) -> str:
                         "Preguntas válidas",
                         (stage.get("questions") or 0) + (stage.get("reserve_questions") or 0),
                         required=False,
-                        hint="Si hay anulaciones",
+                        hint="Cámbialo solo si el tribunal anuló preguntas",
                         placeholder=str(default_valid),
+                        value=default_valid,
                     )
                 )
         if stage.get("help"):
             help_t = stage["help"]
         elif model == "transform":
-            help_t = "Opcional. Introduce solo el umbral directo publicado para esta convocatoria."
+            help_t = (
+                "Opcional. El BOE no cierra este número: es el umbral directo que publica el tribunal "
+                "de esta convocatoria. Si aún no ha salido, déjalo vacío y verás solo la puntuación directa."
+            )
         else:
-            help_t = f"Preguntas: {stage.get('questions', '')}."
+            q = stage.get("questions", "")
+            help_t = (
+                f"Cuestionario de {q} preguntas. Escribe aciertos y errores; los blancos se calculan solos "
+                "y en esta convocatoria no restan."
+            )
         n = len(fields)
         blocks.append(
             f'<fieldset class="stage"><legend>{escape(stage["label"])}</legend>'
@@ -310,29 +407,54 @@ def calculator_form(cfg: dict) -> str:
         )
     if cfg.get("merits"):
         m = cfg["merits"]
+        mmax = m.get("maximum")
+        mph = "Ej. 1,00" if mmax is not None and mmax <= 2 else "Ej. 12,500"
         blocks.append(
             f'<fieldset class="stage"><legend>{escape(m["label"])}</legend>'
-            f'<p class="help">{escape(m.get("help", ""))}</p>'
-            f'<div class="fields fields-1">{number_input(m["id"], "Puntos de concurso", m.get("maximum"), required=False, step="0.001", hint="Total ya baremado")}</div>'
+            f'<p class="help">{escape(m.get("help", "Si no tienes este apartado o no quieres sumarlo, déjalo vacío."))}</p>'
+            f'<div class="fields fields-1">{number_input(m["id"], "Puntos ya baremados", mmax, required=False, step="0.001", hint="Opcional. Vacío = no se suma nada", placeholder=mph)}</div>'
             "</fieldset>"
         )
     if cfg.get("aggregate"):
+        tmax = cfg["aggregate"].get("maximum")
+        if tmax is not None and tmax <= 10:
+            tph = "Ej. 6"
+        elif tmax is not None and tmax <= 60:
+            tph = "Ej. 30"
+        else:
+            tph = "Ej. 50"
         blocks.append(
             '<fieldset class="stage"><legend>Objetivo (opcional)</legend>'
-            '<p class="help">Solo se calcula el inverso si se puede resolver con los errores que ya has indicado, sin inventar un corte de plaza.</p>'
-            f'<div class="fields fields-1">{number_input("target_score", "Objetivo de oposición", cfg["aggregate"].get("maximum"), required=False, step="0.0001", hint="Puntos que quieres alcanzar")}</div>'
+            '<p class="help">Si escribes un número, la calculadora te dice cuántos aciertos te faltarían para llegar a él, dejando los errores como los has puesto. No es la nota de corte ni un pronóstico de plaza.</p>'
+            f'<div class="fields fields-1">{number_input("target_score", "Nota que te gustaría sacar", tmax, required=False, step="0.0001", hint="Opcional. Ejemplo: el mínimo de una prueba o una meta tuya", placeholder=tph)}</div>'
             "</fieldset>"
         )
     return f"""<form id="calc-form" class="calculator" novalidate autocomplete="off">
   {''.join(blocks)}
-  <p class="alert" role="note">Mínimo oficial ≠ nota de corte ≠ plaza.</p>
+  <aside class="glossary" role="note">
+    <h2>Tres ideas que no son lo mismo</h2>
+    <dl>
+      <div><dt>Mínimo oficial</dt><dd>El suelo que marcan las bases para esa prueba. Si no lo alcanzas, sueles quedar fuera de esa prueba.</dd></div>
+      <div><dt>Nota de corte</dt><dd>La marca el resto de aspirantes cuando el tribunal publica la lista. Esta página no la inventa.</dd></div>
+      <div><dt>Plaza</dt><dd>Depende de la lista final. Superar un mínimo no es obtener plaza.</dd></div>
+    </dl>
+  </aside>
   <div class="actions actions-primary">
-    <button type="submit" class="button button-primary">Calcular</button>
-    <button type="reset" class="button button-secondary">Reset</button>
+    <button type="submit" class="button button-primary">Calcular nota</button>
+    <button type="reset" class="button button-secondary">Borrar datos</button>
   </div>
 </form>
 <div class="result-slot">
 <p id="calc-error" class="alert alert-danger" hidden role="alert"></p>
+<div id="result-placeholder" class="result-placeholder">
+  <p class="result-placeholder-kicker">Aún no hay nota</p>
+  <p class="result-placeholder-title">Cuando pulses Calcular nota verás</p>
+  <ul>
+    <li>La puntuación de cada prueba y el total de la oposición.</li>
+    <li>Los blancos, calculados solos a partir de aciertos y errores.</li>
+    <li>Si llegas al mínimo de las bases. Eso no es el corte de plaza.</li>
+  </ul>
+</div>
 <section id="calc-result" class="result-card" hidden>
   <div class="result-main">
     <p id="result-kicker" class="result-kicker">Puntuación de la oposición</p>
@@ -344,7 +466,7 @@ def calculator_form(cfg: dict) -> str:
   <div id="result-scenarios" class="result-scenarios"></div>
   <div class="actions result-actions">
     <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
-    <button type="button" class="button button-secondary" id="share-result">Compartir URL</button>
+    <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
     <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
   </div>
 </section>
@@ -420,8 +542,9 @@ def calculator_page(cfg: dict, all_items: list[dict]) -> str:
       <h1>{escape(cfg["h1"])}</h1>
       <p class="lede">{escape(cfg["lede"])}</p>
       <div class="formula-note">
-        <h2>Qué se calcula</h2>
+        <h2>Fórmula de esta convocatoria</h2>
         <p>{escape(cfg["formula_human"])}</p>
+        <p class="formula-note-help">Abajo escribes aciertos y errores. Los blancos se calculan solos. Cada casilla indica qué va en ella.</p>
       </div>
     </div>
     {ad_slot("after-hero")}
@@ -430,11 +553,12 @@ def calculator_page(cfg: dict, all_items: list[dict]) -> str:
         {calculator_form(cfg)}
         {ad_slot("after-result")}
         <section class="source-card">
-          <p class="source-kicker">Fuente oficial</p>
+          <p class="source-kicker">De dónde sale la fórmula</p>
           <p class="source-id">{escape(cfg.get("source_identifier", ""))}</p>
-          <p>Apartado: {escape(cfg.get("source_section", ""))}</p>
-          <p>Última revisión: {escape(str(cfg.get("last_verified") or src.get("reviewed_at", "")))}</p>
-          <p>Convocatoria: {escape(cfg["convocatoria"])}. Organismo: {escape(cfg["administracion"])}.</p>
+          <p>Convocatoria: {escape(cfg["convocatoria"])}.</p>
+          <p>Organismo: {escape(cfg["administracion"])}.</p>
+          <p>Apartado usado: {escape(cfg.get("source_section", ""))}.</p>
+          <p>Última revisión de esta página: {escape(str(cfg.get("last_verified") or src.get("reviewed_at", "")))}.</p>
           <p>{source_link(cfg)} <span aria-hidden="true">→</span></p>
         </section>
         <p class="notice">{escape(DISCLAIMER)}</p>
@@ -444,11 +568,12 @@ def calculator_page(cfg: dict, all_items: list[dict]) -> str:
       <h2>Cómo se calcula en esta convocatoria</h2>
       {''.join(f'<p>{escape(p)}</p>' for p in copy["how"])}
       {ad_slot("in-content")}
-      {list_block("Ejemplo realista", copy["example"])}
-      {list_block("Errores frecuentes", copy["mistakes"])}
+      {list_block("Un ejemplo con números", copy["example"])}
+      {list_block("Errores frecuentes al calcular", copy["mistakes"])}
       <h2>Fuente oficial</h2>
-      <p>{source_link(cfg)}. Consultado el {escape(str(src.get("accessed_at", cfg.get("last_verified", ""))))}.</p>
-      {list_block("Limitaciones", copy["limits"])}
+      <p>El enlace abre el boletín. Consultado el {escape(str(src.get("accessed_at", cfg.get("last_verified", ""))))}.</p>
+      <p>{source_link(cfg)}.</p>
+      {list_block("Qué no calcula esta página", copy["limits"])}
       {faq_block(copy["faqs"])}
       {affiliate_slot()}
       {related_cards(cfg, all_items, prefix)}
@@ -467,10 +592,10 @@ def home(all_items: list[dict]) -> str:
     <div class="hero hero-home">
       <p class="eyebrow">Calculadoras por convocatoria</p>
       <h1>Tu nota, con la fórmula del BOE</h1>
-      <p class="lede">Aciertos, errores y blancos convertidos en la puntuación de <em>esta</em> convocatoria. No es una media genérica ni un corte inventado.</p>
+      <p class="lede">Elige la convocatoria, escribe aciertos y errores, y obtienes la nota con la fórmula del boletín. No es una media genérica ni un corte inventado.</p>
       <ul class="proof">
-        <li>Fórmula versionada</li>
-        <li>Cálculo en tu navegador</li>
+        <li>Fórmula del BOE</li>
+        <li>Sin cuenta ni servidor</li>
         <li>Fuente oficial enlazada</li>
       </ul>
     </div>
@@ -480,9 +605,14 @@ def home(all_items: list[dict]) -> str:
     </section>
     {ad_slot("home-mid")}
     <section class="content">
-      <h2>Qué hace NotaOpo</h2>
-      <p>Cada URL está atada a un boletín, un apartado y una versión de fórmula. El motor interpreta esos datos en el navegador. No hay cuenta, no se envían tus aciertos a un servidor.</p>
-      <p>Lee la <a href="metodologia/index.html">metodología</a> y las <a href="fuentes/index.html">fuentes oficiales</a>. {escape(DISCLAIMER)}</p>
+      <h2>Cómo funciona</h2>
+      <ol class="how-steps">
+        <li><strong>Elige la oposición.</strong> Cada calculadora está atada a un boletín concreto (BOE) y a un apartado de las bases.</li>
+        <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
+        <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al <em>mínimo oficial</em>. Eso no es la nota de corte ni una plaza.</li>
+      </ol>
+      <p>No hay cuenta ni se envían tus números a un servidor. El cálculo se hace en tu navegador. Consulta la <a href="metodologia/index.html">metodología</a> y las <a href="fuentes/index.html">fuentes oficiales</a>.</p>
+      <p>{escape(DISCLAIMER)}</p>
       <aside class="note-quiet">
         <h2>Aún no publicadas</h2>
         <p>Investigadas, sin URL propia hasta que la fuente aplicable esté cerrada.</p>
@@ -492,7 +622,7 @@ def home(all_items: list[dict]) -> str:
     """
     return page_shell(
         "NotaOpo — calculadoras de oposiciones por convocatoria",
-        "Calcula la nota de Guardia Civil, IIPP, Auxilio Judicial y Auxiliar AGE 2026 con la fórmula del BOE. En el navegador, con fuente oficial.",
+        "Calcula la nota de Guardia Civil, Policía Nacional, IIPP, Auxilio Judicial y Auxiliar AGE con la fórmula del BOE. En el navegador, con fuente oficial.",
         "",
         0,
         body,
@@ -504,14 +634,22 @@ def calculadoras_index(all_items: list[dict]) -> str:
     {crumbs([("Inicio", "../index.html"), ("Calculadoras", "")])}
     <div class="hero">
       <h1>Calculadoras por convocatoria</h1>
-      <p class="lede">Una URL por fórmula oficial. Si cambia el boletín, cambia la página. No hay clones por provincia ni fichas vacías.</p>
+      <p class="lede">Una página por convocatoria. Entras, pones aciertos y errores, y ves la nota según las bases. Si cambia el boletín, cambia esta página: no hay clones genéricos.</p>
     </div>
+    <section class="content">
+      <h2>Cómo usar una calculadora</h2>
+      <ol class="how-steps">
+        <li><strong>Abre la de tu convocatoria.</strong> Guardia Civil no usa la misma fórmula que Policía Nacional ni que Auxilio Judicial.</li>
+        <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Las casillas opcionales se pueden dejar como están.</li>
+        <li><strong>Lee el resultado con calma.</strong> Verás si llegas al mínimo de las bases. Eso no es plaza ni la nota de corte.</li>
+      </ol>
+    </section>
     <div class="catalog">{catalog_cards(all_items, "../")}</div>
     {ad_slot("catalog")}
     """
     return page_shell(
         "Calculadoras NotaOpo 2026",
-        "Índice de calculadoras NotaOpo: Guardia Civil, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE 2026.",
+        "Índice de calculadoras NotaOpo: Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE 2026.",
         "calculadoras/",
         1,
         body,
@@ -567,13 +705,16 @@ def build() -> None:
         simple_page(
             "Metodología de cálculo NotaOpo",
             "Metodología",
-            "Cómo NotaOpo versiona fórmulas oficiales de oposiciones y qué queda fuera de cada calculadora.",
+            "Cómo NotaOpo calcula la nota de cada oposición: fórmula del BOE, qué significa cada casilla y qué queda fuera.",
             "metodologia/",
             [
-                "Cada calculadora parte de un archivo de datos con la convocatoria, la fórmula, la fuente y la fecha de verificación. El motor interpreta modelos (puntuación neta, escala, valor fijo, transformación, apto/no apto, agregación). No hay código del tipo «si la oposición es Guardia Civil».",
-                "Las fórmulas se leen en el boletín oficial. Un blog o una academia nunca es la fuente de la operación.",
-                "Se distinguen tres ideas que el mercado mezcla: puntuación obtenida, mínimo oficial para superar una prueba y corte de plaza publicado después. Solo se muestra lo que la norma permite calcular.",
-                "Antes de dar una calculadora por cerrada se ejecutan casos independientes: perfecto, cero, mezcla, mínimo exacto, justo por debajo, apto/no apto y entradas inválidas.",
+                "Cada calculadora es una convocatoria concreta. No hay una media genérica ni un «simulador de oposiciones» que mezcle bases distintas. Si el boletín cambia, cambia esa página.",
+                "Escribes aciertos y errores. Los blancos se calculan solos (preguntas válidas menos aciertos menos errores). En las convocatorias publicadas aquí, las blancas no restan.",
+                "La fórmula sale del boletín oficial enlazado en cada página, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.",
+                "Tres ideas que no son lo mismo: la puntuación que sacas con tus aciertos; el mínimo oficial de esa prueba en las bases; y la nota de corte, que depende del resto de aspirantes y se publica después. Superar un mínimo no es plaza.",
+                "Si el tribunal anula preguntas y entra reserva, cambia el recuadro de preguntas válidas. El valor que viene relleno es el del boletín.",
+                "Lo que no está en la norma de esa URL no se inventa: físicas sin tabla, baremo ítem a ítem, entrevista, reconocimiento médico o un corte de plaza.",
+                "Antes de publicar una calculadora se prueban casos: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto y números imposibles.",
                 DISCLAIMER,
             ],
         ),
@@ -591,7 +732,7 @@ def build() -> None:
             "Boletines oficiales usados como fuente de las fórmulas de NotaOpo, con fecha de verificación.",
             "fuentes/",
             [
-                "Listado de las normas que controlan el cálculo de las calculadoras publicadas. Verificado el 19 de agosto de 2026.",
+                "Listado de las normas que controlan el cálculo. Cada calculadora enlaza el boletín y el apartado concreto. Verificado el 19 de agosto de 2026.",
             ],
             extra=f"<ul>{fuente_items}</ul>",
         ),
