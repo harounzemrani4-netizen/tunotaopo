@@ -467,6 +467,60 @@
       "config": "auxiliar-age-2026",
       "inputs": { "p1_hits": 50, "p1_errors": 20, "p2_hits": 0, "p2_errors": 0 },
       "expected": { "error": true }
+    },
+    {
+      "id": "pn-perfect",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 100, "cg_errors": 0 },
+      "expected": { "byId.cg.rounded": 10, "byId.cg.passed": true, "opposition_total": 10, "all_required_passed": true }
+    },
+    {
+      "id": "pn-zero",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 0, "cg_errors": 0 },
+      "expected": { "byId.cg.rounded": 0, "byId.cg.passed": false, "opposition_total": 0, "all_required_passed": false }
+    },
+    {
+      "id": "pn-mix",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 70, "cg_errors": 20 },
+      "expected": { "byId.cg.rounded": 6, "byId.cg.blanks": 10, "byId.cg.passed": true, "opposition_total": 6 }
+    },
+    {
+      "id": "pn-min-exact",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 30, "cg_errors": 0 },
+      "expected": { "byId.cg.rounded": 3, "byId.cg.passed": true, "all_required_passed": true }
+    },
+    {
+      "id": "pn-below-min",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 29, "cg_errors": 0 },
+      "expected": { "byId.cg.rounded": 2.9, "byId.cg.passed": false, "all_required_passed": false }
+    },
+    {
+      "id": "pn-errors-half",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 80, "cg_errors": 4 },
+      "expected": { "byId.cg.rounded": 7.8, "byId.cg.blanks": 16 }
+    },
+    {
+      "id": "pn-all-errors-clamp",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 0, "cg_errors": 100 },
+      "expected": { "byId.cg.rounded": 0, "byId.cg.passed": false }
+    },
+    {
+      "id": "pn-idioma-b2",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 70, "cg_errors": 20, "merits": 1 },
+      "expected": { "opposition_total": 6, "process_total": 7, "merits.value": 1 }
+    },
+    {
+      "id": "pn-overflow",
+      "config": "policia-nacional-2026",
+      "inputs": { "cg_hits": 80, "cg_errors": 30 },
+      "expected": { "error": true }
     }
   ]
 }

@@ -71,6 +71,18 @@
       "reviewed_at": "2026-08-19",
       "license_or_terms": "Publicación oficial BOE",
       "used_for": "Auxiliar C2: 60+50 y −1/3. Sin transformada 2026 por falta de PDF CPS recuperable."
+    },
+    {
+      "id": "boe-pn-2026",
+      "title": "Resolución de 7 de julio de 2026, Policía Nacional Escala Básica",
+      "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-15055",
+      "publisher": "BOE",
+      "source_date": "2026-07-07",
+      "effective_date": "2026-07-10",
+      "accessed_at": "2026-08-19",
+      "reviewed_at": "2026-08-19",
+      "license_or_terms": "Publicación oficial BOE",
+      "used_for": "Fórmula 6.1.1 [A−E/(n−1)]×10/P con n=3, mínimo 3, idiomas 6.14. Sin corte 1,75 inventado."
     }
   ],
   "calculation": {
@@ -109,6 +121,11 @@
         "expected": { "opposition_total": 65 }
       },
       {
+        "name": "pn-mix",
+        "inputs": { "cg_hits": 70, "cg_errors": 20 },
+        "expected": { "opposition_total": 6 }
+      },
+      {
         "name": "age-mix-pd",
         "inputs": { "p1_hits": 42, "p1_errors": 9, "p2_hits": 34, "p2_errors": 6 },
         "expected": { "opposition_total": 71 }
@@ -135,8 +152,8 @@
     "phase": "MVP local, no publicado",
     "ads": "reserved-slots-inactive",
     "last_reviewed": "2026-08-19",
-    "mvp": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026"],
-    "published_now": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026"],
+    "mvp": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026", "policia-nacional-2026"],
+    "published_now": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026", "policia-nacional-2026"],
     "deploy_blockers": [
       "Domicilio publicado solo como código postal 28981, Parla (Madrid). Sin calle ni número. El DNI no se publica.",
       "Dominio tunotaopo.es en IONOS. Publicación prevista en Cloudflare Pages (0 €). Falta cuenta Cloudflare, repo Git y DNS.",

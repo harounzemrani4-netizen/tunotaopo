@@ -113,10 +113,43 @@ PAGES = {
             ("¿Cuándo veré la transformada?", "Cuando podamos citar el documento de criterios de esta convocatoria y su interpolación, no un resumen de academia."),
             ("¿Las 5 de reserva cuentan?", "Solo si sustituyen preguntas anuladas. Entonces cambia el número de preguntas válidas.")
         ]
+    },
+    "policia-nacional-2026": {
+        "how": [
+            "La base 6.1.1 corrige el cuestionario de conocimientos con [A − E/(n−1)] × 10/P. Hay 100 preguntas y 3 alternativas, así que n = 3 y cada error resta medio acierto. Las preguntas en blanco no restan. El resultado va de 0 a 10.",
+            "Hace falta un mínimo de 3 puntos. Eso no basta para seguir: solo continúan quienes, habiendo llegado a 3, obtienen las mejores notas hasta 1,75 aspirantes por cada una de las 2.163 plazas de turno libre. Esa nota de corte la marca el resto de opositores, no esta calculadora.",
+            "La calificación final de la oposición es conocimientos más la media de las físicas (base 6.11). Aquí se calcula el test. Si acreditas un idioma prioritario o de interés policial superior a A2, puedes sumar hasta 2 puntos (B1 0,50; B2 1; C1 1,50; C2 2)."
+        ],
+        "example": [
+            "70 aciertos y 20 errores: [70 − 20/2] × 10 / 100 = 6 puntos.",
+            "30 aciertos y 0 errores: 3 puntos, el mínimo oficial. No implica pasar el corte del 1,75.",
+            "80 aciertos y 4 errores: [80 − 2] × 10 / 100 = 7,8 puntos. Con un B2 (1 punto) el total orientativo sería 8,8 si superas la fase."
+        ],
+        "mistakes": [
+            "Aplicar −1/3 como en Guardia Civil. Aquí hay 3 opciones: se resta E/2.",
+            "Tratar el 3 como nota de corte de plaza. Es el suelo legal, no el corte real.",
+            "Sumar el psicotécnico a esta nota. Se califica apto/no apto y el tribunal fija su mínimo después.",
+            "Meter físicas como si fueran aciertos de test. Van en el anexo II, de 0 a 10 por ejercicio."
+        ],
+        "limits": [
+            "No convierte marcas de circuito, dominadas o carrera en puntos del anexo II.",
+            "No califica el psicotécnico: P y el mínimo los fija el tribunal.",
+            "No evalúa entrevista, reconocimiento médico ni méritos de Fuerzas Armadas o deportista de alto nivel ítem a ítem.",
+            "No inventa cuántos aspirantes caben en el 1,75 por plaza."
+        ],
+        "faqs": [
+            ("¿Con un 3 paso?", "Alcanzas el mínimo de la prueba. Seguir depende de estar entre las mejores notas, hasta 1,75 por plaza de turno libre. Eso se publica después."),
+            ("¿Cada error cuánto resta?", "Medio acierto. n = 3, así que E/(n−1) = E/2."),
+            ("¿Y si anulan preguntas?", "P deja de ser 100. Indica las preguntas válidas.")
+        ]
     }
 }
 
 UPCOMING = [
+    {
+        "name": "Policía Local / Policía Municipal",
+        "reason": "No hay una fórmula única: cada ayuntamiento o convocatoria autonómica publica las suyas. Dinos ciudad y boletín y la atamos a esa convocatoria."
+    },
     {
         "name": "TAI — Técnicos Auxiliares de Informática AGE",
         "reason": "Pendiente de cerrar por completo los criterios oficiales aplicables a la convocatoria en curso."

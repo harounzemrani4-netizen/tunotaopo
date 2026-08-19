@@ -1,0 +1,80 @@
+{
+  "slug": "policia-nacional-2026",
+  "status": "published",
+  "path": "calculadoras/policia-nacional/calculadora-nota-2026/",
+  "name": "Policía Nacional — Escala Básica, categoría de Policía",
+  "short_name": "Policía Nacional 2026",
+  "administracion": "Dirección General de la Policía, Ministerio del Interior",
+  "convocatoria": "Resolución de 7 de julio de 2026 (Escala Básica, promoción 43)",
+  "anio": 2026,
+  "title": "Calculadora nota Policía Nacional 2026",
+  "h1": "Calculadora de nota Policía Nacional 2026",
+  "meta_description": "Calcula la nota del test de Policía Nacional 2026: 100 preguntas, 3 opciones y fórmula [A−E/(n−1)]×10/P. Mínimo 3, no es el corte de plaza. BOE-A-2026-15055.",
+  "lede": "Introduce aciertos y errores del cuestionario de conocimientos de Escala Básica 2026. El cálculo usa la fórmula del BOE. El mínimo 3 no es la nota que te hace pasar: solo continúan 1,75 aspirantes por plaza de turno libre.",
+  "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-15055",
+  "source_type": "boe",
+  "source_identifier": "BOE-A-2026-15055",
+  "source_section": "6.1.1, 6.11 y 6.14",
+  "source_date": "2026-07-10",
+  "last_verified": "2026-08-19",
+  "formula_version": "2026.1",
+  "formula_human": "[A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra.",
+  "fuente_oficial": {
+    "id": "boe-pn-2026",
+    "title": "Resolución de 7 de julio de 2026, Dirección General de la Policía, Escala Básica",
+    "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-15055",
+    "publisher": "BOE",
+    "source_date": "2026-07-07",
+    "published_date": "2026-07-10",
+    "accessed_at": "2026-08-19",
+    "reviewed_at": "2026-08-19",
+    "used_for": "Fórmula 6.1.1, mínimo 3, proporción 1,75, idiomas 6.14. Sin físicas ni psicotécnico como nota de corte inventada."
+  },
+  "stages": [
+    {
+      "id": "cg",
+      "label": "Conocimientos",
+      "model": "scaled_score",
+      "questions": 100,
+      "valid_questions": 100,
+      "reserve_questions": 0,
+      "correct_value": 1,
+      "incorrect_divisor": 2,
+      "options_count": 3,
+      "blank_value": 0,
+      "maximum": 10,
+      "minimum": 3,
+      "clamp_min": 0,
+      "clamp_max": 10,
+      "rounding": 4,
+      "eliminatory": true,
+      "source_reference": "6.1.1",
+      "help": "100 preguntas, 3 alternativas, 50 minutos. Cada error resta medio acierto (n−1 = 2). Blancos no restan. P cambia si anulan preguntas."
+    }
+  ],
+  "aggregate": {
+    "id": "oposicion",
+    "label": "Prueba de conocimientos",
+    "model": "aggregate",
+    "include": ["cg"],
+    "maximum": 10,
+    "rounding": 4
+  },
+  "merits": {
+    "id": "merits",
+    "label": "Idiomas (nivel superior a A2)",
+    "minimum": 0,
+    "maximum": 2,
+    "rounding": 2,
+    "optional": true,
+    "help": "Solo si acreditas un nivel superior al A2. B1 = 0,50; B2 = 1; C1 = 1,50; C2 = 2. Máximo 2 puntos aunque acredites varios idiomas (base 6.14). Se suma a quienes superan la fase de oposición."
+  },
+  "process_rounding": 4,
+  "requirements": [
+    {
+      "type": "all_passed",
+      "stages": ["cg"]
+    }
+  ],
+  "valid_questions_editable": ["cg"]
+}
