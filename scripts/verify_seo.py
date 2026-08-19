@@ -23,6 +23,7 @@ SKIP_DIRS = {
     "css",
     "assets",
     "functions",
+    "dist",
 }
 
 
@@ -111,9 +112,12 @@ def main() -> int:
     self_descriptions: dict[str, str] = {}
     pages = html_pages()
     for path in pages:
+        html = path.read_text(encoding="utf-8")
         parser = Page()
-        parser.feed(path.read_text(encoding="utf-8"))
+        parser.feed(html)
         rel = path.relative_to(ROOT).as_posix()
+        if "OpoRuta" in html:
+            errors.append(f"{rel}: menciona un competidor")
         is_embed = rel.startswith("embed/")
         page_url = f"{SITE}/" if rel == "index.html" else f"{SITE}/{rel.replace('/index.html', '/')}"
         if rel.endswith("404.html"):
@@ -158,6 +162,38 @@ def main() -> int:
     locs = sitemap_locs()
     if not locs:
         errors.append("sitemap.xml sin <loc>")
+    if not (ROOT / "oposiciones" / "academias" / "index.html").exists():
+        errors.append("falta oposiciones/academias/index.html")
+    if (ROOT / "academias").exists():
+        errors.append("la carpeta raíz academias/ debería haberse movido a oposiciones/academias/")
+    tool_files = [
+        ROOT / "calculadoras" / "guardia-civil" / "index.html",
+        ROOT / "calculadoras" / "policia-nacional" / "index.html",
+        ROOT / "calculadoras" / "ayudantes-iipp" / "index.html",
+        ROOT / "calculadoras" / "auxilio-judicial" / "index.html",
+        ROOT / "calculadoras" / "auxiliar-administrativo-age" / "index.html",
+        ROOT / "oposiciones" / "policia-nacional" / "pruebas-fisicas" / "index.html",
+        ROOT / "oposiciones" / "guardia-civil" / "pruebas-fisicas" / "index.html",
+        ROOT / "oposiciones" / "guardia-civil" / "baremo" / "index.html",
+    ]
+    markers = (
+        'id="classroom-enter"',
+        'id="share-native"',
+        'id="show-qr"',
+        'id="save-progress"',
+        "Reportar error",
+    )
+    for tool_path in tool_files:
+        rel = tool_path.relative_to(ROOT).as_posix()
+        if not tool_path.exists():
+            errors.append(f"{rel}: no existe")
+            continue
+        html = tool_path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in html:
+                errors.append(f"{rel}: falta {marker}")
+        if "tool-toolbar" not in html:
+            errors.append(f"{rel}: falta barra de herramientas visible")
     for loc in locs:
         if "/embed/" in loc:
             errors.append(f"sitemap incluye embed: {loc}")

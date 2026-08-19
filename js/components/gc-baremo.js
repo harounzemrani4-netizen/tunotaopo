@@ -17,6 +17,53 @@
     return n.toLocaleString("es-ES", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
   }
 
+  function progressKey() {
+    return "tunotaopo:progress:guardia-civil-baremo-2026";
+  }
+
+  function loadProgress() {
+    try {
+      var raw = localStorage.getItem(progressKey());
+      var rows = raw ? JSON.parse(raw) : [];
+      return Array.isArray(rows) ? rows : [];
+    } catch (ignore) {
+      return [];
+    }
+  }
+
+  function saveProgress(out) {
+    if (!out || typeof out.total !== "number" || !Number.isFinite(out.total)) return;
+    var rows = loadProgress();
+    rows.push({ t: Date.now(), s: out.total });
+    if (rows.length > 20) rows = rows.slice(-20);
+    try {
+      localStorage.setItem(progressKey(), JSON.stringify(rows));
+    } catch (ignore) {}
+  }
+
+  function renderProgress() {
+    var panel = $("progress-panel");
+    if (!panel) return;
+    var rows = loadProgress();
+    if (!rows.length) {
+      panel.hidden = true;
+      panel.innerHTML = "";
+      return;
+    }
+    var items = rows.slice(-8).map(function (row) {
+      var label = new Date(row.t).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+      return "<li><span>" + escapeHtml(label) + "</span><strong>" + fmt(row.s) + "</strong></li>";
+    }).join("");
+    panel.hidden = false;
+    panel.innerHTML =
+      "<h2>Mis simulacros</h2>" +
+      '<ol class="progress-list">' +
+      items +
+      "</ol>" +
+      '<p class="progress-note">Se guarda solo en este navegador si pulsas Guardar. No hay cuenta ni servidor.</p>' +
+      '<p><a href="/oposiciones/progreso/index.html">Ver todo mi progreso</a></p>';
+  }
+
   function toggleTurno(form) {
     var turno = (form.elements.turno && form.elements.turno.value) || "libre";
     var tropa = $("baremo-tropa");
@@ -129,9 +176,16 @@
           block("Méritos profesionales", out.professional) +
           block("Méritos académicos", out.academic) +
           block("Otros méritos", out.other);
+        result._last = out;
+        var saveBtn = $("save-progress");
+        if (saveBtn) {
+          saveBtn.hidden = false;
+          saveBtn.textContent = "Guardar en Mi progreso";
+        }
         if (root.NotaOpoAnalytics && root.NotaOpoAnalytics.completed) {
           root.NotaOpoAnalytics.completed("guardia-civil-baremo-2026");
         }
+        renderProgress();
       } catch (err) {
         result.hidden = true;
         showToast(err.message || "Revisa los datos.");
@@ -140,6 +194,17 @@
 
     var close = $("calc-toast-close");
     if (close) close.addEventListener("click", hideToast);
+    var saveBtn = $("save-progress");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var out = result._last;
+        if (!out) return;
+        saveProgress(out);
+        saveBtn.textContent = "Guardado";
+        renderProgress();
+      });
+    }
+    renderProgress();
   }
 
   root.NotaOpoGcBaremoUI = { bind: bind };

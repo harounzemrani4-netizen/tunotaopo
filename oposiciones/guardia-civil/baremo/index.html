@@ -18,7 +18,7 @@
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819z">
+  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -44,7 +44,6 @@
       <h1>Calculadora de baremo Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice I · BOE-A-2026-9982 · BOE oficial</p>
       <nav class="opp-links" aria-label="Secciones"><a href="../../../oposiciones/guardia-civil/index.html">Resumen</a><a href="../../../calculadoras/guardia-civil/index.html">Calcular nota</a><a href="../../../oposiciones/guardia-civil/requisitos/index.html">Requisitos</a><a href="../../../oposiciones/guardia-civil/pruebas/index.html">Pruebas</a><a href="../../../oposiciones/guardia-civil/pruebas-fisicas/index.html">Físicas</a><a href="../../../oposiciones/guardia-civil/baremo/index.html" class="is-current">Baremo</a><a href="../../../oposiciones/guardia-civil/temario/index.html">Temario</a><a href="../../../oposiciones/guardia-civil/fechas/index.html">Fechas</a><a href="../../../oposiciones/guardia-civil/notas-corte/index.html">Notas</a><a href="../../../oposiciones/guardia-civil/examenes-oficiales/index.html">Exámenes</a></nav>
-      <p class="classroom-controls"><button type="button" class="button button-ghost" id="classroom-enter">Modo aula</button><button type="button" class="button button-ghost" id="classroom-exit" hidden>Salir del modo aula</button></p>
     </div>
     <div class="layout">
       <article class="tool">
@@ -99,6 +98,7 @@
       <div class="actions actions-primary">
         <button type="submit" class="button button-primary">Calcular baremo</button>
       </div>
+      <div class="actions tool-toolbar" aria-label="Herramientas de aula"><button type="button" class="button button-secondary" id="classroom-enter">Modo aula</button><button type="button" class="button button-secondary" id="classroom-exit" hidden>Salir del modo aula</button><button type="button" class="button button-secondary" id="share-native">Compartir</button><button type="button" class="button button-secondary" id="show-qr">Mostrar QR</button><a class="button button-ghost" href="mailto:contacto@tunotaopo.es?subject=Error%20en%20baremo%3A%20Guardia%20Civil&amp;body=Oposici%C3%B3n%3A%20Guardia%20Civil%0AConvocatoria%3A%20Resoluci%C3%B3n%20160/38243/2026%2C%20de%205%20de%20mayo%0AP%C3%A1gina%3A%20https%3A//tunotaopo.es/oposiciones/guardia-civil/baremo/%0ATipo%20de%20calculadora%3A%20baremo%0A%0ADescribe%20el%20error%20%28sin%20pegar%20tu%20nota%2C%20aciertos%20ni%20datos%20personales%29%3A%0A">Reportar error</a></div><div id="qr-box" class="qr-box" hidden></div>
     </form>
     <div class="result-slot">
       <div id="gc-baremo-placeholder" class="result-placeholder">
@@ -117,12 +117,7 @@
           <p id="gc-baremo-note" class="result-note"></p>
         </div>
         <div id="gc-baremo-breakdown"></div>
-        <div class="actions result-actions">
-          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-        </div>
-        <div id="qr-box" class="qr-box" hidden></div>
+        <div class="actions result-actions"><button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button><button type="button" class="button button-ghost" id="print-result">Imprimir</button></div>
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -132,6 +127,7 @@
         <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
       </div>
     </div>
+    <aside id="progress-panel" class="progress-panel" hidden></aside>
     <p class="report-error"><a href="mailto:contacto@tunotaopo.es?subject=Error%20en%20baremo%3A%20Guardia%20Civil&body=Oposici%C3%B3n%3A%20Guardia%20Civil%0AConvocatoria%3A%20Resoluci%C3%B3n%20160/38243/2026%2C%20de%205%20de%20mayo%0AP%C3%A1gina%3A%20https%3A//tunotaopo.es/oposiciones/guardia-civil/baremo/%0ATipo%20de%20calculadora%3A%20baremo%0A%0ADescribe%20el%20error%20%28sin%20pegar%20tu%20nota%2C%20aciertos%20ni%20datos%20personales%29%3A%0A">¿Has detectado un error? Avísanos</a></p>
     <section class="content">
       <h2>Qué cubre (y qué no)</h2>
@@ -158,16 +154,16 @@
       <a href="/privacidad/index.html">Privacidad</a>
       <a href="/cookies/index.html">Cookies</a>
       <a href="/aviso-legal/index.html">Aviso legal</a>
-      <a href="/academias/index.html">Academias</a>
+      <a href="/oposiciones/academias/index.html">Academias</a>
       <a href="/contacto/index.html">Contacto</a>
     </div>
   </div>
 </footer>
-  <script src="/js/engine/gc-baremo.js?v=20260819z" defer></script>
-<script src="/js/lib/qr.js?v=20260819z" defer></script>
-<script src="/js/components/gc-baremo.js?v=20260819z" defer></script>
+  <script src="/js/engine/gc-baremo.js?v=20260819aa" defer></script>
+<script src="/js/lib/qr.js?v=20260819aa" defer></script>
+<script src="/js/components/gc-baremo.js?v=20260819aa" defer></script>
 <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819z" defer></script>
-<script src="/js/site.js?v=20260819z" defer></script>
+<script src="/js/components/tools.js?v=20260819aa" defer></script>
+<script src="/js/site.js?v=20260819aa" defer></script>
 </body>
 </html>

@@ -6,5 +6,10 @@ export function onRequest(context) {
     url.search = "";
     return Response.redirect(url.toString(), 301);
   }
+  if (path === "/academias" || path === "/academias/" || path === "/academias/index.html") {
+    url.pathname = "/oposiciones/academias/";
+    url.search = "";
+    return Response.redirect(url.toString(), 301);
+  }
   return context.next();
 }

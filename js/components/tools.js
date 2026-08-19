@@ -115,6 +115,7 @@
         window.print();
       });
     }
+    if (qrBtn && qrBox) {
       qrBtn.addEventListener("click", function () {
         if (!qrBox.hidden && qrBox.innerHTML) {
           qrBox.hidden = true;

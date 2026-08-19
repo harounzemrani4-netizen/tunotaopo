@@ -89,7 +89,9 @@
           ? new Date(last.t).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })
           : "Aún no hay simulacros en este navegador";
         var href = prefix + item.href + "index.html";
-        var cta = item.kind === "fisicas" ? "Calcular físicas" : "Calcular nota";
+        var cta = "Calcular nota";
+        if (item.kind === "fisicas") cta = "Calcular físicas";
+        else if (item.kind === "baremo") cta = "Calcular baremo";
         var list = "";
         var trend = "";
         if (rows.length) {

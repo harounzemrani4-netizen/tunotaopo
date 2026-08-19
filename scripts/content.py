@@ -85,7 +85,6 @@ PAGES = {
         ],
         "faqs": [
             ("¿Cuántos errores puedo tener con 70 aciertos en el primero?", "0,60×70 − 0,15×E ≥ 30 → E ≤ 80. El tope real es el número de preguntas que te queden. La calculadora lo resuelve con tus aciertos."),
-            ("¿OpoRuta ya hace esto?", "Hay tools de Justicia. Aquí la URL es solo Auxilio, con la fórmula literal del Anexo V y escenarios por ejercicio.")
         ]
     },
     "auxiliar-age-2026": {

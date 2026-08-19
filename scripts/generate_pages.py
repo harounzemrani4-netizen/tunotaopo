@@ -18,9 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260819z"
+ASSET_V = "20260819aa"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
 PROGRESO_PATH = "oposiciones/progreso/"
+ACADEMIAS_PATH = "oposiciones/academias/"
 DATA_DIR = ROOT / "data" / "oposiciones"
 MONTHS_ES = (
     "enero",
@@ -149,7 +150,7 @@ def changelog_html(hub: dict) -> str:
     )
 
 
-def report_error_link(name: str, convocatoria: str, page_url: str, kind: str) -> str:
+def report_error_href(name: str, convocatoria: str, page_url: str, kind: str) -> str:
     subject = f"Error en {kind}: {name}"
     body = (
         f"Oposición: {name}\n"
@@ -158,31 +159,48 @@ def report_error_link(name: str, convocatoria: str, page_url: str, kind: str) ->
         f"Tipo de calculadora: {kind}\n\n"
         "Describe el error (sin pegar tu nota, aciertos ni datos personales):\n"
     )
-    href = f"mailto:{CONTACT_EMAIL}?subject={quote(subject)}&body={quote(body)}"
+    return f"mailto:{CONTACT_EMAIL}?subject={quote(subject)}&body={quote(body)}"
+
+
+def report_error_link(name: str, convocatoria: str, page_url: str, kind: str) -> str:
+    href = report_error_href(name, convocatoria, page_url, kind)
     return (
         f'<p class="report-error"><a href="{href}">¿Has detectado un error? Avísanos</a></p>'
     )
 
 
-def classroom_controls() -> str:
+def tool_toolbar(report_href: str = "") -> str:
+    report = ""
+    if report_href:
+        report = (
+            f'<a class="button button-ghost" href="{escape(report_href)}">Reportar error</a>'
+        )
     return (
-        '<p class="classroom-controls">'
-        '<button type="button" class="button button-ghost" id="classroom-enter">Modo aula</button>'
-        '<button type="button" class="button button-ghost" id="classroom-exit" hidden>Salir del modo aula</button>'
-        "</p>"
+        '<div class="actions tool-toolbar" aria-label="Herramientas de aula">'
+        '<button type="button" class="button button-secondary" id="classroom-enter">Modo aula</button>'
+        '<button type="button" class="button button-secondary" id="classroom-exit" hidden>Salir del modo aula</button>'
+        '<button type="button" class="button button-secondary" id="share-native">Compartir</button>'
+        '<button type="button" class="button button-secondary" id="show-qr">Mostrar QR</button>'
+        f"{report}"
+        "</div>"
+        '<div id="qr-box" class="qr-box" hidden></div>'
     )
 
 
-def result_share_actions() -> str:
-    return """<div class="actions result-actions">
-    <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
-    <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
-    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
-    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-    <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-  </div>
-  <div id="qr-box" class="qr-box" hidden></div>"""
+def result_persist_actions(*, copy_result: bool = False) -> str:
+    copy_btns = ""
+    if copy_result:
+        copy_btns = (
+            '<button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>'
+            '<button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>'
+        )
+    return (
+        '<div class="actions result-actions">'
+        f"{copy_btns}"
+        '<button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>'
+        '<button type="button" class="button button-ghost" id="print-result">Imprimir</button>'
+        "</div>"
+    )
 
 
 def es_date(iso: str) -> str:
@@ -238,7 +256,7 @@ def footer(prefix: str) -> str:
       <a href="{prefix}privacidad/index.html">Privacidad</a>
       <a href="{prefix}cookies/index.html">Cookies</a>
       <a href="{prefix}aviso-legal/index.html">Aviso legal</a>
-      <a href="{prefix}academias/index.html">Academias</a>
+      <a href="{prefix}{ACADEMIAS_PATH}index.html">Academias</a>
       <a href="{prefix}contacto/index.html">Contacto</a>
     </div>
   </div>
@@ -689,7 +707,7 @@ def form_guide(cfg: dict) -> str:
     )
 
 
-def calculator_form(cfg: dict, prefix: str = "") -> str:
+def calculator_form(cfg: dict, prefix: str = "", page_url: str = "") -> str:
     blocks = [
         '<p class="calc-hint">Escribe aciertos y errores. Los blancos se calculan solos y, en estas convocatorias, no restan.</p>'
     ]
@@ -814,12 +832,19 @@ def calculator_form(cfg: dict, prefix: str = "") -> str:
             f'<div class="fields fields-1">{number_input("target_score", "Nota que te gustaría sacar", tmax, required=False, step="0.0001", hint="Opcional. Ejemplo: el mínimo de una prueba o una meta tuya", placeholder=tph)}</div>'
             "</fieldset>"
         )
+    family_name = cfg.get("family_name") or cfg["short_name"]
+    report_href = (
+        report_error_href(family_name, cfg["convocatoria"], page_url, "nota")
+        if page_url
+        else ""
+    )
     return f"""<form id="calc-form" class="calculator" novalidate autocomplete="off">
   {''.join(blocks)}
   <div class="actions actions-primary">
     <button type="submit" class="button button-primary">Calcular nota</button>
     <button type="reset" class="button button-secondary">Borrar datos</button>
   </div>
+  {tool_toolbar(report_href)}
 </form>
 <div class="result-slot">
 <div id="result-placeholder" class="result-placeholder">
@@ -841,15 +866,7 @@ def calculator_form(cfg: dict, prefix: str = "") -> str:
   <div id="result-breakdown" class="score-list"></div>
   <div id="result-scenarios" class="result-scenarios"></div>
   <div id="result-historical" class="result-historical"></div>
-  <div class="actions result-actions">
-    <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
-    <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
-    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
-    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-    <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-  </div>
-  <div id="qr-box" class="qr-box" hidden></div>
+  {result_persist_actions(copy_result=True)}
 </section>
 </div>
 <div id="calc-toast" class="toast" hidden>
@@ -987,11 +1004,10 @@ def calculator_page(
       <h1>{escape(heading)}</h1>
       {banner}
       {hub_links}
-      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">
-        {calculator_form(cfg, prefix)}
+        {calculator_form(cfg, prefix, f"{SITE}/{canonical_path}")}
         {ad_slot("after-result")}
         <section class="source-card">
           <p class="source-kicker">De dónde sale la fórmula</p>
@@ -2046,6 +2062,7 @@ def pn_fisicas_page(item: dict) -> str:
       <div class="actions actions-primary">
         <button type="submit" class="button button-primary">Calcular físicas</button>
       </div>
+      {tool_toolbar(report_error_href("Policía Nacional", item["convocatoria"], f"{SITE}/oposiciones/policia-nacional/pruebas-fisicas/", "físicas"))}
     </form>
     <div class="result-slot">
       <div id="fisicas-placeholder" class="result-placeholder">
@@ -2068,13 +2085,7 @@ def pn_fisicas_page(item: dict) -> str:
           <div><span id="fisicas-force-label">Fuerza</span><strong id="fisicas-force"></strong></div>
           <div><span>1.000 m</span><strong id="fisicas-run"></strong></div>
         </div>
-        <div class="actions result-actions">
-          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-          <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
-          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-        </div>
-        <div id="qr-box" class="qr-box" hidden></div>
+        {result_persist_actions()}
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -2105,7 +2116,6 @@ def pn_fisicas_page(item: dict) -> str:
       <h1>Calculadora de pruebas físicas Policía Nacional 2026</h1>
       <p class="calc-badge">Anexo II · BOE-A-2026-15055 · BOE oficial</p>
       {hub_nav(family, prefix, "fisicas")}
-      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2182,6 +2192,7 @@ def gc_fisicas_page(item: dict) -> str:
       <div class="actions actions-primary">
         <button type="submit" class="button button-primary">Calcular físicas</button>
       </div>
+      {tool_toolbar(report_error_href("Guardia Civil", item["convocatoria"], f"{SITE}/oposiciones/guardia-civil/pruebas-fisicas/", "físicas"))}
     </form>
     <div class="result-slot">
       <div id="gc-fisicas-placeholder" class="result-placeholder">
@@ -2199,13 +2210,7 @@ def gc_fisicas_page(item: dict) -> str:
           <p id="gc-fisicas-verdict" class="result-note"></p>
         </div>
         <div class="score-list" id="gc-fisicas-list"></div>
-        <div class="actions result-actions">
-          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-          <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
-          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-        </div>
-        <div id="qr-box" class="qr-box" hidden></div>
+        {result_persist_actions()}
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -2236,7 +2241,6 @@ def gc_fisicas_page(item: dict) -> str:
       <h1>Calculadora de pruebas físicas Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice II · BOE-A-2026-9982 · BOE oficial</p>
       {hub_nav(family, prefix, "fisicas")}
-      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2367,6 +2371,7 @@ def gc_baremo_page(item: dict) -> str:
       <div class="actions actions-primary">
         <button type="submit" class="button button-primary">Calcular baremo</button>
       </div>
+      {tool_toolbar(report_error_href("Guardia Civil", item["convocatoria"], f"{SITE}/oposiciones/guardia-civil/baremo/", "baremo"))}
     </form>
     <div class="result-slot">
       <div id="gc-baremo-placeholder" class="result-placeholder">
@@ -2385,12 +2390,7 @@ def gc_baremo_page(item: dict) -> str:
           <p id="gc-baremo-note" class="result-note"></p>
         </div>
         <div id="gc-baremo-breakdown"></div>
-        <div class="actions result-actions">
-          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-        </div>
-        <div id="qr-box" class="qr-box" hidden></div>
+        {result_persist_actions()}
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -2400,6 +2400,7 @@ def gc_baremo_page(item: dict) -> str:
         <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
       </div>
     </div>
+    <aside id="progress-panel" class="progress-panel" hidden></aside>
     {report_error_link("Guardia Civil", item["convocatoria"], f"{SITE}/oposiciones/guardia-civil/baremo/", "baremo")}
     <section class="content">
       <h2>Qué cubre (y qué no)</h2>
@@ -2419,7 +2420,6 @@ def gc_baremo_page(item: dict) -> str:
       <h1>Calculadora de baremo Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice I · BOE-A-2026-9982 · BOE oficial</p>
       {hub_nav(family, prefix, "baremo")}
-      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2503,6 +2503,14 @@ def progress_trackers(opos: list[dict]) -> list[dict]:
                     "kind": "fisicas",
                 }
             )
+            trackers.append(
+                {
+                    "key": "tunotaopo:progress:guardia-civil-baremo-2026",
+                    "name": "Guardia Civil · baremo",
+                    "href": "oposiciones/guardia-civil/baremo/",
+                    "kind": "baremo",
+                }
+            )
     return trackers
 
 
@@ -2517,12 +2525,12 @@ def progreso_page(opos: list[dict]) -> str:
     ])}
     <div class="hero">
       <h1>Mi progreso</h1>
-      <p class="lede">Los simulacros se quedan en este navegador. No hay cuenta ni servidor. Si cambias de dispositivo o borras los datos del sitio, se pierde el historial.</p>
+      <p class="lede">Calcular no guarda nada. Solo se añade un simulacro si pulsas <strong>Guardar en Mi progreso</strong> en la calculadora. El historial queda en este navegador, no en una cuenta ni en un servidor.</p>
     </div>
     <script type="application/json" id="progreso-config">{config}</script>
     <div id="progreso-root" class="progress-board"></div>
     <section class="content">
-      <p>Para guardar un simulacro, calcula y pulsa <strong>Guardar en Mi progreso</strong>. No se guarda solo. El historial queda en este dispositivo.</p>
+      <p>Si cambias de dispositivo o borras los datos del sitio, se pierde. No se sincroniza entre el móvil y el ordenador.</p>
     </section>
     """
     return page_shell(
@@ -2576,7 +2584,7 @@ def calculator_embed_page(cfg: dict) -> str:
       <p class="calc-badge">{escape(cfg.get("source_identifier", ""))} · convocatoria {escape(str(cfg.get("anio", "")))}</p>
     </div>
     <article class="tool">
-      {calculator_form(cfg, "/")}
+      {calculator_form(cfg, "/", f"{SITE}/{embed_path}")}
       <section class="source-card">
         <p class="source-kicker">Fuente oficial</p>
         <p class="source-id">{escape(cfg.get("source_identifier", ""))}</p>
@@ -2599,6 +2607,7 @@ def calculator_embed_page(cfg: dict) -> str:
 
 
 def academias_page(opos: list[dict]) -> str:
+    prefix = rel_prefix(2)
     cards = []
     snippets = []
     for item in current_by_family(opos):
@@ -2623,7 +2632,7 @@ def academias_page(opos: list[dict]) -> str:
         f'&body={quote("Oposición que preparo:\\nConvocatoria (si la conoces):\\n\\nNo es una petición de plazo ni una promesa de inclusión.")}">Solicitar / contactar</a></p>'
     )
     body = f"""
-    {crumbs([("Inicio", "../index.html"), ("Academias y preparadores", "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Academias y preparadores", "")])}
     <div class="hero">
       <h1>TuNotaOpo para academias y preparadores</h1>
       <p class="lede">Las herramientas de TuNotaOpo pueden utilizarse gratuitamente con alumnos y opositores. Sin registro, sin servidor de notas y con la fórmula de cada convocatoria.</p>
@@ -2659,8 +2668,8 @@ def academias_page(opos: list[dict]) -> str:
     return page_shell(
         seo_title("TuNotaOpo para academias y preparadores"),
         "Usa las calculadoras de TuNotaOpo en clase: modo aula, QR y embed gratuito, sin registro ni servidor de notas.",
-        "academias/",
-        1,
+        ACADEMIAS_PATH,
+        2,
         body,
     )
 
@@ -2685,13 +2694,16 @@ def build() -> None:
     write(ROOT / "index.html", home(opos))
     write(ROOT / "calculadoras" / "index.html", calculadoras_index(opos))
     write(ROOT / "oposiciones" / "progreso" / "index.html", progreso_page(opos))
-    write(ROOT / "academias" / "index.html", academias_page(opos))
+    write(ROOT / "oposiciones" / "academias" / "index.html", academias_page(opos))
     for item in current_by_family(opos):
         slug = embed_family_slug(item)
         write(ROOT / "embed" / slug / "index.html", calculator_embed_page(item))
     stale = ROOT / "progreso"
     if stale.exists():
         shutil.rmtree(stale)
+    stale_academias = ROOT / "academias"
+    if stale_academias.exists():
+        shutil.rmtree(stale_academias)
     hub_urls = write_hubs(opos)
     for cfg in opos:
         year_path = cfg["path"]
@@ -2801,7 +2813,7 @@ def build() -> None:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")
-    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", "academias/", PROGRESO_PATH):
+    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", ACADEMIAS_PATH, PROGRESO_PATH):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:

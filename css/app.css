@@ -1346,6 +1346,12 @@ a.card:hover { transform: translateY(-2px); }
 }
 .search-empty { color: var(--color-text-muted); }
 .classroom-controls { margin: var(--space-3) 0 0; }
+.tool-toolbar {
+  margin-top: var(--space-3);
+}
+.tool-toolbar .button-ghost {
+  text-decoration: none;
+}
 .qr-box {
   margin-top: var(--space-3);
   padding: var(--space-3);
@@ -1400,6 +1406,7 @@ html.is-classroom .site-header { border-bottom-width: 6px; }
   .crumbs,
   .content,
   .classroom-controls,
+  .tool-toolbar,
   .report-error,
   .related-block,
   .progress-panel,

@@ -18,7 +18,7 @@
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819z">
+  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -44,7 +44,6 @@
       <h1>Calculadora de nota Guardia Civil 2026</h1>
       <p class="calc-badge">Actualizada para la convocatoria 2026 · BOE-A-2026-9982 · BOE oficial</p>
       <nav class="opp-links" aria-label="Esta oposición"><a href="../../oposiciones/guardia-civil/index.html">Oposición</a><a href="../../calculadoras/guardia-civil/index.html">Calcular nota</a><a href="../../oposiciones/guardia-civil/pruebas-fisicas/index.html">Pruebas físicas</a><a href="../../oposiciones/guardia-civil/baremo/index.html">Baremo</a><a href="../../oposiciones/guardia-civil/examenes-oficiales/index.html">Exámenes</a><a href="../../fuentes/index.html">Fuentes</a></nav>
-      <p class="classroom-controls"><button type="button" class="button button-ghost" id="classroom-enter">Modo aula</button><button type="button" class="button button-ghost" id="classroom-exit" hidden>Salir del modo aula</button></p>
     </div>
     <div class="layout">
       <article class="tool">
@@ -54,6 +53,7 @@
     <button type="submit" class="button button-primary">Calcular nota</button>
     <button type="reset" class="button button-secondary">Borrar datos</button>
   </div>
+  <div class="actions tool-toolbar" aria-label="Herramientas de aula"><button type="button" class="button button-secondary" id="classroom-enter">Modo aula</button><button type="button" class="button button-secondary" id="classroom-exit" hidden>Salir del modo aula</button><button type="button" class="button button-secondary" id="share-native">Compartir</button><button type="button" class="button button-secondary" id="show-qr">Mostrar QR</button><a class="button button-ghost" href="mailto:contacto@tunotaopo.es?subject=Error%20en%20nota%3A%20Guardia%20Civil&amp;body=Oposici%C3%B3n%3A%20Guardia%20Civil%0AConvocatoria%3A%20Resoluci%C3%B3n%20160/38243/2026%2C%20de%205%20de%20mayo%0AP%C3%A1gina%3A%20https%3A//tunotaopo.es/calculadoras/guardia-civil/%0ATipo%20de%20calculadora%3A%20nota%0A%0ADescribe%20el%20error%20%28sin%20pegar%20tu%20nota%2C%20aciertos%20ni%20datos%20personales%29%3A%0A">Reportar error</a></div><div id="qr-box" class="qr-box" hidden></div>
 </form>
 <div class="result-slot">
 <div id="result-placeholder" class="result-placeholder">
@@ -75,15 +75,7 @@
   <div id="result-breakdown" class="score-list"></div>
   <div id="result-scenarios" class="result-scenarios"></div>
   <div id="result-historical" class="result-historical"></div>
-  <div class="actions result-actions">
-    <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
-    <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
-    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
-    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
-    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
-    <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
-  </div>
-  <div id="qr-box" class="qr-box" hidden></div>
+  <div class="actions result-actions"><button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button><button type="button" class="button button-secondary" id="share-result">Copiar enlace</button><button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button><button type="button" class="button button-ghost" id="print-result">Imprimir</button></div>
 </section>
 </div>
 <div id="calc-toast" class="toast" hidden>
@@ -152,16 +144,16 @@
       <a href="/privacidad/index.html">Privacidad</a>
       <a href="/cookies/index.html">Cookies</a>
       <a href="/aviso-legal/index.html">Aviso legal</a>
-      <a href="/academias/index.html">Academias</a>
+      <a href="/oposiciones/academias/index.html">Academias</a>
       <a href="/contacto/index.html">Contacto</a>
     </div>
   </div>
 </footer>
-  <script src="/js/engine/scoring.js?v=20260819z" defer></script>
-<script src="/js/lib/qr.js?v=20260819z" defer></script>
-<script src="/js/components/calculator.js?v=20260819z" defer></script>
+  <script src="/js/engine/scoring.js?v=20260819aa" defer></script>
+<script src="/js/lib/qr.js?v=20260819aa" defer></script>
+<script src="/js/components/calculator.js?v=20260819aa" defer></script>
 <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819z" defer></script>
-<script src="/js/site.js?v=20260819z" defer></script>
+<script src="/js/components/tools.js?v=20260819aa" defer></script>
+<script src="/js/site.js?v=20260819aa" defer></script>
 </body>
 </html>
