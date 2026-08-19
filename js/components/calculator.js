@@ -234,8 +234,8 @@
 
   function showResult(config, result) {
     var box = $("calc-result");
-    var err = $("calc-error");
-    err.hidden = true;
+    hideToast();
+    clearInvalid();
     box.hidden = false;
     if ($("result-placeholder")) $("result-placeholder").hidden = true;
     $("result-kicker").textContent = "Puntuación de la oposición";
@@ -259,12 +259,74 @@
     }
   }
 
-  function showError(message) {
-    $("calc-result").hidden = true;
-    var err = $("calc-error");
-    err.hidden = false;
-    err.textContent = message;
-    if ($("result-placeholder")) $("result-placeholder").hidden = true;
+  var toastTimer = null;
+
+  function friendlyError(message) {
+    var text = String(message || "").trim();
+    if (!text) return "Revisa los datos del formulario para poder calcular.";
+    if (/^Indica /i.test(text)) {
+      return "Falta un dato: " + text.replace(/^Indica\s+/i, "").replace(/\.$/, "") + ".";
+    }
+    return text;
+  }
+
+  function clearInvalid() {
+    document.querySelectorAll(".is-invalid").forEach(function (el) {
+      el.classList.remove("is-invalid");
+      if (el.removeAttribute) el.removeAttribute("aria-invalid");
+    });
+  }
+
+  function hideToast() {
+    var toast = $("calc-toast");
+    if (toast) toast.hidden = true;
+    if (toastTimer) {
+      window.clearTimeout(toastTimer);
+      toastTimer = null;
+    }
+  }
+
+  function fieldFromError(form, config, message) {
+    var stages = (config && config.stages) || [];
+    var i;
+    var field;
+    for (i = 0; i < stages.length; i += 1) {
+      var stage = stages[i];
+      var label = stage.label;
+      if (message.indexOf(label) === -1) continue;
+      if (message.indexOf("preguntas válidas") !== -1) field = form.elements[stage.id + "_valid"];
+      else if (message.indexOf("aciertos") !== -1) field = form.elements[stage.id + "_hits"];
+      else if (message.indexOf("errores") !== -1) field = form.elements[stage.id + "_errors"];
+      else field = form.elements[stage.id + "_hits"] || form.elements[stage.id + "_errors"] || form.elements[stage.id + "_cut"] || form.elements[stage.id + "_value"];
+      if (field) return field;
+    }
+    return null;
+  }
+
+  function showError(message, form, config) {
+    hideToast();
+    clearInvalid();
+    var toast = $("calc-toast");
+    var text = $("calc-toast-message");
+    if (text) text.textContent = friendlyError(message);
+    if (toast) toast.hidden = false;
+    if ($("calc-result")) $("calc-result").hidden = true;
+    if ($("result-placeholder")) $("result-placeholder").hidden = false;
+    var field = form && config ? fieldFromError(form, config, String(message || "")) : null;
+    if (field) {
+      field.classList.add("is-invalid");
+      field.setAttribute("aria-invalid", "true");
+      if (field.closest) {
+        var stage = field.closest(".stage");
+        if (stage) stage.classList.add("is-invalid");
+      }
+      if (typeof field.focus === "function") field.focus();
+      if (typeof field.scrollIntoView === "function") {
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        field.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      }
+    }
+    toastTimer = window.setTimeout(hideToast, 7000);
   }
 
   function bind(config) {
@@ -277,14 +339,15 @@
     function clearSession() {
       form.reset();
       $("calc-result").hidden = true;
-      $("calc-error").hidden = true;
+      hideToast();
+      clearInvalid();
       if ($("result-placeholder")) $("result-placeholder").hidden = false;
       localStorage.removeItem("notaopo:" + config.slug);
     }
 
     var fromQuery = inputsFromQuery(form);
     if (fromQuery.rejected) {
-      showError("La URL compartida contiene un parámetro no válido. Introduce los datos de nuevo.");
+      showError("La URL compartida contiene un parámetro no válido. Introduce los datos de nuevo.", form, config);
     } else if (Object.keys(fromQuery.data).length) {
       applyInputs(form, fromQuery.data);
     } else {
@@ -296,7 +359,16 @@
       if (event.persisted) clearSession();
     });
 
-    form.addEventListener("input", function () {
+    form.addEventListener("input", function (event) {
+      var target = event.target;
+      if (target && target.classList) {
+        target.classList.remove("is-invalid");
+        target.removeAttribute("aria-invalid");
+        if (target.closest) {
+          var stage = target.closest(".stage");
+          if (stage && !stage.querySelector(".is-invalid")) stage.classList.remove("is-invalid");
+        }
+      }
       root.NotaOpoAnalytics.started(config.slug);
     });
 
@@ -308,17 +380,22 @@
         showResult(config, result);
         root.NotaOpoAnalytics.completed(config.slug);
       } catch (error) {
-        showError(error.message);
+        showError(error.message, form, config);
       }
     });
 
     form.addEventListener("reset", function () {
       $("calc-result").hidden = true;
-      $("calc-error").hidden = true;
+      hideToast();
+      clearInvalid();
       if ($("result-placeholder")) $("result-placeholder").hidden = false;
       localStorage.removeItem("notaopo:" + config.slug);
       history.replaceState({}, "", location.pathname);
     });
+
+    if ($("calc-toast-close")) {
+      $("calc-toast-close").addEventListener("click", hideToast);
+    }
 
     function copyText(text) {
       if (navigator.clipboard && navigator.clipboard.writeText) {

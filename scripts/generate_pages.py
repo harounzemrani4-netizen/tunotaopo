@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819f">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819g">
 </head>"""
 
 
@@ -250,8 +250,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819f" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819f" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819g" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819g" defer></script>')
     return "\n".join(tags)
 
 
@@ -481,7 +481,6 @@ def calculator_form(cfg: dict) -> str:
   </div>
 </form>
 <div class="result-slot">
-<p id="calc-error" class="alert alert-danger" hidden role="alert"></p>
 <div id="result-placeholder" class="result-placeholder">
   <p class="result-placeholder-kicker">Aún no hay nota</p>
   <p class="result-placeholder-title">Cuando pulses Calcular nota verás</p>
@@ -506,6 +505,13 @@ def calculator_form(cfg: dict) -> str:
     <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
   </div>
 </section>
+</div>
+<div id="calc-toast" class="toast" hidden>
+  <div class="toast-card" role="alert" aria-live="assertive">
+    <p class="toast-kicker">Revisa el formulario</p>
+    <p id="calc-toast-message" class="toast-message"></p>
+    <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
+  </div>
 </div>"""
 
 
