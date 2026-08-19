@@ -74,7 +74,7 @@
           '<p class="progress-note">' + escapeHtml(when) +
           (rows.length ? " · " + rows.length + " simulacro" + (rows.length === 1 ? "" : "s") : "") +
           "</p>" +
-          '<p><a class="button button-secondary" href="' + escapeHtml(href) + '">' + cta + "</a></p>" +
+          '<p class="progress-card-actions"><a class="button button-secondary" href="' + escapeHtml(href) + '">' + cta + "</a></p>" +
         "</article>"
       );
     }
