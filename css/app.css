@@ -497,6 +497,13 @@ a:hover { color: var(--color-primary-hover); }
 .tool h2:first-child,
 .panel h2:first-child { margin-top: 0; }
 .content h3 { font-size: 1rem; margin: var(--space-5) 0 var(--space-2); }
+.exam-sedes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.15rem 1.25rem;
+  padding-left: 1.2rem;
+}
+.exam-sedes li { margin: 0; }
 
 .calculator { margin: 0; }
 .tool:has(.calculator) {

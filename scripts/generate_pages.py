@@ -9,6 +9,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 from content import DISCLAIMER, PAGES
+from examenes_oficiales import EXAMENES
 from hubs_data import HUBS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,7 +156,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="{BRAND}">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819n">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819o">
 </head>"""
 
 
@@ -331,11 +332,11 @@ def scripts(prefix: str, calculator: bool = False, fisicas: bool = False) -> str
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819n" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819n" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819o" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819o" defer></script>')
     if fisicas:
-        tags.insert(1, f'<script src="{prefix}js/engine/pn-fisicas.js?v=20260819n" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/fisicas.js?v=20260819n" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/pn-fisicas.js?v=20260819o" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/fisicas.js?v=20260819o" defer></script>')
     return "\n".join(tags)
 
 
@@ -1434,18 +1435,29 @@ def hub_notas(item: dict, hub: dict) -> str:
     )
 
 
+def _exam_links(links: list) -> str:
+    return "".join(f"<li>{ext_a(url, label)}</li>" for url, label in links)
+
+
 def hub_examenes(item: dict, hub: dict) -> str:
     name = hub["name"]
-    blocks = [f"<p>{escape(hub['examenes_lead'])}</p>"]
-    for group in hub["examenes"]:
-        links = "".join(
-            f"<li>{ext_a(url, label)}</li>" for url, label in group["links"]
-        )
-        blocks.append(
-            f"<h2>{escape(group['year'])}</h2>"
-            f"<p>{escape(group['note'])}</p>"
-            f"<ul>{links}</ul>"
-        )
+    family = family_id(item)
+    exam = EXAMENES.get(family, {})
+    lead = exam.get("lead") or hub.get("examenes_lead", "")
+    groups = exam.get("groups") or hub.get("examenes", [])
+    blocks = [f"<p>{escape(lead)}</p>"]
+    for group in groups:
+        blocks.append(f"<h2>{escape(group['year'])}</h2>")
+        if group.get("note"):
+            blocks.append(f"<p>{escape(group['note'])}</p>")
+        if group.get("links"):
+            blocks.append(f"<ul>{_exam_links(group['links'])}</ul>")
+        for sub in group.get("subgroups") or []:
+            blocks.append(f"<h3>{escape(sub['title'])}</h3>")
+            if sub.get("note"):
+                blocks.append(f'<p class="notice">{escape(sub["note"])}</p>')
+            cls = ' class="exam-sedes"' if sub.get("kind") == "sedes" else ""
+            blocks.append(f"<ul{cls}>{_exam_links(sub['links'])}</ul>")
     return hub_section(
         item, hub, "examenes-oficiales", "examenes", "Exámenes oficiales",
         f"Exámenes oficiales {name}",
