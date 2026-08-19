@@ -135,7 +135,7 @@
     "maximum": 45,
     "rounding": 3,
     "optional": true,
-    "help": "Si ya tienes el total del concurso según el apéndice I, escríbelo aquí (de 0 a 45). Esta casilla no calcula ítem a ítem. Si no tienes concurso o no quieres sumarlo, déjalo vacío."
+    "help": "Si ya tienes el total del concurso según el apéndice I, escríbelo aquí (de 0 a 45). Vacío = no se suma. Para calcularlo ítem a ítem usa la calculadora de baremo de esta oposición."
   },
   "process_rounding": 4,
   "historical": {

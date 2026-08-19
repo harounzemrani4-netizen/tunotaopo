@@ -79,7 +79,7 @@
         if (root.NotaOpoAnalytics && root.NotaOpoAnalytics.completed) {
           root.NotaOpoAnalytics.completed("policia-nacional-fisicas-2026");
         }
-        saveFisicasProgress(out.average);
+        saveFisicasProgress(out);
         renderFisicasProgress();
       } catch (err) {
         result.hidden = true;
@@ -106,10 +106,15 @@
     }
   }
 
-  function saveFisicasProgress(average) {
-    if (typeof average !== "number" || !Number.isFinite(average)) return;
+  function saveFisicasProgress(out) {
+    if (!out || typeof out.average !== "number" || !Number.isFinite(out.average)) return;
     var rows = loadFisicasProgress();
-    rows.push({ t: Date.now(), s: average });
+    rows.push({
+      t: Date.now(),
+      s: out.average,
+      run: out.run && out.run.display ? out.run.display : "",
+      runSec: out.run && typeof out.run.raw === "number" ? out.run.raw : null
+    });
     if (rows.length > 20) rows = rows.slice(-20);
     try {
       localStorage.setItem(fisicasKey(), JSON.stringify(rows));
@@ -125,20 +130,36 @@
       panel.innerHTML = "";
       return;
     }
-    var first = rows[0].s;
-    var last = rows[rows.length - 1].s;
-    var delta = Math.round((last - first) * 100) / 100;
+    var timed = rows.filter(function (row) { return typeof row.runSec === "number"; });
     var items = rows.slice(-8).map(function (row) {
       var label = new Date(row.t).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
-      return "<li><span>" + escapeHtml(label) + "</span><strong>" + String(row.s) + "</strong></li>";
+      var extra = row.run ? " · 1.000 m " + row.run : "";
+      return "<li><span>" + escapeHtml(label) + "</span><strong>media " + String(row.s) + escapeHtml(extra) + "</strong></li>";
     }).join("");
-    var trend = delta >= 0 ? "↗ +" + String(delta) : "↘ " + String(delta);
+    var delta = Math.round((rows[rows.length - 1].s - rows[0].s) * 100) / 100;
+    var trend = "Mejora de media: " + (delta >= 0 ? "+" : "") + String(delta);
+    if (timed.length >= 2) {
+      var runDelta = timed[0].runSec - timed[timed.length - 1].runSec;
+      if (runDelta > 0) trend += ". ↗ " + runDelta + " segundos de mejora en los 1.000 m.";
+      else if (runDelta < 0) trend += ". ↘ " + Math.abs(runDelta) + " segundos más lentos en los 1.000 m.";
+    }
     panel.hidden = false;
     panel.innerHTML =
-      "<h2>Mis últimas físicas</h2>" +
+      "<h2>Mis 1.000 metros y media</h2>" +
       '<ol class="progress-list">' + items + "</ol>" +
-      '<p class="progress-trend">' + trend + " desde el primero guardado en este navegador.</p>" +
-      '<p class="progress-note">Se guarda solo en este dispositivo. No hay cuenta ni servidor.</p>';
+      '<p class="progress-trend">' + trend + "</p>" +
+      '<p class="progress-note">Se guarda solo en este navegador. No hay cuenta ni servidor.</p>' +
+      '<p><a href="' + (document.body.getAttribute("data-root") || "") + 'progreso/index.html">Ver todo mi progreso</a></p>' +
+      '<p><button type="button" class="button button-secondary" id="progress-clear">Borrar historial</button></p>';
+    var clear = $("progress-clear");
+    if (clear) {
+      clear.addEventListener("click", function () {
+        try {
+          localStorage.removeItem(fisicasKey());
+        } catch (ignore) {}
+        renderFisicasProgress();
+      });
+    }
   }
 
   root.NotaOpoFisicasUI = { bind: bind };

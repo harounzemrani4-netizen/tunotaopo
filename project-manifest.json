@@ -91,7 +91,7 @@
       "Los blancos no puntúan salvo que la norma diga lo contrario.",
       "Las puntuaciones negativas se recortan a 0 cuando la convocatoria fija una escala desde cero.",
       "T es valid_questions y puede cambiar por anulaciones y reserva.",
-      "El concurso se introduce como total ya baremado, no se inventan méritos.",
+      "El concurso se introduce como total ya baremado o se calcula ítem a ítem con el apéndice I de Guardia Civil.",
       "El mínimo oficial de una prueba no es un corte de plaza."
     ],
     "test_cases": [
@@ -149,14 +149,15 @@
     ]
   },
   "status": {
-    "phase": "MVP local, no publicado",
+    "phase": "publicado",
     "ads": "reserved-slots-inactive",
     "last_reviewed": "2026-08-19",
     "mvp": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026", "policia-nacional-2026"],
     "published_now": ["guardia-civil-2026", "ayudantes-iipp-2026", "auxilio-judicial-2026", "auxiliar-age-2026", "policia-nacional-2026"],
     "deploy_blockers": [
       "Domicilio publicado solo como código postal 28981, Parla (Madrid). Sin calle ni número. El DNI no se publica.",
-      "Dominio tunotaopo.es en IONOS. Publicación prevista en Cloudflare Pages (0 €). Falta cuenta Cloudflare, repo Git y DNS.",
+      "Search Console: falta verificar tunotaopo.es y enviar el sitemap (manual, sin token inventado).",
+      "Alias o buzón contacto@tunotaopo.es pendiente en IONOS.",
       "AdSense y afiliados: huecos reservados visibles, scripts inactivos. Falta Publisher ID y CMP."
     ]
   }

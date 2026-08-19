@@ -9,6 +9,15 @@ document.addEventListener("DOMContentLoaded", function () {
   if (document.getElementById("fisicas-form") && window.NotaOpoFisicasUI) {
     window.NotaOpoFisicasUI.bind();
   }
+  if (document.getElementById("gc-fisicas-form") && window.NotaOpoGcFisicasUI) {
+    window.NotaOpoGcFisicasUI.bind();
+  }
+  if (document.getElementById("gc-baremo-form") && window.NotaOpoGcBaremoUI) {
+    window.NotaOpoGcBaremoUI.bind();
+  }
+  if (document.getElementById("progreso-root") && window.NotaOpoProgreso) {
+    window.NotaOpoProgreso.bind();
+  }
   var search = document.getElementById("opo-search");
   var catalog = document.getElementById("opo-catalog");
   function filterCatalog() {

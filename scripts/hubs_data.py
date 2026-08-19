@@ -80,7 +80,8 @@ HUBS = {
         "name": "Policía Nacional",
         "h1": "Policía Nacional — oposición 2026",
         "eyebrow": "Escala Básica · categoría de Policía",
-        "badge": "Convocatoria publicada · BOE-A-2026-15055 · En curso",
+        "badge": "Proceso 2026 · convocatoria publicada el 10/07/2026 · BOE-A-2026-15055",
+        "process_label": "Proceso 2026 · convocatoria publicada el 10/07/2026",
         "pages": ["requisitos", "pruebas", "fisicas", "temario", "fechas", "notas", "examenes"],
         "status": [
             ("Plazas", "2.704", "2.163 libres · 541 tropa y marinería"),
@@ -111,6 +112,32 @@ HUBS = {
             ("Módulo de formación práctica en puesto de trabajo.", None),
         ],
         "pruebas_lead": "Fase de oposición, luego curso y prácticas (base 1.2 y 6.1). Cada prueba enlaza a la herramienta si existe.",
+        "pruebas_extra": [
+            "El orden de la fase de oposición es el de las bases: primero conocimientos, después físicas, reconocimiento médico, entrevista y psicotécnico. Cada una es eliminatoria. Superar el mínimo de una prueba no te lleva a la siguiente lista final: solo te deja seguir.",
+            "Conocimientos es la única prueba con nota numérica de 0 a 10. El mínimo de las bases es 3. La media de las físicas (0 a 10, con un 0 que elimina) se suma después a esa nota. Médico, entrevista y psicotécnico son apto o no apto: no hay calculadora porque los califica el tribunal, no una fórmula pública de aciertos.",
+            "El día de conocimientos lleva DNI o documento equivalente. El de físicas, además, el certificado médico que pide la convocatoria. Aquí no se sustituye ese certificado ni se dice quién entra en el 1,75 aspirantes por plaza: eso lo publica el tribunal.",
+            "Usa la calculadora de nota para el test y la de físicas para el anexo II. El Portal del Aspirante es la sede de listas y citaciones.",
+        ],
+        "timeline": [
+            {"label": "Convocatoria", "date": "10 de julio", "state": "done"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done", "note": "15 días hábiles desde el 11 de julio."},
+            {"label": "Lista de admitidos", "date": "Consulta individual", "state": "done", "note": "Excluidos en el BOE; el resto, en el Portal del Aspirante."},
+            {"label": "Examen", "date": "26 de septiembre", "state": "current", "note": "Previsión del Portal del Aspirante. No está en el BOE."},
+            {"label": "Físicas", "date": "Por citar", "state": "todo"},
+            {"label": "Entrevista y médico", "date": "Por citar", "state": "todo"},
+            {"label": "Resultado final", "date": "Pendiente", "state": "todo"},
+        ],
+        "fechas_extra": [
+            "El 26 de septiembre de 2026 es una previsión oficial del Portal del Aspirante (18 de junio de 2026), acto único salvo circunstancias sobrevenidas. Si el tribunal cambia el día, manda el portal, no esta página.",
+            "Las físicas, el médico y la entrevista no tienen fecha en el BOE de la convocatoria. Aparecen cuando el tribunal cita. No se estiman aquí.",
+        ],
+        "notas_extra": [
+            "El 3 de las bases es el suelo para no ser eliminado en conocimientos. El 7,17 aproximado de 2025 es otra cosa: el corte de esa promoción, publicado por el Portal del Aspirante el 3 de noviembre de 2025.",
+            "En 2026 el corte no existe todavía. No se copia el de 2025 como si ya valiera. Tampoco se inventa cuántos caben en el 1,75 por plaza.",
+        ],
+        "examenes_extra": [
+            "La Policía Nacional no mantiene un PDF público permanente del test. Quien se examinó descarga cuestionario y plantilla desde su inscripción en el Portal del Aspirante. Cuando salga el de 2026, el enlace oficial estará ahí, no en un blog.",
+        ],
         "temario": PN_TEMAS,
         "temario_lead": "Índice del anexo I. No es el temario desarrollado: no sustituye el boletín ni un manual.",
         "fechas": [
@@ -148,8 +175,9 @@ HUBS = {
         "name": "Guardia Civil",
         "h1": "Guardia Civil — oposición 2026",
         "eyebrow": "Escala de Cabos y Guardias",
-        "badge": "Convocatoria BOE-A-2026-9982 · Psicofísicas en curso",
-        "pages": ["requisitos", "pruebas", "temario", "fechas", "notas", "examenes"],
+        "badge": "Proceso 2026 · convocatoria publicada el 08/05/2026 · psicofísicas en curso",
+        "process_label": "Proceso 2026 · convocatoria publicada el 08/05/2026",
+        "pages": ["requisitos", "pruebas", "fisicas", "baremo", "temario", "fechas", "notas", "examenes"],
         "status": [
             ("Plazas", "3.240", "1.704 libres · 1.296 tropa · 240 Colegio"),
             ("Convocatoria", "Publicada", "8 de mayo de 2026"),
@@ -158,6 +186,8 @@ HUBS = {
         ],
         "tiles": [
             ("calc", "Calculadora de nota", "Ortografía, gramática, conocimientos, inglés y psicotécnico."),
+            ("fisicas", "Pruebas físicas", "2.000 m, circuito, extensiones y 50 m. Apéndice II."),
+            ("baremo", "Baremo del concurso", "Méritos del apéndice I, ítem a ítem, tope 45."),
             ("examenes", "Exámenes oficiales", "2026, 2025 y 2022 (por día y Canarias)."),
             ("temario", "Temario", "25 temas oficiales. Índice, no el tema desarrollado."),
             ("requisitos", "Requisitos", "Edad, ESO o equivalente, permiso B."),
@@ -185,12 +215,34 @@ HUBS = {
             ("Conocimientos generales — 100 preguntas. Mínimo 50.", "calc"),
             ("Lengua inglesa — 20 preguntas. Mínimo 8.", "calc"),
             ("Aptitudes intelectuales — 80 preguntas, máximo 30. Mínimo 12.", "calc"),
-            ("Concurso — méritos del apéndice I, hasta 45. Aquí se introduce el total ya baremado.", "calc"),
-            ("Pruebas físicas — 2.000 m, circuito, extensiones de brazos y 50 m de natación.", None),
+            ("Concurso — méritos del apéndice I, hasta 45.", "baremo"),
+            ("Pruebas físicas — 2.000 m, circuito, extensiones de brazos y 50 m de natación.", "fisicas"),
             ("Entrevista personal y reconocimiento médico.", None),
             ("Formación en la Academia de Guardias (Baeza) y prácticas en unidad.", None),
         ],
         "pruebas_lead": "Concurso-oposición (bases 5 y 6). Las escritas ya se celebraron el 11 de julio de 2026. Las psicofísicas van del 2 al 26 de septiembre.",
+        "pruebas_extra": [
+            "Ortografía y gramática no suman puntos: 6 o más errores te dejan no apto. Conocimientos, inglés y psicotécnico sí puntúan, con mínimos 50, 8 y 12. El concurso (hasta 45) se suma después, no sustituye esas pruebas.",
+            "Las físicas de Guardia Civil no son las de Policía Nacional. Aquí no hay media de 0 a 10: hay cuatro ejercicios eliminatorios, con mínimos distintos por sexo y tramo de edad (menor de 35, 35 a 39, 40 o más). Hace falta certificado médico de los 20 días anteriores.",
+            "Las psicofísicas de esta convocatoria están previstas del 2 al 26 de septiembre de 2026 en Valdemoro. Cada aspirante tiene día asignado en la web del cuerpo. Esta página no cita ni sustituye esa citación.",
+        ],
+        "timeline": [
+            {"label": "Convocatoria", "date": "8 de mayo", "state": "done"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done", "note": "Hasta el 1 de junio de 2026."},
+            {"label": "Admitidos definitivos", "date": "30 de junio", "state": "done", "note": "Resolución 160/38308/2026."},
+            {"label": "Pruebas escritas", "date": "11 de julio", "state": "done"},
+            {"label": "Psicofísicas", "date": "2–26 de septiembre", "state": "current", "note": "Colegio de Guardias Jóvenes, Valdemoro."},
+            {"label": "Academia y prácticas", "date": "Pendiente", "state": "todo"},
+        ],
+        "fechas_extra": [
+            "El calendario de esta página sale de la web oficial de ingreso, actualizada el 24 de julio de 2026, y del BOE de la convocatoria. Si tu citación de psicofísicas dice otro día, manda esa citación.",
+        ],
+        "notas_extra": [
+            "89,61 es el total de quien cerró la lista de propuestos a alumno en turno libre 2025 (BOE-A-2025-21403). No es el ranking de todos los examinados ni tu puesto de 2026. Hace falta haber superado también físicas, entrevista y médico.",
+        ],
+        "examenes_extra": [
+            "Los PDF de 2026 son de la Jefatura de Enseñanza. La plantilla válida es la del PDF nº 2, que corrige la pregunta 7 del modelo A y la 88 del B. El examen de 2025 sirve para practicar el formato, no para esta fórmula.",
+        ],
         "temario": {
             "Temario oficial (25 temas)": [
                 (1, "Derechos humanos."),
@@ -262,7 +314,8 @@ HUBS = {
         "name": "Auxiliar AGE",
         "h1": "Auxiliar AGE — oposición 2026",
         "eyebrow": "Cuerpo General Auxiliar · ingreso libre",
-        "badge": "Convocatoria BOE-A-2025-26262 · Examen ya celebrado",
+        "badge": "Proceso 2026 · convocatoria publicada el 22/12/2025 · examen ya celebrado",
+        "process_label": "Proceso 2026 · convocatoria publicada el 22/12/2025",
         "pages": ["requisitos", "pruebas", "temario", "fechas", "notas", "examenes"],
         "status": [
             ("Plazas", "1.700", "156 reserva discapacidad"),
@@ -288,6 +341,11 @@ HUBS = {
             ("Habilitación", "No separado del servicio ni inhabilitado para empleo público."),
         ],
         "requisitos_lead": "Requisitos de las normas comunes y del anexo I (ingreso libre). El texto que manda es el BOE.",
+        "requisitos_extra": [
+            "Es el Cuerpo General Auxiliar, subgrupo C2: basta el Graduado en ESO o equivalente. No pide Bachiller (eso es C1, como Ayudantes IIPP), ni permiso B ni idioma A2 (eso es Policía Nacional).",
+            "La nacionalidad no está limitada a la española: las normas comunes admiten las situaciones de la base 3.2 (Unión Europea, cónyuge, etc.). El texto que manda es el boletín, no un resumen de academia.",
+            "No hay pruebas físicas ni concurso de méritos en este ingreso libre. La nota sale del ejercicio único.",
+        ],
         "pruebas": [
             ("Primera parte — hasta 60 preguntas (30 de temario y 30 psicotécnicas) más 5 de reserva.", "calc"),
             ("Segunda parte — hasta 50 preguntas de ofimática (Windows 11 y Microsoft 365) más 5 de reserva.", "calc"),
@@ -295,6 +353,32 @@ HUBS = {
             ("La nota 0–50 de cada parte es transformada por la CPS. Aquí se muestra la puntuación directa.", "calc"),
         ],
         "pruebas_lead": "Ejercicio único del anexo I. Las dos partes son obligatorias y eliminatorias.",
+        "pruebas_extra": [
+            "No hay varias jornadas: las dos partes se hacen en una sesión de 90 minutos. Cada error resta un tercio y las blancas no restan. La calculadora muestra la puntuación directa, no la nota 0–50 que transforma la CPS.",
+            "La primera parte mezcla temario (hasta 30) y psicotécnicos (hasta 30). La segunda es ofimática de Windows 11 y Microsoft 365. No hay físicas ni baremo de méritos en este ingreso libre.",
+            "Sin el PDF de criterios de esta convocatoria no se afirma el 25 transformado ni un corte de plaza. Cuando el INAP publique la lista, esa lista manda.",
+            "Las plantillas provisionales salieron en la sede del INAP el 25 de mayo de 2026. El cuestionario oficial está ahí (modelos A y B), no en un PDF de academia.",
+        ],
+        "timeline": [
+            {"label": "Convocatoria", "date": "22 de diciembre de 2025", "state": "done"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done", "note": "23 dic. 2025 – 22 ene. 2026."},
+            {"label": "Examen", "date": "23 de mayo de 2026", "state": "done"},
+            {"label": "Plantillas", "date": "25 de mayo de 2026", "state": "done", "note": "Sede electrónica del INAP."},
+            {"label": "Lista final", "date": "Pendiente", "state": "todo"},
+        ],
+        "fechas_extra": [
+            "La convocatoria es de 2025 y el proceso de ingreso es el de 2026: el boletín salió el 22 de diciembre de 2025 y el ejercicio único fue el 23 de mayo de 2026.",
+            "El examen ya se celebró. Lo que falta es la lista de aprobados o el corte de esta convocatoria, cuando el INAP o el BOE la publiquen. No se estima un día.",
+        ],
+        "notas_extra": [
+            "No hay aquí un histórico de cortes copiado de otra promoción. El umbral 0–50 lo fija la CPS de esta convocatoria, y aún no se usa como transformada en la calculadora.",
+            "Hay 1.700 plazas (156 de reserva para discapacidad). Eso recorta la lista cuando se publique; no se puede calcular aquí con la puntuación directa.",
+            "La calculadora suma las dos puntuaciones directas (máximo 110). La CPS transforma cada parte a 0–50 con un criterio que aún no está aplicado en esta web.",
+        ],
+        "examenes_extra": [
+            "Los cuestionarios y plantillas oficiales están en la ficha del INAP. Un PDF de academia no sustituye esa plantilla.",
+            "Hay modelos A y B del ejercicio del 23 de mayo de 2026. Usa la plantilla de esta convocatoria, no la de un proceso anterior.",
+        ],
         "temario": {
             "I. Organización pública": [
                 (1, "La Constitución Española de 1978."),
@@ -358,7 +442,8 @@ HUBS = {
         "name": "Auxilio Judicial",
         "h1": "Auxilio Judicial — oposición 2026",
         "eyebrow": "Administración de Justicia · acceso libre",
-        "badge": "Convocatoria BOE-A-2025-27053 · En curso",
+        "badge": "Proceso 2026 · convocatoria publicada el 30/12/2025 · BOE-A-2025-27053",
+        "process_label": "Proceso 2026 · convocatoria publicada el 30/12/2025",
         "pages": ["requisitos", "pruebas", "temario", "fechas", "notas", "examenes"],
         "status": [
             ("Plazas", "425", "Acceso libre, Orden PJC/1549/2025"),
@@ -384,12 +469,40 @@ HUBS = {
             ("Habilitación", "No separado del servicio ni inhabilitado para empleo público."),
         ],
         "requisitos_lead": "Requisitos de la Orden PJC/1549/2025. El texto que manda es el BOE.",
+        "requisitos_extra": [
+            "A diferencia del Auxiliar AGE, aquí se exige nacionalidad española. El título es Graduado en ESO o equivalente, no Bachiller.",
+            "No hay prueba física ni concurso de méritos en este acceso libre. La nota sale del teórico y del práctico del anexo V.a).",
+        ],
         "pruebas": [
             ("Primer ejercicio (teórico) — 100 preguntas, 4 reservas. 0,60 por acierto y −0,15 por error. Mínimo 30.", "calc"),
             ("Segundo ejercicio (práctico) — 40 preguntas, 2 reservas. 1 por acierto y −0,25 por error. Mínimo 20.", "calc"),
             ("Los dos el mismo día. Superar 30 y 20 no es plaza: la lista se recorta al número de plazas.", "calc"),
         ],
         "pruebas_lead": "Anexo V.a). Justicia no usa la penalización 1/3 de la AGE.",
+        "pruebas_extra": [
+            "Teórico y práctico se hacen el mismo día. El teórico puntúa 0,60 el acierto y resta 0,15 el error (mínimo 30 sobre 60). El práctico, 1 y −0,25 (mínimo 20 sobre 40). Superar 30 y 20 no es plaza: la lista se recorta a 425 plazas.",
+            "No copies la penalización de Auxiliar AGE. Aquí no es un tercio: Justicia usa valores fijos por acierto y por error.",
+            "El día del examen de esta orden aún no está en el BOE. Se anuncia tras la lista definitiva de admitidos, dentro de los 45 días siguientes. No se copia el 27 de septiembre de 2025 (convocatoria anterior).",
+            "Usa la calculadora para el teórico y el práctico. Los PDF del ministerio de 2025 sirven para ver el formato, no para esta nota.",
+        ],
+        "timeline": [
+            {"label": "Convocatoria", "date": "30 de diciembre de 2025", "state": "done"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done"},
+            {"label": "Examen", "date": "Por anunciar", "state": "current", "note": "Tras la lista definitiva, dentro de los 45 días siguientes. Aún no está en el BOE."},
+            {"label": "Lista final", "date": "Pendiente", "state": "todo"},
+        ],
+        "fechas_extra": [
+            "El proceso es de 2026 y la orden se publicó el 30 de diciembre de 2025 (BOE-A-2025-27053). El día del examen de esta orden no se estima aquí.",
+            "El 27 de septiembre de 2025 es el examen de la Orden PJC/1437/2024, no el de esta convocatoria. Hasta que salga el llamamiento en el BOE, esta página no pone un mes.",
+        ],
+        "notas_extra": [
+            "Los mínimos 30 y 20 no son el corte de plaza. No se copia el corte de la convocatoria anterior.",
+            "Hay 425 plazas de acceso libre. Superar los mínimos te deja en la lista; el recorte al número de plazas lo hace el tribunal cuando publique el resultado.",
+        ],
+        "examenes_extra": [
+            "Los PDF del ministerio de 2025 (Orden PJC/1437/2024) sirven para ver el formato. No son el examen de esta orden.",
+            "Cuando el tribunal publique cuestionarios y plantilla de la Orden PJC/1549/2025, el enlace oficial estará en la ficha de Auxilio Judicial del ministerio.",
+        ],
         "temario": {
             "Anexo VI.c) — Auxilio Judicial": [
                 (1, "La Constitución española de 1978. Corona, Cortes y Tribunal Constitucional."),
@@ -458,7 +571,8 @@ HUBS = {
         "name": "Ayudantes IIPP",
         "h1": "Ayudantes IIPP — oposición 2026",
         "eyebrow": "Cuerpo de Ayudantes de Instituciones Penitenciarias",
-        "badge": "Convocatoria BOE-A-2026-13226 · Examen anunciado",
+        "badge": "Proceso 2026 · convocatoria publicada el 18/06/2026 · examen el 25/10/2026",
+        "process_label": "Proceso 2026 · convocatoria publicada el 18/06/2026",
         "pages": ["requisitos", "pruebas", "temario", "fechas", "notas", "examenes"],
         "status": [
             ("Plazas", "1.050", "Acceso libre, subgrupo C1"),
@@ -488,6 +602,10 @@ HUBS = {
             ("Habilitación", "No separado del servicio ni inhabilitado para empleo público."),
         ],
         "requisitos_lead": "Base 3 de BOE-A-2026-13226. El texto que manda es el boletín.",
+        "requisitos_extra": [
+            "Subgrupo C1: título de Bachiller o Técnico, o estar en condiciones de obtenerlo al cierre de instancias. Nacionalidad española.",
+            "No hay pruebas físicas ni baremo de méritos como en Guardia Civil. El reconocimiento médico es apto o no apto, hasta el número de plazas.",
+        ],
         "pruebas": [
             ("Primera parte — 120 preguntas, 3 de reserva, 1 h 45 min. Cada error resta un tercio.", "calc"),
             ("Segunda parte — 8 supuestos de 5 preguntas (40). Solo se corrige si superaste 10 en la escala transformada de la primera.", "calc"),
@@ -495,6 +613,31 @@ HUBS = {
             ("Curso selectivo y prácticas. La «No apto» o no presentarse excluye.", None),
         ],
         "pruebas_lead": "El 10 de las bases es de la escala 0–20, no de la puntuación directa. Sin el umbral de este tribunal no se afirma ese 10.",
+        "pruebas_extra": [
+            "La primera parte son 120 preguntas (más 3 de reserva). La segunda, 8 supuestos de 5 preguntas. La segunda solo se corrige si superaste el umbral transformado de la primera, y ese umbral lo publica el tribunal de esta convocatoria, no el de 2025.",
+            "El reconocimiento médico es apto o no apto, hasta el número de plazas. La calculadora solo cubre la puntuación directa de los tests (máximo 160), no la escala 0–20.",
+            "Madrid (peninsular, 9:00) y Las Palmas (8:00) hacen el mismo test el 25 de octubre de 2026. La fuente de la hora y el lugar es BOE-A-2026-17631, no una estimación de academia.",
+            "Después del ejercicio hay médico, curso selectivo y prácticas. Una «No apto» o no presentarse excluye. Esas fases no tienen fórmula pública de aciertos.",
+        ],
+        "timeline": [
+            {"label": "Convocatoria", "date": "18 de junio", "state": "done"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done", "note": "20 días hábiles desde el 19 de junio."},
+            {"label": "Admitidos provisionales", "date": "5 de agosto", "state": "done", "note": "BOE-A-2026-17631."},
+            {"label": "Primer ejercicio", "date": "25 de octubre", "state": "current", "note": "Madrid 9:00 · Las Palmas 8:00."},
+            {"label": "Médico y curso", "date": "Por anunciar", "state": "todo"},
+        ],
+        "fechas_extra": [
+            "La fecha del primer ejercicio está en el BOE, no es una estimación de academia. Madrid (peninsular) a las 9:00 y Las Palmas a las 8:00 del 25 de octubre de 2026.",
+            "Los admitidos provisionales están en BOE-A-2026-17631 (5 de agosto de 2026). El médico y el curso no tienen fecha en esa resolución: aparecen cuando el tribunal cite.",
+        ],
+        "notas_extra": [
+            "Sin umbral transformado de este tribunal no hay un 10 sobre 20 ni un corte de plaza. No se usa el de 2025.",
+            "Hay 1.050 plazas de acceso libre. La calculadora muestra la puntuación directa; el recorte al número de plazas lo hace el proceso completo, incluido el médico.",
+        ],
+        "examenes_extra": [
+            "Aún no hay cuestionario de 2026. Cuando salga, el enlace oficial estará en Interior / IIPP o en el BOE, no en un resumen de foro.",
+            "Madrid y Las Palmas: mismo cuestionario. Hasta que Interior cuelgue la plantilla de 2026, no hay PDF de este examen.",
+        ],
         "temario": {
             "Primera parte — Organización del Estado, personal y gestión": [
                 (1, "La Constitución Española de 1978."),

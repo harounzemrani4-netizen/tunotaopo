@@ -8,19 +8,19 @@
   <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light">
   
-  <title>Metodología de cálculo TuNotaOpo</title>
+  <title>Metodología de cálculo | TuNotaOpo</title>
   <meta name="description" content="Cómo TuNotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <link rel="canonical" href="https://tunotaopo.es/metodologia/">
-  <meta property="og:title" content="Metodología de cálculo TuNotaOpo">
+  <meta property="og:title" content="Metodología de cálculo | TuNotaOpo">
   <meta property="og:description" content="Cómo TuNotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tunotaopo.es/metodologia/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/app.css?v=20260819o">
+  <link rel="stylesheet" href="../css/app.css?v=20260819s">
 </head>
-<body>
+<body data-root="../">
   <a class="skip" href="#contenido">Saltar al contenido</a>
   <header class="site-header">
   <div class="wrap header-inner">
@@ -31,6 +31,7 @@
     <nav class="nav" aria-label="Principal">
       <a href="../oposiciones/index.html">Oposiciones</a>
       <a href="../calculadoras/index.html">Calculadoras</a>
+      <a href="../progreso/index.html">Mi progreso</a>
       <a href="../fuentes/index.html">Fuentes</a>
     </nav>
   </div>
@@ -81,14 +82,14 @@
       <ol class="how-steps">
         <li><strong>Aciertos y errores.</strong> Las correctas van en aciertos y los fallos en errores. Los blancos se calculan solos: preguntas válidas menos aciertos menos errores. En las convocatorias publicadas aquí las blancas no restan (valen 0).</li>
         <li><strong>Preguntas válidas.</strong> Viene relleno con el T o P del boletín. Solo se cambia si el tribunal anuló preguntas y entra reserva. La reserva no suma siempre: sustituye, por su orden, a las anuladas. El recuadro no puede superar cuestionario más reserva.</li>
-        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil es un total ya baremado (0 a 45), no el apéndice ítem a ítem.</li>
+        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil admite un total ya baremado (0 a 45) o la calculadora de baremo ítem a ítem.</li>
         <li><strong>Calcular.</strong> Verás cada prueba, blancos, penalización, si llegas al mínimo de las bases y, si el dato existe, una comparación con el año pasado. Si un número es imposible (más aciertos que preguntas, decimales donde toca entero), se marca la casilla y no se finge un resultado.</li>
       </ol>
       <p>Si la puntuación bruta sale negativa, se deja en 0: las convocatorias publicadas aquí no admiten nota negativa en esas pruebas.</p>
 
       <h2 id="motor">Cómo calcula el motor</h2>
       <p>Cada calculadora arranca de un archivo de datos con la convocatoria, la fórmula, la fuente y la fecha de verificación. El motor (notaopo-engine-2.0) interpreta modelos; no hay lógica del tipo «si la oposición es Guardia Civil haz esto».</p>
-      <dl class="source-facts"><div><dt>Puntuación neta</dt><dd>Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.</dd></div><div><dt>Escala oficial</dt><dd>La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.</dd></div><div><dt>Valor fijo</dt><dd>Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.</dd></div><div><dt>Apto / no apto</dt><dd>No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.</dd></div><div><dt>Transformada</dt><dd>Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, TuNotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».</dd></div><div><dt>Suma y concurso</dt><dd>Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.</dd></div></dl>
+      <dl class="source-facts"><div><dt>Puntuación neta</dt><dd>Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.</dd></div><div><dt>Escala oficial</dt><dd>La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.</dd></div><div><dt>Valor fijo</dt><dd>Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.</dd></div><div><dt>Apto / no apto</dt><dd>No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.</dd></div><div><dt>Transformada</dt><dd>Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, TuNotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».</dd></div><div><dt>Suma y concurso</dt><dd>Las pruebas que puntúan se suman. El concurso de Guardia Civil se puede introducir como total ya baremado o calcularse ítem a ítem en la calculadora de baremo del apéndice I.</dd></div></dl>
       <p>Cuando la prueba tiene un mínimo, el motor también puede decir, con tus aciertos, cuántos errores te puedes permitir, o cuántos aciertos harían falta para un objetivo. Solo si la cuenta es resoluble con esa fórmula.</p>
 
       <h2 id="oposiciones">Por oposición</h2>
@@ -160,8 +161,8 @@
 
       <h2 id="limites">Qué no se inventa</h2>
       <ul>
-        <li>Físicas sin la tabla de esa convocatoria, entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
-        <li>Baremo ítem a ítem de méritos (apéndice I de Guardia Civil, Fuerzas Armadas o deportista de alto nivel en Policía Nacional).</li>
+        <li>Físicas de Policía Nacional fuera de las tablas del anexo II, o físicas de Guardia Civil fuera de los mínimos del apéndice II de esa convocatoria. Entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
+        <li>Méritos que no figuren en el apéndice I de Guardia Civil, ni títulos no listados, ni el baremo de deportista de alto nivel de Policía Nacional.</li>
         <li>Una carrera o un grado superior como puntos extra en Escala Básica: el título exigido es Bachiller.</li>
         <li>La transformada de Auxiliar AGE 0–50 sin el PDF de criterios CPS de esta convocatoria.</li>
         <li>El umbral directo de IIPP tomado de 2025 como si ya valiera para 2026.</li>
@@ -186,6 +187,7 @@
     </div>
     <div class="footer-links">
       <a href="../oposiciones/index.html">Oposiciones</a>
+      <a href="../progreso/index.html">Mi progreso</a>
       <a href="../metodologia/index.html">Metodología</a>
       <a href="../fuentes/index.html">Fuentes</a>
       <a href="../privacidad/index.html">Privacidad</a>
@@ -196,6 +198,6 @@
   </div>
 </footer>
   <script src="../js/components/analytics.js" defer></script>
-<script src="../js/site.js" defer></script>
+<script src="../js/site.js?v=20260819s" defer></script>
 </body>
 </html>

@@ -17,10 +17,9 @@ Fecha: 2026-08-19. No es academia: es caja de herramientas + información de la 
 
 ## Siguiente (sin inventar datos)
 
-- Hub Guardia Civil: requisitos, temario índice, fechas y exámenes oficiales enlazados al organismo.
-- Auxiliar AGE, Auxilio Judicial, IIPP: mismo molde solo con lo que cierre el BOE.
-- Mi progreso en `localStorage`.
-- Baremo GC ítem a ítem cuando se modele el apéndice I.
+- Search Console: verificar dominio, sitemap e inspección de URLs principales (manual).
+- Alias `contacto@tunotaopo.es` en IONOS.
+- Solo después, más oposiciones.
 
 ## No hacer
 

@@ -10,12 +10,15 @@ from xml.sax.saxutils import escape
 
 from content import DISCLAIMER, PAGES
 from examenes_oficiales import EXAMENES
+from fisicas_tables import fisicas_tables_html
 from hubs_data import HUBS
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
+ASSET_V = "20260819s"
+CONTACT_EMAIL = "contacto@tunotaopo.es"
 DATA_DIR = ROOT / "data" / "oposiciones"
 MONTHS_ES = (
     "enero",
@@ -64,6 +67,44 @@ def rel_prefix(depth: int) -> str:
     return "" if depth == 0 else "../" * depth
 
 
+def seo_title(*parts: str) -> str:
+    left = " ".join(str(part) for part in parts if part)
+    return f"{left} | {BRAND}"
+
+
+def extra_paras(texts: list[str] | None) -> str:
+    if not texts:
+        return ""
+    return "".join(f"<p>{escape(text)}</p>" for text in texts)
+
+
+def process_flow(hub: dict) -> str:
+    items = []
+    for text, _link in hub.get("pruebas") or []:
+        short = text.split(" — ", 1)[0]
+        items.append(f"<li>{escape(short)}</li>")
+    if not items:
+        return ""
+    return f'<ol class="process-flow" aria-label="Orden de las pruebas">{"".join(items)}</ol>'
+
+
+def timeline_html(events: list[dict] | None) -> str:
+    if not events:
+        return ""
+    marks = {"done": "✓", "current": "→", "todo": "○"}
+    items = []
+    for event in events:
+        state = event.get("state") or "todo"
+        note = f'<p class="timeline-note">{escape(event["note"])}</p>' if event.get("note") else ""
+        items.append(
+            f'<li class="is-{escape(state)}">'
+            f'<span class="timeline-mark" aria-hidden="true">{marks.get(state, "○")}</span>'
+            f'<div><p class="timeline-label">{escape(event["label"])}</p>'
+            f'<p class="timeline-date">{escape(event["date"])}</p>{note}</div></li>'
+        )
+    return f'<ol class="process-timeline">{"".join(items)}</ol>'
+
+
 def es_date(iso: str) -> str:
     if not iso:
         return ""
@@ -95,6 +136,7 @@ def nav(prefix: str) -> str:
     <nav class="nav" aria-label="Principal">
       <a href="{prefix}oposiciones/index.html">Oposiciones</a>
       <a href="{prefix}calculadoras/index.html">Calculadoras</a>
+      <a href="{prefix}progreso/index.html">Mi progreso</a>
       <a href="{prefix}fuentes/index.html">Fuentes</a>
     </nav>
   </div>
@@ -110,6 +152,7 @@ def footer(prefix: str) -> str:
     </div>
     <div class="footer-links">
       <a href="{prefix}oposiciones/index.html">Oposiciones</a>
+      <a href="{prefix}progreso/index.html">Mi progreso</a>
       <a href="{prefix}metodologia/index.html">Metodología</a>
       <a href="{prefix}fuentes/index.html">Fuentes</a>
       <a href="{prefix}privacidad/index.html">Privacidad</a>
@@ -156,7 +199,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="{BRAND}">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819o">
+  <link rel="stylesheet" href="{prefix}css/app.css?v={ASSET_V}">
 </head>"""
 
 
@@ -261,6 +304,9 @@ def card_tests(item: dict) -> str:
         labels.append(item["merits"].get("label") or "Méritos")
     if family_id(item) == "policia-nacional":
         labels.append("Pruebas físicas")
+    if family_id(item) == "guardia-civil":
+        labels.append("Pruebas físicas")
+        labels.append("Baremo")
     return " · ".join(labels)
 
 
@@ -269,6 +315,8 @@ def catalog_cards(items: list[dict], href_prefix: str = "", *, dest: str = "calc
     for item in current_by_family(items):
         name = item.get("family_name") or item["short_name"]
         year = item.get("anio", "")
+        hub = HUBS.get(family_id(item), {})
+        badge = hub.get("process_label") or f"Proceso {year}"
         if dest == "hub":
             href = f"{href_prefix}oposiciones/{family_id(item)}/index.html"
             cta = "Ver oposición"
@@ -277,7 +325,7 @@ def catalog_cards(items: list[dict], href_prefix: str = "", *, dest: str = "calc
             cta = "Calcular mi nota"
         cards.append(
             f'<a class="card catalog-card" href="{href}">'
-            f'<div class="card-meta"><span class="badge">Convocatoria {escape(str(year))}</span>'
+            f'<div class="card-meta"><span class="badge">{escape(badge)}</span>'
             f'<span class="card-org">Fuente: {escape(item.get("source_identifier", ""))}</span></div>'
             f"<h2>{escape(name)}</h2>"
             f'<p class="card-kind">Calcula tu nota de la convocatoria {escape(str(year))}</p>'
@@ -289,7 +337,7 @@ def catalog_cards(items: list[dict], href_prefix: str = "", *, dest: str = "calc
 
 PUBLISHER = {
     "name": "Haroun Zemrani El Hadri",
-    "email": "harounzemrani4@gmail.com",
+    "email": CONTACT_EMAIL,
     "address": "28981, Parla (Madrid)",
 }
 
@@ -326,18 +374,36 @@ def website_schema() -> str:
     return f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>'
 
 
-def scripts(prefix: str, calculator: bool = False, fisicas: bool = False) -> str:
+def scripts(prefix: str, tools: tuple[str, ...] = ()) -> str:
     tags = [
         f'<script src="{prefix}js/components/analytics.js" defer></script>',
-        f'<script src="{prefix}js/site.js" defer></script>',
+        f'<script src="{prefix}js/site.js?v={ASSET_V}" defer></script>',
     ]
-    if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819o" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819o" defer></script>')
-    if fisicas:
-        tags.insert(1, f'<script src="{prefix}js/engine/pn-fisicas.js?v=20260819o" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/fisicas.js?v=20260819o" defer></script>')
-    return "\n".join(tags)
+    extra = {
+        "calculator": [
+            f'<script src="{prefix}js/engine/scoring.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/components/calculator.js?v={ASSET_V}" defer></script>',
+        ],
+        "fisicas": [
+            f'<script src="{prefix}js/engine/pn-fisicas.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/components/fisicas.js?v={ASSET_V}" defer></script>',
+        ],
+        "gc_fisicas": [
+            f'<script src="{prefix}js/engine/gc-fisicas.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/components/gc-fisicas.js?v={ASSET_V}" defer></script>',
+        ],
+        "gc_baremo": [
+            f'<script src="{prefix}js/engine/gc-baremo.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/components/gc-baremo.js?v={ASSET_V}" defer></script>',
+        ],
+        "progreso": [
+            f'<script src="{prefix}js/components/progreso.js?v={ASSET_V}" defer></script>',
+        ],
+    }
+    inserted = []
+    for tool in tools:
+        inserted.extend(extra.get(tool) or [])
+    return "\n".join(inserted + tags)
 
 
 def page_shell(
@@ -350,6 +416,7 @@ def page_shell(
     noindex: bool = False,
     fisicas: bool = False,
     website: bool = False,
+    tools: tuple[str, ...] = (),
 ) -> str:
     prefix = rel_prefix(depth)
     canonical = f"{SITE}/{path}" if path else f"{SITE}/"
@@ -359,8 +426,13 @@ def page_shell(
     if website:
         extras.append(website_schema())
     extra_head = "\n  ".join(extras)
+    resolved = tuple(tools)
+    if calculator:
+        resolved = ("calculator",) + resolved
+    if fisicas:
+        resolved = ("fisicas",) + resolved
     return f"""{head(title, description, canonical, prefix, extra_head)}
-<body>
+<body data-root="{prefix}">
   <a class="skip" href="#contenido">Saltar al contenido</a>
   {nav(prefix)}
   <div class="wrap">{ad_slot("top")}</div>
@@ -369,7 +441,7 @@ def page_shell(
   </main>
   <div class="wrap">{ad_slot("bottom")}</div>
   {footer(prefix)}
-  {scripts(prefix, calculator, fisicas)}
+  {scripts(prefix, resolved)}
 </body>
 </html>
 """
@@ -446,7 +518,7 @@ def form_guide(cfg: dict) -> str:
     )
 
 
-def calculator_form(cfg: dict) -> str:
+def calculator_form(cfg: dict, prefix: str = "") -> str:
     blocks = [
         '<p class="calc-hint">Escribe aciertos y errores. Los blancos se calculan solos y, en estas convocatorias, no restan.</p>'
     ]
@@ -539,9 +611,17 @@ def calculator_form(cfg: dict) -> str:
         m = cfg["merits"]
         mmax = m.get("maximum")
         mph = "Ej. 1,00" if mmax is not None and mmax <= 2 else "Ej. 12,500"
+        merit_help = m.get("help", "Si no tienes este apartado o no quieres sumarlo, déjalo vacío.")
+        extra_link = ""
+        if family_id(cfg) == "guardia-civil":
+            extra_link = (
+                f'<p class="help">Para sumar cada mérito del apéndice I usa la '
+                f'<a href="{prefix}oposiciones/guardia-civil/baremo/index.html">calculadora de baremo</a> '
+                "y pega aquí el total.</p>"
+            )
         blocks.append(
             f'<fieldset class="stage"><legend>{escape(m["label"])}</legend>'
-            f'<p class="help">{escape(m.get("help", "Si no tienes este apartado o no quieres sumarlo, déjalo vacío."))}</p>'
+            f'<p class="help">{escape(merit_help)}</p>{extra_link}'
             f'<div class="fields fields-1">{number_input(m["id"], m.get("input_label", "Puntos ya baremados"), mmax, required=False, step="0.001", hint="Opcional. Vacío = no se suma nada", placeholder=mph)}</div>'
             "</fieldset>"
         )
@@ -715,6 +795,8 @@ def calculator_page(
     hub_cfg = HUBS.get(family_id(cfg), {})
     if "fisicas" in hub_cfg.get("pages", []):
         extra_hub += f'<a href="{prefix}{hub}pruebas-fisicas/index.html">Pruebas físicas</a>'
+    if "baremo" in hub_cfg.get("pages", []):
+        extra_hub += f'<a href="{prefix}{hub}baremo/index.html">Baremo</a>'
     if "examenes" in hub_cfg.get("pages", []):
         extra_hub += f'<a href="{prefix}{hub}examenes-oficiales/index.html">Exámenes</a>'
     hub_links = (
@@ -733,7 +815,7 @@ def calculator_page(
     </div>
     <div class="layout">
       <article class="tool">
-        {calculator_form(cfg)}
+        {calculator_form(cfg, prefix)}
         {ad_slot("after-result")}
         <section class="source-card">
           <p class="source-kicker">De dónde sale la fórmula</p>
@@ -776,7 +858,7 @@ def calculator_page(
     <script type="application/json" id="oposicion-config">{json.dumps(with_historical(cfg), ensure_ascii=False)}</script>
     """
     title = heading if heading == cfg["title"] else heading
-    return page_shell(f"{title} — {BRAND}", cfg["meta_description"], canonical_path, depth, body, calculator=True)
+    return page_shell(f"{title} | {BRAND}", cfg["meta_description"], canonical_path, depth, body, calculator=True)
 
 
 def home(all_items: list[dict]) -> str:
@@ -807,7 +889,7 @@ def home(all_items: list[dict]) -> str:
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al mínimo oficial. Eso no es la nota de corte ni una plaza.</li>
       </ol>
-      <p>No hay cuenta. El cálculo se hace en tu navegador. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
+      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="progreso/index.html">Mi progreso</a>. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
       <p>{escape(DISCLAIMER)}</p>
     </section>
     """
@@ -832,7 +914,7 @@ def calculadoras_index(all_items: list[dict]) -> str:
     {ad_slot("catalog")}
     """
     return page_shell(
-        f"Calculadoras de nota — {BRAND}",
+        seo_title("Calculadoras de nota oposiciones"),
         "Calculadoras de Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.",
         "calculadoras/",
         1,
@@ -1026,7 +1108,7 @@ def fuentes_page(opos: list[dict]) -> str:
     </section>
     """
     return page_shell(
-        "Fuentes oficiales de las calculadoras",
+        seo_title("Fuentes oficiales"),
         f"Boletines del BOE, PDFs, listas históricas y portales oficiales que controlan las fórmulas de {BRAND}. Verificado el 19 de agosto de 2026.",
         "fuentes/",
         1,
@@ -1105,7 +1187,7 @@ def metodologia_page(opos: list[dict]) -> str:
         ),
         (
             "Suma y concurso",
-            "Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.",
+            "Las pruebas que puntúan se suman. El concurso de Guardia Civil se puede introducir como total ya baremado o calcularse ítem a ítem en la calculadora de baremo del apéndice I.",
         ),
     ]
     models_html = "".join(
@@ -1155,7 +1237,7 @@ def metodologia_page(opos: list[dict]) -> str:
       <ol class="how-steps">
         <li><strong>Aciertos y errores.</strong> Las correctas van en aciertos y los fallos en errores. Los blancos se calculan solos: preguntas válidas menos aciertos menos errores. En las convocatorias publicadas aquí las blancas no restan (valen 0).</li>
         <li><strong>Preguntas válidas.</strong> Viene relleno con el T o P del boletín. Solo se cambia si el tribunal anuló preguntas y entra reserva. La reserva no suma siempre: sustituye, por su orden, a las anuladas. El recuadro no puede superar cuestionario más reserva.</li>
-        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil es un total ya baremado (0 a 45), no el apéndice ítem a ítem.</li>
+        <li><strong>Lo opcional.</strong> Concurso, idiomas, umbral del tribunal u objetivo: vacío significa que no se suma ni se usa. El concurso de Guardia Civil admite un total ya baremado (0 a 45) o la calculadora de baremo ítem a ítem.</li>
         <li><strong>Calcular.</strong> Verás cada prueba, blancos, penalización, si llegas al mínimo de las bases y, si el dato existe, una comparación con el año pasado. Si un número es imposible (más aciertos que preguntas, decimales donde toca entero), se marca la casilla y no se finge un resultado.</li>
       </ol>
       <p>Si la puntuación bruta sale negativa, se deja en 0: las convocatorias publicadas aquí no admiten nota negativa en esas pruebas.</p>
@@ -1179,8 +1261,8 @@ def metodologia_page(opos: list[dict]) -> str:
 
       <h2 id="limites">Qué no se inventa</h2>
       <ul>
-        <li>Físicas sin la tabla de esa convocatoria, entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
-        <li>Baremo ítem a ítem de méritos (apéndice I de Guardia Civil, Fuerzas Armadas o deportista de alto nivel en Policía Nacional).</li>
+        <li>Físicas de Policía Nacional fuera de las tablas del anexo II, o físicas de Guardia Civil fuera de los mínimos del apéndice II de esa convocatoria. Entrevista, reconocimiento médico o psicotécnico de Policía Nacional calificado por el tribunal.</li>
+        <li>Méritos que no figuren en el apéndice I de Guardia Civil, ni títulos no listados, ni el baremo de deportista de alto nivel de Policía Nacional.</li>
         <li>Una carrera o un grado superior como puntos extra en Escala Básica: el título exigido es Bachiller.</li>
         <li>La transformada de Auxiliar AGE 0–50 sin el PDF de criterios CPS de esta convocatoria.</li>
         <li>El umbral directo de IIPP tomado de 2025 como si ya valiera para 2026.</li>
@@ -1196,7 +1278,7 @@ def metodologia_page(opos: list[dict]) -> str:
     </section>
     """
     return page_shell(
-        f"Metodología de cálculo {BRAND}",
+        seo_title("Metodología de cálculo"),
         f"Cómo {BRAND} calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.",
         "metodologia/",
         1,
@@ -1208,6 +1290,7 @@ NAV_LABELS = {
     "requisitos": "Requisitos",
     "pruebas": "Pruebas",
     "fisicas": "Físicas",
+    "baremo": "Baremo",
     "temario": "Temario",
     "fechas": "Fechas",
     "notas": "Notas",
@@ -1217,6 +1300,7 @@ HUB_SLUGS = {
     "requisitos": "requisitos",
     "pruebas": "pruebas",
     "fisicas": "pruebas-fisicas",
+    "baremo": "baremo",
     "temario": "temario",
     "fechas": "fechas",
     "notas": "notas-corte",
@@ -1255,7 +1339,7 @@ def oposiciones_index(opos: list[dict]) -> str:
     <div class="catalog" id="opo-catalog">{catalog_cards(opos, "../", dest="hub")}</div>
     """
     return page_shell(
-        f"Oposiciones — {BRAND}",
+        seo_title("Oposiciones"),
         "Policía Nacional, Guardia Civil, Auxiliar AGE, Auxilio Judicial y Ayudantes IIPP: calculadora, proceso y fuente oficial de cada convocatoria.",
         "oposiciones/",
         1,
@@ -1295,9 +1379,14 @@ def hub_home(item: dict, hub: dict) -> str:
     )
     extra_btn = ""
     if "fisicas" in hub.get("pages", []):
-        extra_btn = (
+        extra_btn += (
             f'<a class="button button-secondary" href="{prefix}oposiciones/{family}/pruebas-fisicas/index.html">'
             "Calcular físicas</a>"
+        )
+    if "baremo" in hub.get("pages", []):
+        extra_btn += (
+            f'<a class="button button-secondary" href="{prefix}oposiciones/{family}/baremo/index.html">'
+            "Calcular baremo</a>"
         )
     body = f"""
     {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), (name, "")])}
@@ -1310,10 +1399,12 @@ def hub_home(item: dict, hub: dict) -> str:
     </div>
     <section class="status-board" aria-label="Datos de la convocatoria">{status}</section>
     <p class="status-updated">Última revisión de estas páginas: 19 de agosto de 2026. Fuente: {ext_a(item["source_url"], item.get("source_identifier", "BOE"))}.</p>
+    {timeline_html(hub.get("timeline"))}
+    {process_flow(hub)}
     <div class="hub-grid">{"".join(tiles)}</div>
     """
     return page_shell(
-        f"{name} {item.get('anio', '')} — {BRAND}",
+        seo_title(name, item.get("anio", "")),
         f"{name} {item.get('anio', '')}: calculadora, proceso, temario índice y fuentes oficiales ({item.get('source_identifier', '')}).",
         f"oposiciones/{family}/",
         2,
@@ -1321,10 +1412,11 @@ def hub_home(item: dict, hub: dict) -> str:
     )
 
 
-def hub_section(item: dict, hub: dict, slug: str, nav_key: str, title: str, h1: str, description: str, inner: str) -> str:
+def hub_section(item: dict, hub: dict, slug: str, nav_key: str, title: str, h1: str, description: str, inner: str, page_title: str | None = None) -> str:
     prefix = rel_prefix(3)
     family = family_id(item)
     name = hub["name"]
+    year = item.get("anio", "")
     body = f"""
     {crumbs([
         ("Inicio", prefix + "index.html"),
@@ -1341,7 +1433,13 @@ def hub_section(item: dict, hub: dict, slug: str, nav_key: str, title: str, h1: 
       <p>Fuente: {ext_a(item["source_url"], item.get("source_identifier", "BOE"))}. Consultado el 19 de agosto de 2026.</p>
     </section>
     """
-    return page_shell(f"{title} — {BRAND}", description, f"oposiciones/{family}/{slug}/", 3, body)
+    return page_shell(
+        page_title or seo_title(title, name, year),
+        description,
+        f"oposiciones/{family}/{slug}/",
+        3,
+        body,
+    )
 
 
 def hub_requisitos(item: dict, hub: dict) -> str:
@@ -1350,10 +1448,18 @@ def hub_requisitos(item: dict, hub: dict) -> str:
     rows = "".join(
         f"<div><dt>{escape(label)}</dt><dd>{escape(text)}</dd></div>" for label, text in hub["requisitos"]
     )
+    family = family_id(item)
+    extra_btn = ""
+    if "fisicas" in hub.get("pages", []):
+        extra_btn = (
+            f' <a class="button button-secondary" href="{rel_prefix(3)}oposiciones/{family}/pruebas/index.html#tablas-fisicas">'
+            "Ver marcas de las físicas</a>"
+        )
     inner = (
         f"<p>{escape(hub['requisitos_lead'])}</p>"
         f'<dl class="source-facts">{rows}</dl>'
-        f'<p class="hero-actions"><a class="button button-primary" href="{rel_prefix(3)}{live_path(item)}index.html">Calcular mi nota</a></p>'
+        f"{extra_paras(hub.get('requisitos_extra'))}"
+        f'<p class="hero-actions"><a class="button button-primary" href="{rel_prefix(3)}{live_path(item)}index.html">Calcular mi nota</a>{extra_btn}</p>'
     )
     return hub_section(
         item, hub, "requisitos", "requisitos", "Requisitos",
@@ -1375,9 +1481,18 @@ def hub_pruebas(item: dict, hub: dict) -> str:
         elif link == "fisicas":
             href = f"{prefix}oposiciones/{family}/pruebas-fisicas/index.html"
             steps.append(f'<li>{escape(text)} <a href="{href}">Calcular físicas</a></li>')
+        elif link == "baremo":
+            href = f"{prefix}oposiciones/{family}/baremo/index.html"
+            steps.append(f'<li>{escape(text)} <a href="{href}">Calcular baremo</a></li>')
         else:
             steps.append(f"<li>{escape(text)}</li>")
-    inner = f"<p>{escape(hub['pruebas_lead'])}</p><ol class=\"how-steps\">{''.join(steps)}</ol>"
+    inner = (
+        f"<p>{escape(hub['pruebas_lead'])}</p>"
+        f"{process_flow(hub)}"
+        f'<ol class="how-steps">{"".join(steps)}</ol>'
+        f"{extra_paras(hub.get('pruebas_extra'))}"
+        f"{fisicas_tables_html(family)}"
+    )
     return hub_section(
         item, hub, "pruebas", "pruebas", "Pruebas",
         f"Cómo es la oposición de {name}",
@@ -1401,12 +1516,31 @@ def hub_temario(item: dict, hub: dict) -> str:
     )
 
 
+def next_cycle_html(item: dict, hub: dict) -> str:
+    year = item.get("anio") or 2026
+    nxt = int(year) + 1
+    name = hub["name"]
+    return f"""<aside class="next-cycle" role="note">
+      <p class="source-kicker">Siguiente proceso</p>
+      <h2>{escape(name)} {nxt}</h2>
+      <p>No hay convocatoria {nxt} en el BOE. Esta página es el calendario <strong>en vigor</strong> ({escape(str(year))}), no un pronóstico.</p>
+      <p>Las IAs y muchas academias desplazan el año pasado (OEP en primavera, examen en verano, «mismas plazas»). Eso no es una norma. {BRAND} no publica meses inventados ni copia las plazas de {escape(str(year))}.</p>
+      <p>Cuando salga la resolución {nxt}, se actualiza esta misma dirección: plazos, citaciones y, si cambia, la fórmula. Hasta entonces el calendario útil es el de {escape(str(year))}.</p>
+    </aside>"""
+
+
 def hub_fechas(item: dict, hub: dict) -> str:
     name = hub["name"]
     rows = "".join(
         f"<div><dt>{escape(label)}</dt><dd>{escape(text)}</dd></div>" for label, text in hub["fechas"]
     )
-    inner = f"<p>{escape(hub['fechas_lead'])}</p><dl class=\"source-facts\">{rows}</dl>"
+    inner = (
+        f"<p>{escape(hub['fechas_lead'])}</p>"
+        f"{timeline_html(hub.get('timeline'))}"
+        f'<dl class="source-facts">{rows}</dl>'
+        f"{extra_paras(hub.get('fechas_extra'))}"
+        f"{next_cycle_html(item, hub)}"
+    )
     return hub_section(
         item, hub, "fechas", "fechas", "Fechas",
         f"Fechas {name} {item.get('anio', '')}",
@@ -1426,12 +1560,14 @@ def hub_notas(item: dict, hub: dict) -> str:
         '<table class="plain-table"><thead><tr><th>Convocatoria</th><th>Dato</th><th>Qué es</th><th>Fuente</th></tr></thead>'
         f"<tbody>{rows}</tbody></table>"
         f"<p>{escape(hub.get('notas_note', ''))}</p>"
+        f"{extra_paras(hub.get('notas_extra'))}"
     )
     return hub_section(
         item, hub, "notas-corte", "notas", "Notas de corte",
         f"Histórico de notas {name}",
         f"Histórico de notas y cortes de {name} solo con fuente oficial.",
         inner,
+        page_title=seo_title("Notas de corte", name),
     )
 
 
@@ -1458,6 +1594,7 @@ def hub_examenes(item: dict, hub: dict) -> str:
                 blocks.append(f'<p class="notice">{escape(sub["note"])}</p>')
             cls = ' class="exam-sedes"' if sub.get("kind") == "sedes" else ""
             blocks.append(f"<ul{cls}>{_exam_links(sub['links'])}</ul>")
+    blocks.append(extra_paras(hub.get("examenes_extra")))
     return hub_section(
         item, hub, "examenes-oficiales", "examenes", "Exámenes oficiales",
         f"Exámenes oficiales {name}",
@@ -1760,6 +1897,7 @@ def pn_fisicas_page(item: dict) -> str:
       <h2>Qué dice el anexo II</h2>
       <p>Tres ejercicios. Cada uno se puntúa de 0 a 10. Un 0 en cualquiera elimina. La nota de la prueba es la media, y hay que llegar a 5. La calificación final de la oposición es conocimientos más esta media (base 6.11).</p>
       <p>Hace falta certificado médico el día de la prueba. {BRAND} no sustituye al tribunal ni al certificado.</p>
+      {fisicas_tables_html("policia-nacional")}
       <p>Fuente: {ext_a(item["source_url"], "BOE-A-2026-15055, anexo II")}.</p>
     </section>
     """
@@ -1780,12 +1918,274 @@ def pn_fisicas_page(item: dict) -> str:
     </div>
     """
     return page_shell(
-        f"Calculadora pruebas físicas Policía Nacional 2026 — {BRAND}",
+        seo_title("Pruebas físicas Policía Nacional", "2026"),
         "Puntúa circuito, dominadas o suspensión y 1.000 metros de Policía Nacional con las tablas del anexo II de BOE-A-2026-15055.",
         "oposiciones/policia-nacional/pruebas-fisicas/",
         3,
         body,
         fisicas=True,
+    )
+
+
+GC_LANGS = [
+    ("aleman", "Alemán"),
+    ("arabe", "Árabe"),
+    ("frances", "Francés"),
+    ("ingles", "Inglés"),
+    ("italiano", "Italiano"),
+    ("portugues", "Portugués"),
+    ("ruso", "Ruso"),
+]
+
+
+def gc_fisicas_page(item: dict) -> str:
+    prefix = rel_prefix(3)
+    family = "guardia-civil"
+    inner_form = f"""
+    <p class="calc-hint">Mínimos del apéndice II. Cuatro pruebas eliminatorias. Apto o no apto. No es la tabla de Policía Nacional ni una plaza.</p>
+    <form id="gc-fisicas-form" class="calculator" novalidate autocomplete="off">
+      <fieldset class="stage">
+        <legend>Tabla oficial</legend>
+        <div class="fields">
+          <label class="choice"><input type="radio" name="sex" value="hombres" checked> Hombres</label>
+          <label class="choice"><input type="radio" name="sex" value="mujeres"> Mujeres</label>
+        </div>
+        <div class="fields">
+          <label class="choice"><input type="radio" name="band" value="lt35" checked> Menor de 35 años</label>
+          <label class="choice"><input type="radio" name="band" value="a35"> 35 a 39 años</label>
+          <label class="choice"><input type="radio" name="band" value="ge40"> 40 años o más</label>
+        </div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>2.000 metros (R2)</legend>
+        <p class="help">Un intento. Hay que cubrir la distancia en un tiempo no superior al de tu tabla. Hombres menores de 35: 9 min 25 s o menos.</p>
+        <div class="fields">{number_input("run_min", "Minutos", None, placeholder="Ej. 9")}{number_input("run_sec", "Segundos", 59, placeholder="Ej. 10")}</div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>Circuito de agilidad (C1)</legend>
+        <p class="help">Tiempo en segundos. Dos intentos. Hombres menores de 35: 14,00 s o menos.</p>
+        <div class="fields fields-1">{number_input("circuit", "Tiempo (s)", None, step="0.01", placeholder="Ej. 13,80")}</div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>Extensiones de brazos (P3)</legend>
+        <p class="help">Repeticiones válidas. Dos intentos. Hombres menores de 35: 16 o más. Mujeres menores de 35: 11 o más.</p>
+        <div class="fields fields-1">{number_input("pushups", "Extensiones", None, placeholder="Ej. 16")}</div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>50 metros de natación (O1)</legend>
+        <p class="help">Estilo libre. Un intento. Tiempo no superior al de la tabla. Hombres menores de 35: 70 s o menos.</p>
+        <div class="fields fields-1">{number_input("swim", "Tiempo (s)", None, step="0.01", placeholder="Ej. 68")}</div>
+      </fieldset>
+      <div class="actions actions-primary">
+        <button type="submit" class="button button-primary">Calcular físicas</button>
+      </div>
+    </form>
+    <div class="result-slot">
+      <div id="gc-fisicas-placeholder" class="result-placeholder">
+        <p class="result-placeholder-kicker">Aún no hay resultado</p>
+        <p class="result-placeholder-title">Cuando pulses Calcular físicas verás</p>
+        <ul>
+          <li>Si cada prueba es apto o no apto según tu sexo y tramo.</li>
+          <li>El máximo o mínimo oficial que te aplica.</li>
+          <li>Que las cuatro son eliminatorias: falla una y no sigues.</li>
+        </ul>
+      </div>
+      <section id="gc-fisicas-result" class="result-card" hidden>
+        <div class="result-main">
+          <p class="result-kicker">Pruebas físicas Guardia Civil</p>
+          <p id="gc-fisicas-verdict" class="result-note"></p>
+        </div>
+        <div class="score-list" id="gc-fisicas-list"></div>
+      </section>
+    </div>
+    <div id="calc-toast" class="toast" hidden>
+      <div class="toast-card" role="alert" aria-live="assertive">
+        <p class="toast-kicker">Revisa el formulario</p>
+        <p id="calc-toast-message" class="toast-message"></p>
+        <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
+      </div>
+    </div>
+    <aside id="progress-panel" class="progress-panel" hidden></aside>
+    <section class="content">
+      <h2>Qué dice el apéndice II</h2>
+      <p>Cuatro ejercicios, en el orden que fije el tribunal: resistencia 2.000 m, circuito, extensiones de brazos y 50 m de natación. Todas son eliminatorias. No hay media de 0 a 10, a diferencia de Policía Nacional.</p>
+      <p>Los tramos son menor de 35 años; igual o mayor de 35 y menor de 40; e igual o mayor de 40. Carrera y natación: un intento. Circuito y extensiones: dos intentos. El día de la prueba hay que entregar certificado médico expedido en los 20 días anteriores, o la ficha médica válida de Defensa.</p>
+      {fisicas_tables_html("guardia-civil")}
+      <p>Fuente: {ext_a(item["source_url"], "BOE-A-2026-9982, apéndice II")}.</p>
+    </section>
+    """
+    body = f"""
+    {crumbs([
+        ("Inicio", prefix + "index.html"),
+        ("Oposiciones", prefix + "oposiciones/index.html"),
+        ("Guardia Civil", prefix + "oposiciones/guardia-civil/index.html"),
+        ("Pruebas físicas", ""),
+    ])}
+    <div class="hero hero-calc">
+      <h1>Calculadora de pruebas físicas Guardia Civil 2026</h1>
+      <p class="calc-badge">Apéndice II · BOE-A-2026-9982 · BOE oficial</p>
+      {hub_nav(family, prefix, "fisicas")}
+    </div>
+    <div class="layout">
+      <article class="tool">{inner_form}</article>
+    </div>
+    """
+    return page_shell(
+        seo_title("Pruebas físicas Guardia Civil", "2026"),
+        "Comprueba si eres apto en 2.000 m, circuito, extensiones y 50 m de natación de Guardia Civil 2026 con los mínimos del apéndice II de BOE-A-2026-9982.",
+        "oposiciones/guardia-civil/pruebas-fisicas/",
+        3,
+        body,
+        tools=("gc_fisicas",),
+    )
+
+
+def gc_baremo_page(item: dict) -> str:
+    prefix = rel_prefix(3)
+    family = "guardia-civil"
+    lang_opts = "".join(f'<option value="{code}">{escape(label)}</option>' for code, label in GC_LANGS)
+    lang_rows = []
+    for code, label in GC_LANGS:
+        lang_rows.append(
+            f'<div class="fields" data-lang="{code}">'
+            f"<p><strong>{escape(label)}</strong></p>"
+            f'<div class="input-group"><label for="{code}_level">Nivel</label>'
+            f'<select class="input" id="{code}_level" name="{code}_level">'
+            '<option value="none">Sin acreditar</option>'
+            '<option value="b2">B2 (5 puntos)</option>'
+            '<option value="c1">C1 (7 puntos)</option>'
+            '<option value="c2">C2 (9 puntos)</option>'
+            "</select></div>"
+            f'<div class="input-group"><label for="{code}_via">Vía</label>'
+            f'<select class="input" id="{code}_via" name="{code}_via">'
+            '<option value="eoi">Escuela Oficial de Idiomas</option>'
+            '<option value="otro">Título del apéndice (Cambridge, Goethe, DELF…)</option>'
+            '<option value="slp">Perfil SLP (solo FAS)</option>'
+            "</select></div></div>"
+        )
+    inner_form = f"""
+    <p class="calc-hint">Solo méritos del apéndice I. Topes: 13,5 profesionales, 27 académicos, 4,5 otros, 45 en total. Si un título no está en el boletín, no suma.</p>
+    <form id="gc-baremo-form" class="calculator" novalidate autocomplete="off">
+      <fieldset class="stage">
+        <legend>Turno</legend>
+        <p class="help">El apartado A de méritos profesionales es exclusivo de tropa y marinería. Libre y Colegio usan el apartado B.</p>
+        <div class="fields">
+          <label class="choice"><input type="radio" name="turno" value="libre" checked> Acceso libre</label>
+          <label class="choice"><input type="radio" name="turno" value="tropa"> Tropa y marinería</label>
+          <label class="choice"><input type="radio" name="turno" value="colegio"> Colegio de Guardias Jóvenes</label>
+        </div>
+      </fieldset>
+      <fieldset class="stage" id="baremo-tropa" hidden>
+        <legend>Méritos profesionales (tropa)</legend>
+        <p class="help">0,90 puntos por año completo como tropa y marinería, hasta 9. El empleo máximo: cabo 2,40 o cabo 1.º 3,60. Tope del bloque: 13,5.</p>
+        <div class="fields">{number_input("tropa_years", "Años completos de tropa", 40, required=False, placeholder="Ej. 5")}</div>
+        <div class="fields">
+          <label class="choice"><input type="radio" name="tropa_rank" value="none" checked> Sin empleo de cabo</label>
+          <label class="choice"><input type="radio" name="tropa_rank" value="cabo"> Cabo (2,40)</label>
+          <label class="choice"><input type="radio" name="tropa_rank" value="cabo1"> Cabo 1.º (3,60)</label>
+        </div>
+      </fieldset>
+      <fieldset class="stage" id="baremo-libre">
+        <legend>Méritos profesionales (libre / Colegio)</legend>
+        <p class="help">0,90 por año completo en la AGE, incluido el tiempo militar. Reservista voluntario: 0,025 por mes desde que se adquiere la condición.</p>
+        <div class="fields">{number_input("age_years", "Años completos en la AGE", 40, required=False, placeholder="Ej. 2")}{number_input("reservist_months", "Meses como reservista", 120, required=False, placeholder="Ej. 12")}</div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>Nivel académico</legend>
+        <p class="help">Solo una titulación en el punto 2.1: Bachiller o superior vale 2. Filología o Traducción e Interpretación en un idioma de interés vale 9 y no se suma el 2.1.</p>
+        <div class="fields">
+          <label class="choice"><input type="radio" name="academic" value="none" checked> Sin este mérito</label>
+          <label class="choice"><input type="radio" name="academic" value="bachiller"> Bachiller o titulación superior (2)</label>
+          <label class="choice"><input type="radio" name="academic" value="filologia"> Filología / Traducción (9)</label>
+        </div>
+        <div class="fields" id="baremo-degree-lang" hidden>
+          <div class="input-group"><label for="degree_lang">Idioma de esa titulación</label>
+          <select class="input" id="degree_lang" name="degree_lang">{lang_opts}</select></div>
+        </div>
+      </fieldset>
+      <fieldset class="stage">
+        <legend>Idiomas</legend>
+        <p class="help">Por cada idioma solo cuenta la acreditación de mayor puntuación (B2 5, C1 7, C2 9). Idiomas del apéndice: alemán, árabe, francés, inglés, italiano, portugués y ruso. El SLP exige haber pertenecido a las FAS.</p>
+        <label class="choice"><input type="checkbox" name="fas" value="1"> He pertenecido o pertenezco a las Fuerzas Armadas (necesario para SLP)</label>
+        {''.join(lang_rows)}
+      </fieldset>
+      <fieldset class="stage">
+        <legend>Permisos y deportista</legend>
+        <p class="help">En cada grupo de permiso solo se barema uno. Deportista de alto nivel: últimos cinco años, un solo grupo, el de mayor puntuación.</p>
+        <label class="choice"><input type="checkbox" name="perm_a" value="1"> Permiso A o A2 (3)</label>
+        <label class="choice"><input type="checkbox" name="perm_ce" value="1"> Permiso C+E o D+E (3)</label>
+        <label class="choice"><input type="checkbox" name="perm_c" value="1"> Permiso C1, C, C1+E, D1, D o D1+E (2)</label>
+        <div class="fields">
+          <div class="input-group"><label for="dan_group">Deportista de alto nivel</label>
+          <select class="input" id="dan_group" name="dan_group">
+            <option value="none">No</option>
+            <option value="A">Grupo A (0,35 / año)</option>
+            <option value="B">Grupo B (0,25 / año)</option>
+            <option value="C">Grupo C (0,20 / año)</option>
+          </select></div>
+          {number_input("dan_years", "Años completos (máx. 5)", 5, required=False, placeholder="Ej. 2")}
+        </div>
+      </fieldset>
+      <div class="actions actions-primary">
+        <button type="submit" class="button button-primary">Calcular baremo</button>
+      </div>
+    </form>
+    <div class="result-slot">
+      <div id="gc-baremo-placeholder" class="result-placeholder">
+        <p class="result-placeholder-kicker">Aún no hay total</p>
+        <p class="result-placeholder-title">Cuando pulses Calcular baremo verás</p>
+        <ul>
+          <li>Puntos de profesionales, académicos y otros, con sus topes.</li>
+          <li>El total hasta 45.</li>
+          <li>Un desglose para copiarlo en la calculadora de nota.</li>
+        </ul>
+      </div>
+      <section id="gc-baremo-result" class="result-card" hidden>
+        <div class="result-main">
+          <p class="result-kicker">Total del concurso</p>
+          <p id="gc-baremo-total" class="result-value"></p>
+          <p id="gc-baremo-note" class="result-note"></p>
+        </div>
+        <div id="gc-baremo-breakdown"></div>
+      </section>
+    </div>
+    <div id="calc-toast" class="toast" hidden>
+      <div class="toast-card" role="alert" aria-live="assertive">
+        <p class="toast-kicker">Revisa el formulario</p>
+        <p id="calc-toast-message" class="toast-message"></p>
+        <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
+      </div>
+    </div>
+    <section class="content">
+      <h2>Qué cubre (y qué no)</h2>
+      <p>Reproduce el apéndice I de BOE-A-2026-9982: méritos alegados en la inscripción y poseídos al cierre de instancias. No suma diplomas propios, equivalencias solo profesionales ni idiomas fuera de esa lista.</p>
+      <p>El total se puede pegar en la <a href="{prefix}calculadoras/guardia-civil/index.html">calculadora de nota</a> como concurso ya baremado. Prevalece el tribunal si hay duda sobre un documento.</p>
+      <p>Fuente: {ext_a(item["source_url"], "BOE-A-2026-9982, apéndice I")}.</p>
+    </section>
+    """
+    body = f"""
+    {crumbs([
+        ("Inicio", prefix + "index.html"),
+        ("Oposiciones", prefix + "oposiciones/index.html"),
+        ("Guardia Civil", prefix + "oposiciones/guardia-civil/index.html"),
+        ("Baremo", ""),
+    ])}
+    <div class="hero hero-calc">
+      <h1>Calculadora de baremo Guardia Civil 2026</h1>
+      <p class="calc-badge">Apéndice I · BOE-A-2026-9982 · BOE oficial</p>
+      {hub_nav(family, prefix, "baremo")}
+    </div>
+    <div class="layout">
+      <article class="tool">{inner_form}</article>
+    </div>
+    """
+    return page_shell(
+        seo_title("Baremo Guardia Civil", "2026"),
+        "Calcula el concurso de Guardia Civil 2026 ítem a ítem con el apéndice I de BOE-A-2026-9982: tropa, AGE, idiomas, permisos y deportista de alto nivel.",
+        "oposiciones/guardia-civil/baremo/",
+        3,
+        body,
+        tools=("gc_baremo",),
     )
 
 
@@ -1810,10 +2210,79 @@ def write_hubs(opos: list[dict]) -> list[str]:
         write(ROOT / "oposiciones" / family / "index.html", hub_home(item, hub))
         urls.append(f"{SITE}/oposiciones/{family}/")
         for key in hub.get("pages") or []:
-            page = pn_fisicas_page(item) if key == "fisicas" else writers[key](item, hub)
+            if key == "fisicas":
+                if family == "policia-nacional":
+                    page = pn_fisicas_page(item)
+                elif family == "guardia-civil":
+                    page = gc_fisicas_page(item)
+                else:
+                    continue
+            elif key == "baremo":
+                page = gc_baremo_page(item)
+            else:
+                page = writers[key](item, hub)
             write(ROOT / "oposiciones" / family / HUB_SLUGS[key] / "index.html", page)
             urls.append(f"{SITE}/oposiciones/{family}/{HUB_SLUGS[key]}/")
     return urls
+
+
+def progress_trackers(opos: list[dict]) -> list[dict]:
+    trackers = []
+    for item in current_by_family(opos):
+        family = family_id(item)
+        name = item.get("family_name") or item["short_name"]
+        trackers.append(
+            {
+                "key": f"tunotaopo:progress:{item['slug']}",
+                "name": name,
+                "href": live_path(item),
+                "kind": "nota",
+            }
+        )
+        if family == "policia-nacional":
+            trackers.append(
+                {
+                    "key": "tunotaopo:progress:policia-nacional-fisicas-2026",
+                    "name": "Policía Nacional · físicas",
+                    "href": "oposiciones/policia-nacional/pruebas-fisicas/",
+                    "kind": "fisicas",
+                }
+            )
+        if family == "guardia-civil":
+            trackers.append(
+                {
+                    "key": "tunotaopo:progress:guardia-civil-fisicas-2026",
+                    "name": "Guardia Civil · físicas",
+                    "href": "oposiciones/guardia-civil/pruebas-fisicas/",
+                    "kind": "fisicas",
+                }
+            )
+    return trackers
+
+
+def progreso_page(opos: list[dict]) -> str:
+    prefix = rel_prefix(1)
+    config = json.dumps(progress_trackers(opos), ensure_ascii=False)
+    body = f"""
+    {crumbs([("Inicio", prefix + "index.html"), ("Mi progreso", "")])}
+    <div class="hero">
+      <h1>Mi progreso</h1>
+      <p class="lede">Los simulacros se quedan en este navegador. No hay cuenta ni servidor. Si cambias de dispositivo o borras los datos del sitio, se pierde el historial.</p>
+    </div>
+    <script type="application/json" id="progreso-config">{config}</script>
+    <div id="progreso-root" class="progress-board"></div>
+    <section class="content">
+      <p>Para guardar un simulacro, calcula la nota o las físicas y pulsa Calcular. El resultado se añade aquí solo en este dispositivo.</p>
+    </section>
+    """
+    return page_shell(
+        seo_title("Mi progreso"),
+        "Historial de simulacros de nota y físicas guardado en este navegador. Sin cuenta ni servidor.",
+        "progreso/",
+        1,
+        body,
+        tools=("progreso",),
+    )
 
 
 def simple_page(
@@ -1858,6 +2327,7 @@ def build() -> None:
     remove_retired_urls(opos)
     write(ROOT / "index.html", home(opos))
     write(ROOT / "calculadoras" / "index.html", calculadoras_index(opos))
+    write(ROOT / "progreso" / "index.html", progreso_page(opos))
     hub_urls = write_hubs(opos)
     for cfg in opos:
         year_path = cfg["path"]
@@ -1884,7 +2354,7 @@ def build() -> None:
     write(
         ROOT / "aviso-legal" / "index.html",
         simple_page(
-            "Aviso legal",
+            seo_title("Aviso legal"),
             "Aviso legal",
             f"Aviso legal de {BRAND}. Titular: Haroun Zemrani El Hadri.",
             "aviso-legal/",
@@ -1898,27 +2368,28 @@ def build() -> None:
     write(
         ROOT / "privacidad" / "index.html",
         simple_page(
-            "Política de privacidad",
+            seo_title("Política de privacidad"),
             "Privacidad",
             f"Política de privacidad de {BRAND}. En esta versión no hay analítica ni publicidad de terceros activa.",
             "privacidad/",
             [
-                "El cálculo se ejecuta en el navegador. Al cambiar de página los datos del formulario se descartan. No se envían a un servidor.",
+                "El cálculo se ejecuta en el navegador. El historial de simulacros, si lo usas, se guarda solo en este dispositivo (almacenamiento local) y no se envía a un servidor. Puedes verlo en Mi progreso.",
                 "No hay cookies de analítica, AdSense ni redes publicitarias activas. Cuando exista un Publisher ID y un consentimiento válido, esta página se actualizará y se activará un CMP antes de cargar esos scripts.",
             ],
+            extra=f'<p><a href="{rel_prefix(1)}progreso/index.html">Abrir Mi progreso</a>.</p>',
             lead=legal_identity(),
         ),
     )
     write(
         ROOT / "cookies" / "index.html",
         simple_page(
-            "Política de cookies",
+            seo_title("Política de cookies"),
             "Cookies",
             f"Política de cookies de {BRAND}. No hay cookies no esenciales activas en esta versión.",
             "cookies/",
             [
                 "Esta versión no instala cookies de analítica ni publicidad.",
-                "El último cálculo no se guarda al salir de la página. Si usas Compartir URL, los datos van en la dirección, no en una cookie.",
+                "Los simulacros de nota y físicas se guardan en el almacenamiento local del navegador, no en una cookie. Si usas Compartir URL, los datos van en la dirección.",
                 "Si más adelante se activa AdSense o una medición, se incorporará un banner de consentimiento válido para el EEE antes de cargar esos scripts.",
             ],
         ),
@@ -1926,12 +2397,12 @@ def build() -> None:
     write(
         ROOT / "contacto" / "index.html",
         simple_page(
+            seo_title("Contacto"),
             "Contacto",
-            "Contacto",
-            f"Contacto de {BRAND}. Correo del titular para correcciones de fórmula.",
+            f"Contacto de {BRAND}. Correo del proyecto para correcciones de fórmula.",
             "contacto/",
             [
-                "Para correcciones de fórmula o avisos de nueva convocatoria: harounzemrani4@gmail.com.",
+                f"Para correcciones de fórmula o avisos de nueva convocatoria: {CONTACT_EMAIL}.",
                 "Indica la oposición, el identificador del boletín y el apartado concreto. No envíes datos personales innecesarios.",
             ],
             lead=legal_identity(),
@@ -1965,7 +2436,7 @@ def build() -> None:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")
-    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/"):
+    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", "progreso/"):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:

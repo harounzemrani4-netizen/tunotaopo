@@ -306,6 +306,10 @@
     return "tunotaopo:progress:" + slug;
   }
 
+  function targetKey(slug) {
+    return "tunotaopo:target:" + slug;
+  }
+
   function loadProgress(slug) {
     try {
       var raw = localStorage.getItem(progressKey(slug));
@@ -316,14 +320,29 @@
     }
   }
 
+  function readTarget(slug, form) {
+    var targetEl = form && form.elements.target_score;
+    var typed = targetEl && targetEl.value ? Number(String(targetEl.value).replace(",", ".")) : NaN;
+    if (Number.isFinite(typed) && typed > 0) return typed;
+    try {
+      var saved = Number(localStorage.getItem(targetKey(slug)));
+      return Number.isFinite(saved) && saved > 0 ? saved : NaN;
+    } catch (ignore) {
+      return NaN;
+    }
+  }
+
   function saveProgress(config, result) {
     var score = typeof result.process_total === "number" ? result.process_total : result.opposition_total;
     if (typeof score !== "number" || !Number.isFinite(score)) return;
     var rows = loadProgress(config.slug);
     rows.push({ t: Date.now(), s: Math.round(score * 10000) / 10000 });
     if (rows.length > 20) rows = rows.slice(-20);
+    var form = $("calc-form");
+    var target = readTarget(config.slug, form);
     try {
       localStorage.setItem(progressKey(config.slug), JSON.stringify(rows));
+      if (Number.isFinite(target)) localStorage.setItem(targetKey(config.slug), String(target));
     } catch (ignore) {}
   }
 
@@ -340,26 +359,36 @@
     var last = rows[rows.length - 1].s;
     var delta = Math.round((last - first) * 10000) / 10000;
     var form = $("calc-form");
-    var targetEl = form && form.elements.target_score;
-    var target = targetEl && targetEl.value ? Number(String(targetEl.value).replace(",", ".")) : NaN;
+    var target = readTarget(config.slug, form);
     var items = rows.slice(-8).map(function (row) {
       var label = new Date(row.t).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
       return "<li><span>" + escapeHtml(label) + "</span><strong>" + fmt(row.s, 2) + "</strong></li>";
     }).join("");
-    var trend = delta >= 0 ? "↗ +" + fmt(delta, 2) : "↘ " + fmt(delta, 2);
+    var trend = "Mejora: " + (delta >= 0 ? "+" : "") + fmt(delta, 2);
     var goal = "";
     if (Number.isFinite(target) && target > 0) {
       var left = Math.round((target - last) * 10000) / 10000;
-      if (left > 0) goal = "<p>Objetivo: " + fmt(target, 2) + ". Te faltan " + fmt(left, 2) + " puntos.</p>";
+      if (left > 0) goal = "<p>Objetivo: " + fmt(target, 2) + ". Te faltan " + fmt(left, 2) + ".</p>";
       else goal = "<p>Objetivo: " + fmt(target, 2) + ". Ya lo superas en este simulacro.</p>";
     }
     panel.hidden = false;
     panel.innerHTML =
-      "<h2>Mis últimos simulacros</h2>" +
+      "<h2>Mis simulacros</h2>" +
       '<ol class="progress-list">' + items + "</ol>" +
-      '<p class="progress-trend">' + trend + " desde el primero guardado en este navegador.</p>" +
+      '<p class="progress-trend">' + trend + "</p>" +
       goal +
-      '<p class="progress-note">Se guarda solo en este dispositivo. No hay cuenta ni servidor.</p>';
+      '<p class="progress-note">Se guarda solo en este navegador. No hay cuenta ni servidor.</p>' +
+      '<p><a href="' + (document.body.getAttribute("data-root") || "") + 'progreso/index.html">Ver todo mi progreso</a></p>' +
+      '<p><button type="button" class="button button-secondary" id="progress-clear">Borrar historial</button></p>';
+    var clear = $("progress-clear");
+    if (clear) {
+      clear.addEventListener("click", function () {
+        try {
+          localStorage.removeItem(progressKey(config.slug));
+        } catch (ignore) {}
+        renderProgress(config);
+      });
+    }
   }
 
   function showResult(config, result) {
@@ -468,6 +497,13 @@
     keepCanonicalClean();
 
     form.setAttribute("autocomplete", "off");
+    try {
+      var savedTarget = Number(localStorage.getItem(targetKey(config.slug)));
+      if (Number.isFinite(savedTarget) && savedTarget > 0 && form.elements.target_score && !form.elements.target_score.value) {
+        form.elements.target_score.value = String(savedTarget);
+      }
+    } catch (ignore) {}
+    renderProgress(config);
 
     function clearSession() {
       form.reset();
