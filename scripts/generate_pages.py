@@ -17,8 +17,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260819s"
+ASSET_V = "20260819t"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
+PROGRESO_PATH = "oposiciones/progreso/"
 DATA_DIR = ROOT / "data" / "oposiciones"
 MONTHS_ES = (
     "enero",
@@ -136,7 +137,7 @@ def nav(prefix: str) -> str:
     <nav class="nav" aria-label="Principal">
       <a href="{prefix}oposiciones/index.html">Oposiciones</a>
       <a href="{prefix}calculadoras/index.html">Calculadoras</a>
-      <a href="{prefix}progreso/index.html">Mi progreso</a>
+      <a href="{prefix}{PROGRESO_PATH}index.html">Mi progreso</a>
       <a href="{prefix}fuentes/index.html">Fuentes</a>
     </nav>
   </div>
@@ -152,7 +153,7 @@ def footer(prefix: str) -> str:
     </div>
     <div class="footer-links">
       <a href="{prefix}oposiciones/index.html">Oposiciones</a>
-      <a href="{prefix}progreso/index.html">Mi progreso</a>
+      <a href="{prefix}{PROGRESO_PATH}index.html">Mi progreso</a>
       <a href="{prefix}metodologia/index.html">Metodología</a>
       <a href="{prefix}fuentes/index.html">Fuentes</a>
       <a href="{prefix}privacidad/index.html">Privacidad</a>
@@ -889,7 +890,7 @@ def home(all_items: list[dict]) -> str:
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al mínimo oficial. Eso no es la nota de corte ni una plaza.</li>
       </ol>
-      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="progreso/index.html">Mi progreso</a>. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
+      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="{PROGRESO_PATH}index.html">Mi progreso</a>. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
       <p>{escape(DISCLAIMER)}</p>
     </section>
     """
@@ -2261,10 +2262,14 @@ def progress_trackers(opos: list[dict]) -> list[dict]:
 
 
 def progreso_page(opos: list[dict]) -> str:
-    prefix = rel_prefix(1)
+    prefix = rel_prefix(2)
     config = json.dumps(progress_trackers(opos), ensure_ascii=False)
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Mi progreso", "")])}
+    {crumbs([
+        ("Inicio", prefix + "index.html"),
+        ("Oposiciones", prefix + "oposiciones/index.html"),
+        ("Mi progreso", ""),
+    ])}
     <div class="hero">
       <h1>Mi progreso</h1>
       <p class="lede">Los simulacros se quedan en este navegador. No hay cuenta ni servidor. Si cambias de dispositivo o borras los datos del sitio, se pierde el historial.</p>
@@ -2278,8 +2283,8 @@ def progreso_page(opos: list[dict]) -> str:
     return page_shell(
         seo_title("Mi progreso"),
         "Historial de simulacros de nota y físicas guardado en este navegador. Sin cuenta ni servidor.",
-        "progreso/",
-        1,
+        PROGRESO_PATH,
+        2,
         body,
         tools=("progreso",),
     )
@@ -2327,7 +2332,10 @@ def build() -> None:
     remove_retired_urls(opos)
     write(ROOT / "index.html", home(opos))
     write(ROOT / "calculadoras" / "index.html", calculadoras_index(opos))
-    write(ROOT / "progreso" / "index.html", progreso_page(opos))
+    write(ROOT / "oposiciones" / "progreso" / "index.html", progreso_page(opos))
+    stale = ROOT / "progreso"
+    if stale.exists():
+        shutil.rmtree(stale)
     hub_urls = write_hubs(opos)
     for cfg in opos:
         year_path = cfg["path"]
@@ -2376,7 +2384,7 @@ def build() -> None:
                 "El cálculo se ejecuta en el navegador. El historial de simulacros, si lo usas, se guarda solo en este dispositivo (almacenamiento local) y no se envía a un servidor. Puedes verlo en Mi progreso.",
                 "No hay cookies de analítica, AdSense ni redes publicitarias activas. Cuando exista un Publisher ID y un consentimiento válido, esta página se actualizará y se activará un CMP antes de cargar esos scripts.",
             ],
-            extra=f'<p><a href="{rel_prefix(1)}progreso/index.html">Abrir Mi progreso</a>.</p>',
+            extra=f'<p><a href="{rel_prefix(1)}{PROGRESO_PATH}index.html">Abrir Mi progreso</a>.</p>',
             lead=legal_identity(),
         ),
     )
@@ -2436,7 +2444,7 @@ def build() -> None:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")
-    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", "progreso/"):
+    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", PROGRESO_PATH):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:

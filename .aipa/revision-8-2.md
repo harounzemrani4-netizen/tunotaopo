@@ -8,7 +8,7 @@ Fecha: 19 de agosto de 2026.
 2. Calculadora de físicas Guardia Civil 2026: apéndice II, apto/no apto por sexo y tramo de edad. URL nueva `/oposiciones/guardia-civil/pruebas-fisicas/`. No cambia `/calculadoras/guardia-civil/`.
 3. Calculadora de baremo Guardia Civil 2026 ítem a ítem: apéndice I, topes 13,5 / 27 / 4,5 / 45. URL `/oposiciones/guardia-civil/baremo/`.
 4. Páginas de pruebas, fechas, notas y exámenes con texto útil, diagrama de proceso y timeline visual. Hubs AGE, Auxilio e IIPP al mismo molde de contenido (sin clonar físicas/baremo que el BOE no define).
-5. Mi progreso: `localStorage` en calculadoras y página `/progreso/` que agrupa nota y físicas de este navegador.
+5. Mi progreso: `localStorage` en calculadoras y página `/oposiciones/progreso/` que agrupa nota y físicas de este navegador.
 6. Etiqueta «Proceso 2026 · convocatoria publicada el …».
 7. Correo público `contacto@tunotaopo.es`.
 
@@ -27,7 +27,7 @@ No hay token de Google Search Console en el repo. Hay que hacerlo en la cuenta d
    - `/calculadoras/guardia-civil/`
    - `/oposiciones/guardia-civil/pruebas-fisicas/`
    - `/oposiciones/guardia-civil/baremo/`
-   - `/progreso/`
+   - `/oposiciones/progreso/`
 4. Crear el buzón o alias `contacto@tunotaopo.es` en el proveedor del dominio (IONOS).
 
 ## No hacer todavía

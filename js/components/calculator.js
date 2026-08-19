@@ -378,7 +378,7 @@
       '<p class="progress-trend">' + trend + "</p>" +
       goal +
       '<p class="progress-note">Se guarda solo en este navegador. No hay cuenta ni servidor.</p>' +
-      '<p><a href="' + (document.body.getAttribute("data-root") || "") + 'progreso/index.html">Ver todo mi progreso</a></p>' +
+      '<p><a href="' + (document.body.getAttribute("data-root") || "") + 'oposiciones/progreso/index.html">Ver todo mi progreso</a></p>' +
       '<p><button type="button" class="button button-secondary" id="progress-clear">Borrar historial</button></p>';
     var clear = $("progress-clear");
     if (clear) {
