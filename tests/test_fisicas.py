@@ -48,6 +48,30 @@ def main() -> int:
     if zero["passed"] or not zero["zeroOut"]:
         print("[FAIL] 0 en circuito debe eliminar")
         return 1
+    women_hang0 = evaluate({"sex": "mujeres", "circuit": "11.3", "hang": "35", "run_min": "3", "run_sec": "24"})
+    if women_hang0["force"]["score"] != 0:
+        print("[FAIL] 35 s suspensión mujeres debe ser 0")
+        return 1
+    women_hang1 = evaluate({"sex": "mujeres", "circuit": "11.3", "hang": "36", "run_min": "3", "run_sec": "24"})
+    if women_hang1["force"]["score"] < 1:
+        print("[FAIL] 36 s suspensión mujeres debe puntuar")
+        return 1
+    men_pull_lim = evaluate({"sex": "hombres", "circuit": "10.2", "pullups": "4", "run_min": "3", "run_sec": "18"})
+    if men_pull_lim["force"]["score"] != 0:
+        print("[FAIL] 4 dominadas hombres debe ser 0")
+        return 1
+    men_pull_ok = evaluate({"sex": "hombres", "circuit": "10.2", "pullups": "5", "run_min": "3", "run_sec": "18"})
+    if men_pull_ok["force"]["score"] != 1:
+        print("[FAIL] 5 dominadas hombres debe ser 1")
+        return 1
+    try:
+        evaluate({"sex": "hombres", "circuit": "-1", "pullups": "10", "run_min": "3", "run_sec": "18"})
+        print("[FAIL] circuito negativo debería fallar")
+        return 1
+    except SystemExit:
+        pass
+    except Exception:
+        pass
     print("Físicas PN: PASS")
     return 0
 

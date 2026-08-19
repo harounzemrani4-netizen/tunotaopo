@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "build": "python scripts/generate_pages.py",
+    "test": "python tests/test_engine.py && python tests/test_fisicas.py && python tests/test_gc_fisicas.py && python tests/test_gc_baremo.py && python tests/test_security.py",
+    "verify": "python scripts/run_qa.py"
+  },
   "devDependencies": {
     "unlighthouse": "^0.17.10"
   }

@@ -114,6 +114,14 @@ def main() -> int:
     if swim_over["passed"] or swim_over["tests"][3]["passed"]:
         print("[FAIL] 85 s natación mujeres <35 debe ser no apto")
         return 1
+    try:
+        evaluate({"sex": "hombres", "band": "lt35"})
+        print("[FAIL] físicas GC vacías deberían fallar")
+        return 1
+    except SystemExit:
+        pass
+    except Exception:
+        pass
     print("Físicas GC: PASS")
     return 0
 

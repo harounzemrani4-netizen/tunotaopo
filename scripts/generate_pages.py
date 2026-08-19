@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
+from urllib.parse import quote
 from xml.sax.saxutils import escape
 
 from content import DISCLAIMER, PAGES
@@ -17,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260819y"
+ASSET_V = "20260819z"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
 PROGRESO_PATH = "oposiciones/progreso/"
 DATA_DIR = ROOT / "data" / "oposiciones"
@@ -79,11 +80,27 @@ def extra_paras(texts: list[str] | None) -> str:
     return "".join(f"<p>{escape(text)}</p>" for text in texts)
 
 
+def unpack_prueba(entry) -> tuple:
+    text = entry[0]
+    link = entry[1] if len(entry) > 1 else None
+    tags = list(entry[2]) if len(entry) > 2 else []
+    return text, link, tags
+
+
 def process_flow(hub: dict) -> str:
     items = []
-    for text, _link in hub.get("pruebas") or []:
+    for entry in hub.get("pruebas") or []:
+        text, link, tags = unpack_prueba(entry)
         short = text.split(" — ", 1)[0]
-        items.append(f"<li>{escape(short)}</li>")
+        badges = "".join(f'<span class="flow-tag">{escape(tag)}</span>' for tag in tags)
+        calc = ""
+        if link == "calc":
+            calc = '<span class="flow-calc">Calcular esta prueba →</span>'
+        elif link == "fisicas":
+            calc = '<span class="flow-calc">Calcular esta prueba →</span>'
+        elif link == "baremo":
+            calc = '<span class="flow-calc">Calcular esta prueba →</span>'
+        items.append(f"<li><strong>{escape(short)}</strong>{badges}{calc}</li>")
     if not items:
         return ""
     return f'<ol class="process-flow" aria-label="Orden de las pruebas">{"".join(items)}</ol>'
@@ -92,18 +109,80 @@ def process_flow(hub: dict) -> str:
 def timeline_html(events: list[dict] | None) -> str:
     if not events:
         return ""
-    marks = {"done": "✓", "current": "→", "todo": "○"}
+    marks = {"done": "✓", "current": "→", "next": "○", "todo": "○"}
     items = []
     for event in events:
         state = event.get("state") or "todo"
         note = f'<p class="timeline-note">{escape(event["note"])}</p>' if event.get("note") else ""
+        source = ""
+        if event.get("source_url"):
+            label = event.get("source_label") or "Fuente oficial"
+            source = f'<p class="timeline-note"><a href="{escape(event["source_url"])}" rel="noopener noreferrer">{escape(label)}</a></p>'
         items.append(
             f'<li class="is-{escape(state)}">'
             f'<span class="timeline-mark" aria-hidden="true">{marks.get(state, "○")}</span>'
             f'<div><p class="timeline-label">{escape(event["label"])}</p>'
-            f'<p class="timeline-date">{escape(event["date"])}</p>{note}</div></li>'
+            f'<p class="timeline-date">{escape(event["date"])}</p>{note}{source}</div></li>'
         )
     return f'<ol class="process-timeline">{"".join(items)}</ol>'
+
+
+def changelog_html(hub: dict) -> str:
+    updates = hub.get("updates") or []
+    if not updates:
+        return ""
+    items = []
+    for row in updates:
+        src = ""
+        if row.get("source_url"):
+            label = row.get("source_label") or "Fuente"
+            src = f' <a href="{escape(row["source_url"])}" rel="noopener noreferrer">{escape(label)} →</a>'
+        items.append(
+            f"<li><time datetime=\"{escape(row['date'])}\">{escape(es_date(row['date']))}</time>"
+            f"<p>{escape(row['text'])}{src}</p></li>"
+        )
+    return (
+        '<section class="changelog" aria-labelledby="changelog-title">'
+        '<h2 id="changelog-title">Últimas actualizaciones</h2>'
+        f"<ol>{''.join(items)}</ol>"
+        "</section>"
+    )
+
+
+def report_error_link(name: str, convocatoria: str, page_url: str, kind: str) -> str:
+    subject = f"Error en {kind}: {name}"
+    body = (
+        f"Oposición: {name}\n"
+        f"Convocatoria: {convocatoria}\n"
+        f"Página: {page_url}\n"
+        f"Tipo de calculadora: {kind}\n\n"
+        "Describe el error (sin pegar tu nota, aciertos ni datos personales):\n"
+    )
+    href = f"mailto:{CONTACT_EMAIL}?subject={quote(subject)}&body={quote(body)}"
+    return (
+        f'<p class="report-error"><a href="{href}">¿Has detectado un error? Avísanos</a></p>'
+    )
+
+
+def classroom_controls() -> str:
+    return (
+        '<p class="classroom-controls">'
+        '<button type="button" class="button button-ghost" id="classroom-enter">Modo aula</button>'
+        '<button type="button" class="button button-ghost" id="classroom-exit" hidden>Salir del modo aula</button>'
+        "</p>"
+    )
+
+
+def result_share_actions() -> str:
+    return """<div class="actions result-actions">
+    <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
+    <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
+    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
+    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
+    <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
+  </div>
+  <div id="qr-box" class="qr-box" hidden></div>"""
 
 
 def es_date(iso: str) -> str:
@@ -159,6 +238,7 @@ def footer(prefix: str) -> str:
       <a href="{prefix}privacidad/index.html">Privacidad</a>
       <a href="{prefix}cookies/index.html">Cookies</a>
       <a href="{prefix}aviso-legal/index.html">Aviso legal</a>
+      <a href="{prefix}academias/index.html">Academias</a>
       <a href="{prefix}contacto/index.html">Contacto</a>
     </div>
   </div>
@@ -177,15 +257,28 @@ CSP = (
     "frame-ancestors 'none'; "
     "object-src 'none'"
 )
+CSP_EMBED = (
+    "default-src 'self'; "
+    "script-src 'self'; "
+    "style-src 'self'; "
+    "img-src 'self' data:; "
+    "font-src 'self'; "
+    "connect-src 'self'; "
+    "form-action 'self'; "
+    "base-uri 'self'; "
+    "frame-ancestors *; "
+    "object-src 'none'"
+)
 
 
-def head(title: str, description: str, canonical: str, prefix: str, extra: str = "") -> str:
+def head(title: str, description: str, canonical: str, prefix: str, extra: str = "", csp: str | None = None) -> str:
+    policy = csp or CSP
     return f"""<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="{CSP}">
+  <meta http-equiv="Content-Security-Policy" content="{policy}">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light">
@@ -325,7 +418,7 @@ def catalog_cards(items: list[dict], href_prefix: str = "", *, dest: str = "calc
             href = f"{href_prefix}{live_path(item)}index.html"
             cta = "Calcular mi nota"
         cards.append(
-            f'<a class="card catalog-card" href="{href}">'
+            f'<a class="card catalog-card" href="{href}" data-aliases="{escape(" ".join(item.get("aliases") or []))}">'
             f'<div class="card-meta"><span class="badge">{escape(badge)}</span>'
             f'<span class="card-org">Fuente: {escape(item.get("source_identifier", ""))}</span></div>'
             f"<h2>{escape(name)}</h2>"
@@ -378,23 +471,28 @@ def website_schema() -> str:
 def scripts(prefix: str, tools: tuple[str, ...] = ()) -> str:
     tags = [
         f'<script src="{prefix}js/components/analytics.js" defer></script>',
+        f'<script src="{prefix}js/components/tools.js?v={ASSET_V}" defer></script>',
         f'<script src="{prefix}js/site.js?v={ASSET_V}" defer></script>',
     ]
     extra = {
         "calculator": [
             f'<script src="{prefix}js/engine/scoring.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/lib/qr.js?v={ASSET_V}" defer></script>',
             f'<script src="{prefix}js/components/calculator.js?v={ASSET_V}" defer></script>',
         ],
         "fisicas": [
             f'<script src="{prefix}js/engine/pn-fisicas.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/lib/qr.js?v={ASSET_V}" defer></script>',
             f'<script src="{prefix}js/components/fisicas.js?v={ASSET_V}" defer></script>',
         ],
         "gc_fisicas": [
             f'<script src="{prefix}js/engine/gc-fisicas.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/lib/qr.js?v={ASSET_V}" defer></script>',
             f'<script src="{prefix}js/components/gc-fisicas.js?v={ASSET_V}" defer></script>',
         ],
         "gc_baremo": [
             f'<script src="{prefix}js/engine/gc-baremo.js?v={ASSET_V}" defer></script>',
+            f'<script src="{prefix}js/lib/qr.js?v={ASSET_V}" defer></script>',
             f'<script src="{prefix}js/components/gc-baremo.js?v={ASSET_V}" defer></script>',
         ],
         "progreso": [
@@ -418,10 +516,13 @@ def page_shell(
     fisicas: bool = False,
     website: bool = False,
     tools: tuple[str, ...] = (),
+    robots: str | None = None,
 ) -> str:
     canonical = f"{SITE}/{path}" if path else f"{SITE}/"
     extras = []
-    if noindex:
+    if robots:
+        extras.append(f'<meta name="robots" content="{escape(robots)}">')
+    elif noindex:
         extras.append('<meta name="robots" content="noindex">')
     if website:
         extras.append(website_schema())
@@ -441,6 +542,41 @@ def page_shell(
   </main>
   <div class="wrap">{ad_slot("bottom")}</div>
   {footer("/")}
+  {scripts("/", resolved)}
+</body>
+</html>
+"""
+
+
+def embed_shell(
+    title: str,
+    description: str,
+    path: str,
+    body: str,
+    tools: tuple[str, ...] = (),
+    open_href: str = "/",
+) -> str:
+    canonical = f"{SITE}/{path}"
+    extra = '<meta name="robots" content="noindex,nofollow">'
+    resolved = tuple(tools)
+    return f"""{head(title, description, canonical, "/", extra, csp=CSP_EMBED)}
+<body class="is-embed" data-root="/">
+  <header class="embed-header">
+    <div class="wrap">
+      <a class="brand" href="{escape(open_href)}" target="_blank" rel="noopener">
+        <img src="/assets/logo.svg" width="36" height="36" alt="">
+        <span>{BRAND}</span>
+      </a>
+    </div>
+  </header>
+  <main id="contenido" class="wrap">
+    {body}
+  </main>
+  <footer class="embed-footer">
+    <div class="wrap">
+      <p>Cálculo orientativo. Prevalece la convocatoria oficial. <a href="{escape(open_href)}" target="_blank" rel="noopener">Abrir en {BRAND}</a></p>
+    </div>
+  </footer>
   {scripts("/", resolved)}
 </body>
 </html>
@@ -708,8 +844,12 @@ def calculator_form(cfg: dict, prefix: str = "") -> str:
   <div class="actions result-actions">
     <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
     <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
+    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
+    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
     <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
   </div>
+  <div id="qr-box" class="qr-box" hidden></div>
 </section>
 </div>
 <div id="calc-toast" class="toast" hidden>
@@ -847,6 +987,7 @@ def calculator_page(
       <h1>{escape(heading)}</h1>
       {banner}
       {hub_links}
+      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">
@@ -861,6 +1002,7 @@ def calculator_page(
           <p>Última revisión: {escape(str(cfg.get("last_verified") or src.get("reviewed_at", "")))}.</p>
           <p>{source_link(cfg)} <span aria-hidden="true">→</span></p>
         </section>
+        {report_error_link(family_name, cfg["convocatoria"], f"{SITE}/{canonical_path}", "nota")}
         <p class="notice">{escape(DISCLAIMER)}</p>
       </article>
     </div>
@@ -915,6 +1057,7 @@ def home(all_items: list[dict]) -> str:
     <section>
       <h2 class="section-title">Oposiciones</h2>
       <div class="catalog" id="opo-catalog">{catalog_cards(all_items, dest="hub")}</div>
+      <p id="opo-search-empty" class="search-empty" hidden>No hay una oposición con ese nombre en TuNotaOpo. Prueba PN, GC, AGE, IIPP o auxilio.</p>
     </section>
     {ad_slot("home-mid")}
     <section class="content">
@@ -1372,6 +1515,7 @@ def oposiciones_index(opos: list[dict]) -> str:
       </form>
     </div>
     <div class="catalog" id="opo-catalog">{catalog_cards(opos, "../", dest="hub")}</div>
+    <p id="opo-search-empty" class="search-empty" hidden>No hay una oposición con ese nombre en TuNotaOpo. Prueba PN, GC, AGE, IIPP o auxilio.</p>
     """
     return page_shell(
         seo_title("Oposiciones"),
@@ -1436,6 +1580,7 @@ def hub_home(item: dict, hub: dict) -> str:
     <p class="status-updated">Última revisión de estas páginas: 19 de agosto de 2026. Fuente: {ext_a(item["source_url"], item.get("source_identifier", "BOE"))}.</p>
     {timeline_html(hub.get("timeline"))}
     {process_flow(hub)}
+    {changelog_html(hub)}
     <div class="hub-grid">{"".join(tiles)}</div>
     """
     return page_shell(
@@ -1509,18 +1654,20 @@ def hub_pruebas(item: dict, hub: dict) -> str:
     family = family_id(item)
     name = hub["name"]
     steps = []
-    for text, link in hub["pruebas"]:
+    for entry in hub["pruebas"]:
+        text, link, tags = unpack_prueba(entry)
+        tag_html = "".join(f'<span class="flow-tag">{escape(tag)}</span>' for tag in tags)
         if link == "calc":
             href = prefix + live_path(item) + "index.html"
-            steps.append(f'<li>{escape(text)} <a href="{href}">Calcular</a></li>')
+            steps.append(f'<li>{escape(text)} {tag_html} <a href="{href}">Calcular esta prueba →</a></li>')
         elif link == "fisicas":
             href = f"{prefix}oposiciones/{family}/pruebas-fisicas/index.html"
-            steps.append(f'<li>{escape(text)} <a href="{href}">Calcular físicas</a></li>')
+            steps.append(f'<li>{escape(text)} {tag_html} <a href="{href}">Calcular esta prueba →</a></li>')
         elif link == "baremo":
             href = f"{prefix}oposiciones/{family}/baremo/index.html"
-            steps.append(f'<li>{escape(text)} <a href="{href}">Calcular baremo</a></li>')
+            steps.append(f'<li>{escape(text)} {tag_html} <a href="{href}">Calcular esta prueba →</a></li>')
         else:
-            steps.append(f"<li>{escape(text)}</li>")
+            steps.append(f"<li>{escape(text)} {tag_html}</li>")
     inner = (
         f"<p>{escape(hub['pruebas_lead'])}</p>"
         f"{process_flow(hub)}"
@@ -1921,6 +2068,13 @@ def pn_fisicas_page(item: dict) -> str:
           <div><span id="fisicas-force-label">Fuerza</span><strong id="fisicas-force"></strong></div>
           <div><span>1.000 m</span><strong id="fisicas-run"></strong></div>
         </div>
+        <div class="actions result-actions">
+          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+          <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
+          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
+          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
+        </div>
+        <div id="qr-box" class="qr-box" hidden></div>
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -1931,6 +2085,7 @@ def pn_fisicas_page(item: dict) -> str:
       </div>
     </div>
     <aside id="progress-panel" class="progress-panel" hidden></aside>
+    {report_error_link("Policía Nacional", item["convocatoria"], f"{SITE}/oposiciones/policia-nacional/pruebas-fisicas/", "físicas")}
     <section class="content">
       <h2>Qué dice el anexo II</h2>
       <p>Tres ejercicios. Cada uno se puntúa de 0 a 10. Un 0 en cualquiera elimina. La nota de la prueba es la media, y hay que llegar a 5. La calificación final de la oposición es conocimientos más esta media (base 6.11).</p>
@@ -1950,6 +2105,7 @@ def pn_fisicas_page(item: dict) -> str:
       <h1>Calculadora de pruebas físicas Policía Nacional 2026</h1>
       <p class="calc-badge">Anexo II · BOE-A-2026-15055 · BOE oficial</p>
       {hub_nav(family, prefix, "fisicas")}
+      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2043,6 +2199,13 @@ def gc_fisicas_page(item: dict) -> str:
           <p id="gc-fisicas-verdict" class="result-note"></p>
         </div>
         <div class="score-list" id="gc-fisicas-list"></div>
+        <div class="actions result-actions">
+          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+          <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
+          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
+          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
+        </div>
+        <div id="qr-box" class="qr-box" hidden></div>
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -2053,6 +2216,7 @@ def gc_fisicas_page(item: dict) -> str:
       </div>
     </div>
     <aside id="progress-panel" class="progress-panel" hidden></aside>
+    {report_error_link("Guardia Civil", item["convocatoria"], f"{SITE}/oposiciones/guardia-civil/pruebas-fisicas/", "físicas")}
     <section class="content">
       <h2>Qué dice el apéndice II</h2>
       <p>Cuatro ejercicios, en el orden que fije el tribunal: resistencia 2.000 m, circuito, extensiones de brazos y 50 m de natación. Todas son eliminatorias. No hay media de 0 a 10, a diferencia de Policía Nacional.</p>
@@ -2072,6 +2236,7 @@ def gc_fisicas_page(item: dict) -> str:
       <h1>Calculadora de pruebas físicas Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice II · BOE-A-2026-9982 · BOE oficial</p>
       {hub_nav(family, prefix, "fisicas")}
+      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2220,6 +2385,12 @@ def gc_baremo_page(item: dict) -> str:
           <p id="gc-baremo-note" class="result-note"></p>
         </div>
         <div id="gc-baremo-breakdown"></div>
+        <div class="actions result-actions">
+          <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+          <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
+          <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
+        </div>
+        <div id="qr-box" class="qr-box" hidden></div>
       </section>
     </div>
     <div id="calc-toast" class="toast" hidden>
@@ -2229,6 +2400,7 @@ def gc_baremo_page(item: dict) -> str:
         <button type="button" class="toast-close" id="calc-toast-close">Cerrar</button>
       </div>
     </div>
+    {report_error_link("Guardia Civil", item["convocatoria"], f"{SITE}/oposiciones/guardia-civil/baremo/", "baremo")}
     <section class="content">
       <h2>Qué cubre (y qué no)</h2>
       <p>Reproduce el apéndice I de BOE-A-2026-9982: méritos alegados en la inscripción y poseídos al cierre de instancias. No suma diplomas propios, equivalencias solo profesionales ni idiomas fuera de esa lista.</p>
@@ -2247,6 +2419,7 @@ def gc_baremo_page(item: dict) -> str:
       <h1>Calculadora de baremo Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice I · BOE-A-2026-9982 · BOE oficial</p>
       {hub_nav(family, prefix, "baremo")}
+      {classroom_controls()}
     </div>
     <div class="layout">
       <article class="tool">{inner_form}</article>
@@ -2349,7 +2522,7 @@ def progreso_page(opos: list[dict]) -> str:
     <script type="application/json" id="progreso-config">{config}</script>
     <div id="progreso-root" class="progress-board"></div>
     <section class="content">
-      <p>Para guardar un simulacro, calcula la nota o las físicas y pulsa Calcular. El resultado se añade aquí solo en este dispositivo.</p>
+      <p>Para guardar un simulacro, calcula y pulsa <strong>Guardar en Mi progreso</strong>. No se guarda solo. El historial queda en este dispositivo.</p>
     </section>
     """
     return page_shell(
@@ -2385,6 +2558,113 @@ def simple_page(
     return page_shell(slug_title, description, path, depth, body)
 
 
+def embed_family_slug(item: dict) -> str:
+    family_path = (item.get("family_path") or "").strip("/")
+    if family_path.startswith("calculadoras/"):
+        return family_path.split("/", 1)[1]
+    return family_id(item)
+
+
+def calculator_embed_page(cfg: dict) -> str:
+    open_href = "/" + live_path(cfg) + "index.html"
+    embed_path = f"embed/{embed_family_slug(cfg)}/"
+    src = cfg.get("fuente_oficial") or {}
+    heading = cfg["h1"] if str(cfg.get("anio", "")) in cfg["h1"] else f'{cfg["h1"]} {cfg["anio"]}'
+    body = f"""
+    <div class="hero hero-calc">
+      <h1>{escape(heading)}</h1>
+      <p class="calc-badge">{escape(cfg.get("source_identifier", ""))} · convocatoria {escape(str(cfg.get("anio", "")))}</p>
+    </div>
+    <article class="tool">
+      {calculator_form(cfg, "/")}
+      <section class="source-card">
+        <p class="source-kicker">Fuente oficial</p>
+        <p class="source-id">{escape(cfg.get("source_identifier", ""))}</p>
+        <p>Convocatoria: {escape(cfg["convocatoria"])}.</p>
+        <p>Última revisión: {escape(str(cfg.get("last_verified") or src.get("reviewed_at", "")))}.</p>
+        <p>{source_link(cfg)}</p>
+      </section>
+      {report_error_link(cfg.get("family_name") or cfg["short_name"], cfg["convocatoria"], f"{SITE}/{embed_path}", "nota (embed)")}
+    </article>
+    <script type="application/json" id="oposicion-config">{json.dumps(with_historical(cfg), ensure_ascii=False)}</script>
+    """
+    return embed_shell(
+        f"{heading} · embed | {BRAND}",
+        cfg["meta_description"] + " Versión para insertar en un iframe. No indexable.",
+        embed_path,
+        body,
+        tools=("calculator",),
+        open_href=open_href,
+    )
+
+
+def academias_page(opos: list[dict]) -> str:
+    cards = []
+    snippets = []
+    for item in current_by_family(opos):
+        name = item.get("family_name") or item["short_name"]
+        slug = embed_family_slug(item)
+        calc = "/" + live_path(item) + "index.html"
+        classroom = calc + "?mode=classroom"
+        embed = f"{SITE}/embed/{slug}/"
+        cards.append(
+            f'<a class="card" href="{calc}"><h3>{escape(name)}</h3>'
+            f"<p>Calculadora de la convocatoria {escape(str(item.get('anio', '')))}.</p>"
+            f'<span class="card-cta">Ver herramientas</span></a>'
+        )
+        snippets.append(
+            f"<h3>{escape(name)}</h3>"
+            f"<pre><code>&lt;iframe src=&quot;{embed}&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora {escape(name)}&quot;&gt;&lt;/iframe&gt;</code></pre>"
+            f'<p><a href="{classroom}">Abrir modo aula</a> · <a href="/embed/{slug}/index.html">Ver embed</a></p>'
+        )
+    request = (
+        f'<p><a class="button button-secondary" href="mailto:{CONTACT_EMAIL}'
+        f'?subject={quote("Solicitar oposición en TuNotaOpo")}'
+        f'&body={quote("Oposición que preparo:\\nConvocatoria (si la conoces):\\n\\nNo es una petición de plazo ni una promesa de inclusión.")}">Solicitar / contactar</a></p>'
+    )
+    body = f"""
+    {crumbs([("Inicio", "../index.html"), ("Academias y preparadores", "")])}
+    <div class="hero">
+      <h1>TuNotaOpo para academias y preparadores</h1>
+      <p class="lede">Las herramientas de TuNotaOpo pueden utilizarse gratuitamente con alumnos y opositores. Sin registro, sin servidor de notas y con la fórmula de cada convocatoria.</p>
+    </div>
+    <ul class="proof">
+      <li>Gratis</li>
+      <li>Sin registro</li>
+      <li>Basado en fuentes oficiales</li>
+      <li>Calculadoras por convocatoria</li>
+      <li>Código QR</li>
+      <li>Modo aula</li>
+      <li>Resultados imprimibles</li>
+      <li>Sin almacenar las notas de los alumnos en servidores</li>
+    </ul>
+    <section class="content">
+      <h2>Herramientas disponibles</h2>
+      <div class="catalog">{''.join(cards)}</div>
+      <h2>Úsalo en clase</h2>
+      <ol class="how-steps">
+        <li><strong>Abre la calculadora</strong> de la oposición en el navegador.</li>
+        <li><strong>Activa modo aula</strong> (botón o <code>?mode=classroom</code>) para verlo en proyector.</li>
+        <li><strong>Muestra el QR</strong> o comparte el enlace. Los alumnos calculan en su móvil.</li>
+        <li><strong>Imprime</strong> el resultado si hace falta papel. No se crea una cuenta.</li>
+      </ol>
+      <h2>Calculadora embebible</h2>
+      <p>Misma fórmula que la página pública. Sin menú, sin anuncios y con <code>noindex</code>. Ejemplo:</p>
+      {''.join(snippets)}
+      <h2>¿Falta la oposición que preparas?</h2>
+      <p>Puedes escribirnos. No prometemos incluirla ni damos plazo. Solo se publica con fuente oficial y tests.</p>
+      {request}
+    </section>
+    """
+    return page_shell(
+        seo_title("TuNotaOpo para academias y preparadores"),
+        "Usa las calculadoras de TuNotaOpo en clase: modo aula, QR y embed gratuito, sin registro ni servidor de notas.",
+        "academias/",
+        1,
+        body,
+    )
+
+
 def remove_retired_urls(published: list[dict]) -> None:
     keep = {item["path"].rstrip("/") for item in published}
     keep.update(item["family_path"].rstrip("/") for item in published if item.get("family_path"))
@@ -2405,6 +2685,10 @@ def build() -> None:
     write(ROOT / "index.html", home(opos))
     write(ROOT / "calculadoras" / "index.html", calculadoras_index(opos))
     write(ROOT / "oposiciones" / "progreso" / "index.html", progreso_page(opos))
+    write(ROOT / "academias" / "index.html", academias_page(opos))
+    for item in current_by_family(opos):
+        slug = embed_family_slug(item)
+        write(ROOT / "embed" / slug / "index.html", calculator_embed_page(item))
     stale = ROOT / "progreso"
     if stale.exists():
         shutil.rmtree(stale)
@@ -2453,7 +2737,8 @@ def build() -> None:
             f"Política de privacidad de {BRAND}. En esta versión no hay analítica ni publicidad de terceros activa.",
             "privacidad/",
             [
-                "El cálculo se ejecuta en el navegador. El historial de simulacros, si lo usas, se guarda solo en este dispositivo (almacenamiento local) y no se envía a un servidor. Puedes verlo en Mi progreso.",
+                "El cálculo se ejecuta en el navegador. Mi progreso es opcional: solo se guarda si pulsas el botón. Queda en el almacenamiento local de este dispositivo, no se envía a TuNotaOpo y no requiere cuenta. Puedes borrar cada historial o los datos del sitio en el navegador.",
+                "No se piden nombre, DNI ni correo para usar las calculadoras. El correo de contacto solo se usa si tú escribes.",
                 "No hay cookies de analítica, AdSense ni redes publicitarias activas. Cuando exista un Publisher ID y un consentimiento válido, esta página se actualizará y se activará un CMP antes de cargar esos scripts.",
             ],
             extra='<p><a href="/oposiciones/progreso/index.html">Abrir Mi progreso</a>.</p>',
@@ -2516,7 +2801,7 @@ def build() -> None:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")
-    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", PROGRESO_PATH):
+    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", "academias/", PROGRESO_PATH):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:
@@ -2527,7 +2812,7 @@ def build() -> None:
         ROOT / "robots.txt",
         "User-agent: *\nAllow: /\n"
         "Disallow: /research/\nDisallow: /tests/\nDisallow: /scripts/\n"
-        "Disallow: /release/\nDisallow: /data/\n"
+        "Disallow: /release/\nDisallow: /data/\nDisallow: /embed/\n"
         f"Sitemap: {SITE}/sitemap.xml\n",
     )
     write(

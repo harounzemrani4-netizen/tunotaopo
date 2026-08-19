@@ -1315,15 +1315,110 @@ a.card:hover { transform: translateY(-2px); }
   font-weight: 400;
 }
 
+.flow-tag {
+  display: inline-block;
+  margin: 0.2rem 0.25rem 0 0;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+.flow-calc {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.changelog ol { list-style: none; padding: 0; margin: 0 0 var(--space-5); }
+.changelog li {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.changelog time { font-weight: 700; }
+.changelog p { margin: 0.25rem 0 0; }
+.report-error {
+  margin: var(--space-4) 0 0;
+  font-size: 0.9rem;
+}
+.search-empty { color: var(--color-text-muted); }
+.classroom-controls { margin: var(--space-3) 0 0; }
+.qr-box {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  text-align: center;
+}
+.qr-box svg { margin: 0 auto; }
+.qr-kicker { margin: 0 0 var(--space-2); font-weight: 700; }
+.qr-url { margin: var(--space-2) 0 0; font-size: 0.8rem; word-break: break-all; }
+.progress-del {
+  margin-left: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+.progress-chart { display: block; margin: var(--space-2) 0; max-width: 100%; }
+.embed-header, .embed-footer {
+  background: var(--color-header);
+  color: #edf2f6;
+}
+.embed-header { border-bottom: 3px solid #c4a574; }
+.embed-header .wrap, .embed-footer .wrap { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+.embed-footer a { color: inherit; }
+body.is-embed { min-height: 100vh; }
+html.is-classroom { font-size: 125%; }
+html.is-classroom .content,
+html.is-classroom .crumbs,
+html.is-classroom .ad-slot,
+html.is-classroom .related-block,
+html.is-classroom .site-footer .footer-links,
+html.is-classroom .nav,
+html.is-classroom .report-error { display: none !important; }
+html.is-classroom .result-value { font-size: clamp(2.4rem, 8vw, 4.2rem); }
+html.is-classroom .input,
+html.is-classroom input,
+html.is-classroom select { min-height: 3.25rem; font-size: 1.2rem; }
+html.is-classroom .site-header { border-bottom-width: 6px; }
+
 @media print {
   .site-header,
   .site-footer,
   .actions,
   .ad-slot,
   .aside,
-  .nav { display: none !important; }
-  .toast { display: none !important; }
-  body { background: #fff; }
+  .nav,
+  .crumbs,
+  .content,
+  .classroom-controls,
+  .report-error,
+  .related-block,
+  .progress-panel,
+  .qr-box,
+  .toast,
+  .hero-actions,
+  .opp-links { display: none !important; }
+  body { background: #fff; color: #000; }
+  .result-card, .source-card, .tool {
+    display: block !important;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  .result-card::before {
+    content: "TuNotaOpo — cálculo orientativo. Prevalece la convocatoria oficial.";
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

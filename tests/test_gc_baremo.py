@@ -99,6 +99,11 @@ def main() -> int:
         print(f"[FAIL] SLP C1 {slp['academic']['points']}")
         return 1
 
+    empty = evaluate({"turno": "libre", "academic": "none", "languages": []})
+    if not close(empty["total"], 0):
+        print(f"[FAIL] 0 méritos {empty['total']}")
+        return 1
+
     print("Baremo GC: PASS")
     return 0
 

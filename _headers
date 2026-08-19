@@ -34,3 +34,7 @@
 
 /*.woff2
   Cache-Control: public, max-age=2592000
+
+/embed/*
+  X-Frame-Options: ALLOWALL
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors *; object-src 'none'

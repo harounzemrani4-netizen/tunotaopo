@@ -5,6 +5,8 @@
   "family_name": "Policía Nacional",
   "family_path": "calculadoras/policia-nacional/",
   "is_current": true,
+  "call_status": "active",
+  "aliases": ["pn", "policia", "policía", "policia nacional", "policía nacional", "escala basica", "escala básica"],
   "path": "calculadoras/policia-nacional/calculadora-nota-2026/",
   "name": "Policía Nacional — Escala Básica, categoría de Policía",
   "short_name": "Policía Nacional",

@@ -5,6 +5,8 @@
   "family_name": "Auxiliar AGE",
   "family_path": "calculadoras/auxiliar-administrativo-age/",
   "is_current": true,
+  "call_status": "active",
+  "aliases": ["age", "auxiliar", "c2", "administrativo", "auxiliar administrativo", "inap"],
   "path": "calculadoras/auxiliar-administrativo-age/calculadora-nota-2026/",
   "name": "Cuerpo General Auxiliar de la Administración del Estado",
   "short_name": "Auxiliar AGE",

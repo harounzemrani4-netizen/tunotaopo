@@ -155,7 +155,12 @@
         if (root.NotaOpoAnalytics && root.NotaOpoAnalytics.completed) {
           root.NotaOpoAnalytics.completed("guardia-civil-fisicas-2026");
         }
-        saveProgress(out);
+        result._last = out;
+        var saveBtn = $("save-progress");
+        if (saveBtn) {
+          saveBtn.hidden = false;
+          saveBtn.textContent = "Guardar en Mi progreso";
+        }
         renderProgress();
       } catch (err) {
         result.hidden = true;
@@ -165,6 +170,16 @@
 
     var close = $("calc-toast-close");
     if (close) close.addEventListener("click", hideToast);
+    var saveBtn = $("save-progress");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var out = result._last;
+        if (!out) return;
+        saveProgress(out);
+        saveBtn.textContent = "Guardado";
+        renderProgress();
+      });
+    }
     renderProgress();
   }
 

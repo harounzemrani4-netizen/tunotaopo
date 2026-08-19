@@ -79,7 +79,12 @@
         if (root.NotaOpoAnalytics && root.NotaOpoAnalytics.completed) {
           root.NotaOpoAnalytics.completed("policia-nacional-fisicas-2026");
         }
-        saveFisicasProgress(out);
+        result._last = out;
+        var saveBtn = $("save-progress");
+        if (saveBtn) {
+          saveBtn.hidden = false;
+          saveBtn.textContent = "Guardar en Mi progreso";
+        }
         renderFisicasProgress();
       } catch (err) {
         result.hidden = true;
@@ -89,6 +94,16 @@
 
     var close = $("calc-toast-close");
     if (close) close.addEventListener("click", hideToast);
+    var saveBtn = $("save-progress");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var out = result._last;
+        if (!out) return;
+        saveFisicasProgress(out);
+        saveBtn.textContent = "Guardado";
+        renderFisicasProgress();
+      });
+    }
     renderFisicasProgress();
   }
 

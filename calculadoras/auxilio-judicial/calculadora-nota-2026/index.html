@@ -18,7 +18,7 @@
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819y">
+  <link rel="stylesheet" href="/css/app.css?v=20260819z">
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -44,6 +44,7 @@
       <h1>Calculadora de nota Auxilio Judicial 2026</h1>
       <p class="calc-badge">Archivo 2026 · BOE-A-2025-27053 · <a href="../../../calculadoras/auxilio-judicial/index.html">Calculadora en vigor</a></p>
       <nav class="opp-links" aria-label="Esta oposición"><a href="../../../oposiciones/auxilio-judicial/index.html">Oposición</a><a href="../../../calculadoras/auxilio-judicial/index.html">Calcular nota</a><a href="../../../oposiciones/auxilio-judicial/examenes-oficiales/index.html">Exámenes</a><a href="../../../fuentes/index.html">Fuentes</a></nav>
+      <p class="classroom-controls"><button type="button" class="button button-ghost" id="classroom-enter">Modo aula</button><button type="button" class="button button-ghost" id="classroom-exit" hidden>Salir del modo aula</button></p>
     </div>
     <div class="layout">
       <article class="tool">
@@ -77,8 +78,12 @@
   <div class="actions result-actions">
     <button type="button" class="button button-secondary" id="copy-result">Copiar resultado</button>
     <button type="button" class="button button-secondary" id="share-result">Copiar enlace</button>
+    <button type="button" class="button button-secondary" id="share-native">Compartir</button>
+    <button type="button" class="button button-secondary" id="save-progress" hidden>Guardar en Mi progreso</button>
+    <button type="button" class="button button-ghost" id="show-qr">Mostrar QR</button>
     <button type="button" class="button button-ghost" id="print-result">Imprimir</button>
   </div>
+  <div id="qr-box" class="qr-box" hidden></div>
 </section>
 </div>
 <div id="calc-toast" class="toast" hidden>
@@ -99,6 +104,7 @@
           <p>Última revisión: 2026-08-19.</p>
           <p><a class="source-link" data-track="official-source" href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053">Ver fuente oficial</a> <span aria-hidden="true">→</span></p>
         </section>
+        <p class="report-error"><a href="mailto:contacto@tunotaopo.es?subject=Error%20en%20nota%3A%20Auxilio%20Judicial&body=Oposici%C3%B3n%3A%20Auxilio%20Judicial%0AConvocatoria%3A%20Orden%20PJC/1549/2025%2C%20de%2022%20de%20diciembre%20%28Anexo%20V.a%29%0AP%C3%A1gina%3A%20https%3A//tunotaopo.es/calculadoras/auxilio-judicial/%0ATipo%20de%20calculadora%3A%20nota%0A%0ADescribe%20el%20error%20%28sin%20pegar%20tu%20nota%2C%20aciertos%20ni%20datos%20personales%29%3A%0A">¿Has detectado un error? Avísanos</a></p>
         <p class="notice">Herramienta independiente de cálculo orientativo basada en la convocatoria indicada. No está afiliada ni respaldada por el organismo convocante. Ante cualquier discrepancia prevalece siempre la convocatoria oficial.</p>
       </article>
     </div>
@@ -128,7 +134,7 @@
       <h2>Preguntas frecuentes</h2><h3>¿Sirve el año que viene?</h3><p>Sí. Esta es la calculadora de la oposición, no de un único año. Usas siempre la convocatoria en vigor. Si el próximo boletín cambia la fórmula, se actualiza esta página y la anterior queda en una URL de archivo.</p><h3>¿Cuántos errores puedo tener con 70 aciertos en el primero?</h3><p>0,60×70 − 0,15×E ≥ 30 → E ≤ 80. El tope real es el número de preguntas que te queden. La calculadora lo resuelve con tus aciertos.</p><h3>¿OpoRuta ya hace esto?</h3><p>Hay tools de Justicia. Aquí la URL es solo Auxilio, con la fórmula literal del Anexo V y escenarios por ejercicio.</p>
       <section class="related-block"><h2>Calculadoras relacionadas</h2><div class="related"><a class="card" href="../../../calculadoras/guardia-civil/index.html"><span class="badge">En vigor</span><h3>Guardia Civil</h3><p>Conocimientos · Inglés · Psicotécnico · Ortografía · Gramática · Méritos (fase de concurso) · Pruebas físicas · Baremo</p><span class="card-cta">Calcular nota</span></a><a class="card" href="../../../calculadoras/policia-nacional/index.html"><span class="badge">En vigor</span><h3>Policía Nacional</h3><p>Conocimientos · Idiomas (nivel superior a A2) · Pruebas físicas</p><span class="card-cta">Calcular nota</span></a><a class="card" href="../../../calculadoras/ayudantes-iipp/index.html"><span class="badge">En vigor</span><h3>Ayudantes IIPP</h3><p>Primera parte (cuestionario) · Segunda parte (supuestos)</p><span class="card-cta">Calcular nota</span></a><a class="card" href="../../../calculadoras/auxiliar-administrativo-age/index.html"><span class="badge">En vigor</span><h3>Auxiliar AGE</h3><p>Primera parte (teoría y psicotécnicos) · Segunda parte (ofimática)</p><span class="card-cta">Calcular nota</span></a></div></section><aside class="ad-slot is-reserved is-inactive" data-place="after-related" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside>
     </section>
-    <script type="application/json" id="oposicion-config">{"slug": "auxilio-judicial-2026", "status": "published", "family": "auxilio-judicial", "family_name": "Auxilio Judicial", "family_path": "calculadoras/auxilio-judicial/", "is_current": true, "path": "calculadoras/auxilio-judicial/calculadora-nota-2026/", "name": "Cuerpo de Auxilio Judicial", "short_name": "Auxilio Judicial", "administracion": "Ministerio de la Presidencia, Justicia y Relaciones con las Cortes", "convocatoria": "Orden PJC/1549/2025, de 22 de diciembre (Anexo V.a)", "anio": 2026, "title": "Calculadora de nota Auxilio Judicial", "h1": "Calculadora de nota Auxilio Judicial", "meta_description": "Calcula la nota de Auxilio Judicial con la fórmula de la convocatoria en vigor: +0,60/−0,15 en el teórico y +1/−0,25 en el práctico. Mínimos 30 y 20. Fuente BOE-A-2025-27053.", "lede": "Justicia no usa la penalización 1/3 de la AGE. Cada acierto y cada error valen lo que dice el Anexo V de esta convocatoria.", "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053", "source_type": "boe", "source_identifier": "BOE-A-2025-27053", "source_section": "Anexo V.a) 1.1-1.3", "source_date": "2025-12-30", "last_verified": "2026-08-19", "formula_version": "2025.1", "formula_human": "Ejercicio 1: 0,60×A − 0,15×E (mín. 30). Ejercicio 2: 1×A − 0,25×E (mín. 20).", "fuente_oficial": {"id": "boe-justicia-2025-27053", "title": "Orden PJC/1549/2025, de 22 de diciembre", "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053", "publisher": "BOE", "source_date": "2025-12-22", "published_date": "2025-12-30", "accessed_at": "2026-08-19", "reviewed_at": "2026-08-19", "used_for": "Valores 0,60/0,15 y 1,00/0,25, mínimos 30 y 20, reservas 4 y 2"}, "stages": [{"id": "e1", "label": "Primer ejercicio (teórico)", "model": "fixed_value", "questions": 100, "valid_questions": 100, "reserve_questions": 4, "correct_value": 0.6, "incorrect_penalty": 0.15, "blank_value": 0, "maximum": 60, "minimum": 30, "clamp_min": 0, "clamp_max": 60, "rounding": 4, "eliminatory": true, "source_reference": "Anexo V.a) 1.1", "help": "100 preguntas y 4 de reserva. Cada acierto suma 0,60 y cada error resta 0,15. Las blancas no restan. El mínimo oficial es 30 puntos sobre 60."}, {"id": "e2", "label": "Segundo ejercicio (práctico)", "model": "fixed_value", "questions": 40, "valid_questions": 40, "reserve_questions": 2, "correct_value": 1, "incorrect_penalty": 0.25, "blank_value": 0, "maximum": 40, "minimum": 20, "clamp_min": 0, "clamp_max": 40, "rounding": 4, "eliminatory": true, "source_reference": "Anexo V.a) 1.2", "help": "40 preguntas y 2 de reserva. Cada acierto suma 1 punto y cada error resta 0,25. Las blancas no restan. El mínimo oficial es 20 puntos sobre 40."}], "aggregate": {"id": "oposicion", "label": "Puntuación de la oposición", "model": "aggregate", "include": ["e1", "e2"], "maximum": 100, "rounding": 4}, "requirements": [{"type": "all_passed", "stages": ["e1", "e2"]}], "valid_questions_editable": ["e1", "e2"]}</script>
+    <script type="application/json" id="oposicion-config">{"slug": "auxilio-judicial-2026", "status": "published", "family": "auxilio-judicial", "family_name": "Auxilio Judicial", "family_path": "calculadoras/auxilio-judicial/", "is_current": true, "call_status": "active", "aliases": ["auxilio", "justicia", "judicial", "auxilio judicial"], "path": "calculadoras/auxilio-judicial/calculadora-nota-2026/", "name": "Cuerpo de Auxilio Judicial", "short_name": "Auxilio Judicial", "administracion": "Ministerio de la Presidencia, Justicia y Relaciones con las Cortes", "convocatoria": "Orden PJC/1549/2025, de 22 de diciembre (Anexo V.a)", "anio": 2026, "title": "Calculadora de nota Auxilio Judicial", "h1": "Calculadora de nota Auxilio Judicial", "meta_description": "Calcula la nota de Auxilio Judicial con la fórmula de la convocatoria en vigor: +0,60/−0,15 en el teórico y +1/−0,25 en el práctico. Mínimos 30 y 20. Fuente BOE-A-2025-27053.", "lede": "Justicia no usa la penalización 1/3 de la AGE. Cada acierto y cada error valen lo que dice el Anexo V de esta convocatoria.", "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053", "source_type": "boe", "source_identifier": "BOE-A-2025-27053", "source_section": "Anexo V.a) 1.1-1.3", "source_date": "2025-12-30", "last_verified": "2026-08-19", "formula_version": "2025.1", "formula_human": "Ejercicio 1: 0,60×A − 0,15×E (mín. 30). Ejercicio 2: 1×A − 0,25×E (mín. 20).", "fuente_oficial": {"id": "boe-justicia-2025-27053", "title": "Orden PJC/1549/2025, de 22 de diciembre", "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053", "publisher": "BOE", "source_date": "2025-12-22", "published_date": "2025-12-30", "accessed_at": "2026-08-19", "reviewed_at": "2026-08-19", "used_for": "Valores 0,60/0,15 y 1,00/0,25, mínimos 30 y 20, reservas 4 y 2"}, "stages": [{"id": "e1", "label": "Primer ejercicio (teórico)", "model": "fixed_value", "questions": 100, "valid_questions": 100, "reserve_questions": 4, "correct_value": 0.6, "incorrect_penalty": 0.15, "blank_value": 0, "maximum": 60, "minimum": 30, "clamp_min": 0, "clamp_max": 60, "rounding": 4, "eliminatory": true, "source_reference": "Anexo V.a) 1.1", "help": "100 preguntas y 4 de reserva. Cada acierto suma 0,60 y cada error resta 0,15. Las blancas no restan. El mínimo oficial es 30 puntos sobre 60."}, {"id": "e2", "label": "Segundo ejercicio (práctico)", "model": "fixed_value", "questions": 40, "valid_questions": 40, "reserve_questions": 2, "correct_value": 1, "incorrect_penalty": 0.25, "blank_value": 0, "maximum": 40, "minimum": 20, "clamp_min": 0, "clamp_max": 40, "rounding": 4, "eliminatory": true, "source_reference": "Anexo V.a) 1.2", "help": "40 preguntas y 2 de reserva. Cada acierto suma 1 punto y cada error resta 0,25. Las blancas no restan. El mínimo oficial es 20 puntos sobre 40."}], "aggregate": {"id": "oposicion", "label": "Puntuación de la oposición", "model": "aggregate", "include": ["e1", "e2"], "maximum": 100, "rounding": 4}, "requirements": [{"type": "all_passed", "stages": ["e1", "e2"]}], "valid_questions_editable": ["e1", "e2"]}</script>
     
   </main>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="bottom" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -146,13 +152,16 @@
       <a href="/privacidad/index.html">Privacidad</a>
       <a href="/cookies/index.html">Cookies</a>
       <a href="/aviso-legal/index.html">Aviso legal</a>
+      <a href="/academias/index.html">Academias</a>
       <a href="/contacto/index.html">Contacto</a>
     </div>
   </div>
 </footer>
-  <script src="/js/engine/scoring.js?v=20260819y" defer></script>
-<script src="/js/components/calculator.js?v=20260819y" defer></script>
+  <script src="/js/engine/scoring.js?v=20260819z" defer></script>
+<script src="/js/lib/qr.js?v=20260819z" defer></script>
+<script src="/js/components/calculator.js?v=20260819z" defer></script>
 <script src="/js/components/analytics.js" defer></script>
-<script src="/js/site.js?v=20260819y" defer></script>
+<script src="/js/components/tools.js?v=20260819z" defer></script>
+<script src="/js/site.js?v=20260819z" defer></script>
 </body>
 </html>

@@ -5,6 +5,8 @@
   "family_name": "Ayudantes IIPP",
   "family_path": "calculadoras/ayudantes-iipp/",
   "is_current": true,
+  "call_status": "active",
+  "aliases": ["iipp", "prisiones", "penitenciarias", "ayudantes", "instituciones penitenciarias"],
   "path": "calculadoras/ayudantes-iipp/calculadora-nota-2026/",
   "name": "Cuerpo de Ayudantes de Instituciones Penitenciarias",
   "short_name": "Ayudantes IIPP",

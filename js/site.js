@@ -18,20 +18,37 @@ document.addEventListener("DOMContentLoaded", function () {
   if (document.getElementById("progreso-root") && window.NotaOpoProgreso) {
     window.NotaOpoProgreso.bind();
   }
+  if (window.NotaOpoTools) {
+    window.NotaOpoTools.bindClassroom();
+    window.NotaOpoTools.bindShare();
+  }
   var search = document.getElementById("opo-search");
   var catalog = document.getElementById("opo-catalog");
+  function normalize(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
   function filterCatalog() {
     if (!catalog) return;
     var q = "";
-    if (search && search.value) q = search.value.toLowerCase();
-    else q = String(new URLSearchParams(window.location.search).get("q") || "").toLowerCase();
+    if (search && search.value) q = search.value;
+    else q = String(new URLSearchParams(window.location.search).get("q") || "");
     if (search && !search.value && q) search.value = q;
+    var needle = normalize(q).trim();
     var cards = catalog.querySelectorAll(".catalog-card");
     var i;
+    var visible = 0;
     for (i = 0; i < cards.length; i += 1) {
-      var text = cards[i].textContent.toLowerCase();
-      cards[i].hidden = Boolean(q) && text.indexOf(q) === -1;
+      var text = normalize(cards[i].textContent);
+      var aliases = normalize(cards[i].getAttribute("data-aliases") || "");
+      var match = !needle || text.indexOf(needle) !== -1 || aliases.indexOf(needle) !== -1;
+      cards[i].hidden = !match;
+      if (match) visible += 1;
     }
+    var empty = document.getElementById("opo-search-empty");
+    if (empty) empty.hidden = !needle || visible > 0;
   }
   if (search) {
     search.addEventListener("input", filterCatalog);

@@ -23,6 +23,7 @@ def main() -> int:
     run([sys.executable, str(ROOT / "tests" / "test_gc_fisicas.py")])
     run([sys.executable, str(ROOT / "tests" / "test_gc_baremo.py")])
     run([sys.executable, str(ROOT / "tests" / "test_security.py")])
+    run([sys.executable, str(ROOT / "scripts" / "verify_seo.py")])
     run([sys.executable, str(SKILL / "validate_project_manifest.py"), str(ROOT / "project-manifest.json")])
     run([sys.executable, str(SKILL / "verify_project.py"), "--project", str(ROOT)])
     return 0

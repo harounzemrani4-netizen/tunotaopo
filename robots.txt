@@ -5,4 +5,5 @@ Disallow: /tests/
 Disallow: /scripts/
 Disallow: /release/
 Disallow: /data/
+Disallow: /embed/
 Sitemap: https://tunotaopo.es/sitemap.xml

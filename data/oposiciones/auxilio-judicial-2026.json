@@ -5,6 +5,8 @@
   "family_name": "Auxilio Judicial",
   "family_path": "calculadoras/auxilio-judicial/",
   "is_current": true,
+  "call_status": "active",
+  "aliases": ["auxilio", "justicia", "judicial", "auxilio judicial"],
   "path": "calculadoras/auxilio-judicial/calculadora-nota-2026/",
   "name": "Cuerpo de Auxilio Judicial",
   "short_name": "Auxilio Judicial",

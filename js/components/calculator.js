@@ -332,9 +332,30 @@
     }
   }
 
+  function sparkline(rows) {
+    var scores = rows.map(function (row) { return row.s; }).filter(function (n) {
+      return typeof n === "number" && Number.isFinite(n);
+    });
+    if (scores.length < 2) return "";
+    var min = Math.min.apply(null, scores);
+    var max = Math.max.apply(null, scores);
+    var span = max - min || 1;
+    var w = 240;
+    var h = 48;
+    var pts = scores.map(function (score, i) {
+      var x = (i / (scores.length - 1)) * (w - 8) + 4;
+      var y = h - 6 - ((score - min) / span) * (h - 12);
+      return x.toFixed(1) + "," + y.toFixed(1);
+    }).join(" ");
+    return (
+      '<svg class="progress-chart" viewBox="0 0 ' + w + " " + h + '" width="240" height="48" role="img" aria-label="Evolución de la nota">' +
+      '<polyline fill="none" stroke="#173a56" stroke-width="2" points="' + pts + '"/></svg>'
+    );
+  }
+
   function saveProgress(config, result) {
     var score = typeof result.process_total === "number" ? result.process_total : result.opposition_total;
-    if (typeof score !== "number" || !Number.isFinite(score)) return;
+    if (typeof score !== "number" || !Number.isFinite(score)) return false;
     var rows = loadProgress(config.slug);
     rows.push({ t: Date.now(), s: Math.round(score * 10000) / 10000 });
     if (rows.length > 20) rows = rows.slice(-20);
@@ -343,7 +364,10 @@
     try {
       localStorage.setItem(progressKey(config.slug), JSON.stringify(rows));
       if (Number.isFinite(target)) localStorage.setItem(targetKey(config.slug), String(target));
-    } catch (ignore) {}
+      return true;
+    } catch (ignore) {
+      return false;
+    }
   }
 
   function renderProgress(config) {
@@ -360,11 +384,17 @@
     var delta = Math.round((last - first) * 10000) / 10000;
     var form = $("calc-form");
     var target = readTarget(config.slug, form);
-    var items = rows.slice(-8).map(function (row) {
+    var start = Math.max(0, rows.length - 8);
+    var items = rows.slice(start).map(function (row, idx) {
       var label = new Date(row.t).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
-      return "<li><span>" + escapeHtml(label) + "</span><strong>" + fmt(row.s, 2) + "</strong></li>";
+      var real = start + idx;
+      return (
+        "<li><span>" + escapeHtml(label) + "</span><strong>" + fmt(row.s, 2) +
+        '</strong> <button type="button" class="progress-del" data-i="' + real +
+        '" aria-label="Eliminar este simulacro">Eliminar</button></li>'
+      );
     }).join("");
-    var trend = "Mejora: " + (delta >= 0 ? "+" : "") + fmt(delta, 2);
+    var trend = "Evolución: " + (delta >= 0 ? "+" : "") + fmt(delta, 2) + " puntos";
     var goal = "";
     if (Number.isFinite(target) && target > 0) {
       var left = Math.round((target - last) * 10000) / 10000;
@@ -374,10 +404,11 @@
     panel.hidden = false;
     panel.innerHTML =
       "<h2>Mis simulacros</h2>" +
+      sparkline(rows) +
       '<ol class="progress-list">' + items + "</ol>" +
       '<p class="progress-trend">' + trend + "</p>" +
       goal +
-      '<p class="progress-note">Se guarda solo en este navegador. No hay cuenta ni servidor.</p>' +
+      '<p class="progress-note">Se guarda solo en este navegador si pulsas Guardar. No hay cuenta ni servidor.</p>' +
       '<p><a href="/oposiciones/progreso/index.html">Ver todo mi progreso</a></p>' +
       '<p><button type="button" class="button button-secondary" id="progress-clear">Borrar historial</button></p>';
     var clear = $("progress-clear");
@@ -389,6 +420,16 @@
         renderProgress(config);
       });
     }
+    panel.querySelectorAll(".progress-del").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var i = Number(btn.getAttribute("data-i"));
+        var next = loadProgress(config.slug).filter(function (_row, idx) { return idx !== i; });
+        try {
+          localStorage.setItem(progressKey(config.slug), JSON.stringify(next));
+        } catch (ignore) {}
+        renderProgress(config);
+      });
+    });
   }
 
   function showResult(config, result) {
@@ -413,7 +454,13 @@
     $("result-scenarios").innerHTML = renderScenarios(config, result);
     if ($("result-historical")) $("result-historical").innerHTML = renderHistorical(config, result);
     box.dataset.text = resultText(config, result);
-    saveProgress(config, result);
+    box._lastResult = result;
+    var saveBtn = $("save-progress");
+    if (saveBtn) {
+      saveBtn.hidden = false;
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Guardar en Mi progreso";
+    }
     renderProgress(config);
     if (typeof box.scrollIntoView === "function") {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -558,6 +605,7 @@
       hideToast();
       clearInvalid();
       if ($("result-placeholder")) $("result-placeholder").hidden = false;
+      if ($("save-progress")) $("save-progress").hidden = true;
       localStorage.removeItem("notaopo:" + config.slug);
       history.replaceState({}, "", location.pathname);
     });
@@ -631,9 +679,19 @@
       });
     });
 
-    $("print-result").addEventListener("click", function () {
-      window.print();
-    });
+    var saveBtn = $("save-progress");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var result = $("calc-result") && $("calc-result")._lastResult;
+        if (!result) return;
+        if (saveProgress(config, result)) {
+          flashButton(saveBtn, "Guardado");
+          renderProgress(config);
+        } else {
+          flashButton(saveBtn, "No se pudo guardar");
+        }
+      });
+    }
 
     document.querySelectorAll("[data-track='official-source']").forEach(function (link) {
       link.addEventListener("click", function () {
