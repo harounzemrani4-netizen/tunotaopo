@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260819u"
+ASSET_V = "20260819v"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
 PROGRESO_PATH = "oposiciones/progreso/"
 DATA_DIR = ROOT / "data" / "oposiciones"
@@ -462,6 +462,41 @@ def example_count(questions: int | None, kind: str) -> str:
     if q <= 50:
         return "Ej. 6"
     return "Ej. 10"
+
+
+def segmented(
+    name: str,
+    options: list[tuple[str, str]],
+    *,
+    legend: str = "",
+    checked: str | None = None,
+) -> str:
+    selected = options[0][0] if checked is None else checked
+    bits = []
+    for value, label in options:
+        on = " checked" if value == selected else ""
+        bits.append(
+            f'<label class="segment">'
+            f'<input type="radio" name="{escape(name)}" value="{escape(value)}"{on}>'
+            f"<span>{escape(label)}</span></label>"
+        )
+    heading = f'<p class="choice-group-label" id="label-{escape(name)}">{escape(legend)}</p>' if legend else ""
+    labelled = f' aria-labelledby="label-{escape(name)}"' if legend else f' aria-label="{escape(name)}"'
+    return (
+        f'<div class="choice-group">{heading}'
+        f'<div class="segmented" role="radiogroup"{labelled}>{"".join(bits)}</div></div>'
+    )
+
+
+def choice_chips(items: list[tuple[str, str, str]]) -> str:
+    bits = []
+    for name, value, label in items:
+        bits.append(
+            f'<label class="segment">'
+            f'<input type="checkbox" name="{escape(name)}" value="{escape(value)}">'
+            f"<span>{escape(label)}</span></label>"
+        )
+    return f'<div class="segmented segmented-wrap">{"".join(bits)}</div>'
 
 
 def number_input(
@@ -1828,15 +1863,18 @@ def pn_notas(item: dict) -> str:
 def pn_fisicas_page(item: dict) -> str:
     prefix = rel_prefix(3)
     family = "policia-nacional"
+    sex = segmented(
+        "sex",
+        [("hombres", "Hombres"), ("mujeres", "Mujeres")],
+        legend="Sexo",
+        checked="hombres",
+    )
     inner_form = f"""
     <p class="calc-hint">Tablas del anexo II. 0 en un ejercicio elimina. Hace falta media de 5. No es plaza.</p>
     <form id="fisicas-form" class="calculator" novalidate autocomplete="off">
       <fieldset class="stage">
         <legend>Categoría de la tabla</legend>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="sex" value="hombres" checked> Hombres</label>
-          <label class="choice"><input type="radio" name="sex" value="mujeres"> Mujeres</label>
-        </div>
+        {sex}
       </fieldset>
       <fieldset class="stage">
         <legend>Circuito de agilidad</legend>
@@ -1941,20 +1979,29 @@ GC_LANGS = [
 def gc_fisicas_page(item: dict) -> str:
     prefix = rel_prefix(3)
     family = "guardia-civil"
+    sex = segmented(
+        "sex",
+        [("hombres", "Hombres"), ("mujeres", "Mujeres")],
+        legend="Sexo",
+        checked="hombres",
+    )
+    band = segmented(
+        "band",
+        [
+            ("lt35", "Menor de 35 años"),
+            ("a35", "35 a 39 años"),
+            ("ge40", "40 años o más"),
+        ],
+        legend="Tramo de edad",
+        checked="lt35",
+    )
     inner_form = f"""
     <p class="calc-hint">Mínimos del apéndice II. Cuatro pruebas eliminatorias. Apto o no apto. No es la tabla de Policía Nacional ni una plaza.</p>
     <form id="gc-fisicas-form" class="calculator" novalidate autocomplete="off">
       <fieldset class="stage">
         <legend>Tabla oficial</legend>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="sex" value="hombres" checked> Hombres</label>
-          <label class="choice"><input type="radio" name="sex" value="mujeres"> Mujeres</label>
-        </div>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="band" value="lt35" checked> Menor de 35 años</label>
-          <label class="choice"><input type="radio" name="band" value="a35"> 35 a 39 años</label>
-          <label class="choice"><input type="radio" name="band" value="ge40"> 40 años o más</label>
-        </div>
+        {sex}
+        {band}
       </fieldset>
       <fieldset class="stage">
         <legend>2.000 metros (R2)</legend>
@@ -2063,27 +2110,59 @@ def gc_baremo_page(item: dict) -> str:
             '<option value="slp">Perfil SLP (solo FAS)</option>'
             "</select></div></div>"
         )
+    turno = segmented(
+        "turno",
+        [
+            ("libre", "Acceso libre"),
+            ("tropa", "Tropa y marinería"),
+            ("colegio", "Colegio de Guardias Jóvenes"),
+        ],
+        legend="Turno de acceso",
+        checked="libre",
+    )
+    tropa_rank = segmented(
+        "tropa_rank",
+        [
+            ("none", "Sin empleo de cabo"),
+            ("cabo", "Cabo (2,40)"),
+            ("cabo1", "Cabo 1.º (3,60)"),
+        ],
+        legend="Empleo",
+        checked="none",
+    )
+    academic = segmented(
+        "academic",
+        [
+            ("none", "Sin este mérito"),
+            ("bachiller", "Bachiller o titulación superior (2)"),
+            ("filologia", "Filología / Traducción (9)"),
+        ],
+        legend="Titulación",
+        checked="none",
+    )
+    fas = choice_chips(
+        [("fas", "1", "He pertenecido o pertenezco a las Fuerzas Armadas (necesario para SLP)")]
+    )
+    permisos = choice_chips(
+        [
+            ("perm_a", "1", "Permiso A o A2 (3)"),
+            ("perm_ce", "1", "Permiso C+E o D+E (3)"),
+            ("perm_c", "1", "Permiso C1, C, C1+E, D1, D o D1+E (2)"),
+        ]
+    )
     inner_form = f"""
     <p class="calc-hint">Solo méritos del apéndice I. Topes: 13,5 profesionales, 27 académicos, 4,5 otros, 45 en total. Si un título no está en el boletín, no suma.</p>
     <form id="gc-baremo-form" class="calculator" novalidate autocomplete="off">
       <fieldset class="stage">
         <legend>Turno</legend>
         <p class="help">El apartado A de méritos profesionales es exclusivo de tropa y marinería. Libre y Colegio usan el apartado B.</p>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="turno" value="libre" checked> Acceso libre</label>
-          <label class="choice"><input type="radio" name="turno" value="tropa"> Tropa y marinería</label>
-          <label class="choice"><input type="radio" name="turno" value="colegio"> Colegio de Guardias Jóvenes</label>
-        </div>
+        {turno}
       </fieldset>
       <fieldset class="stage" id="baremo-tropa" hidden>
         <legend>Méritos profesionales (tropa)</legend>
         <p class="help">0,90 puntos por año completo como tropa y marinería, hasta 9. El empleo máximo: cabo 2,40 o cabo 1.º 3,60. Tope del bloque: 13,5.</p>
         <div class="fields">{number_input("tropa_years", "Años completos de tropa", 40, required=False, placeholder="Ej. 5")}</div>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="tropa_rank" value="none" checked> Sin empleo de cabo</label>
-          <label class="choice"><input type="radio" name="tropa_rank" value="cabo"> Cabo (2,40)</label>
-          <label class="choice"><input type="radio" name="tropa_rank" value="cabo1"> Cabo 1.º (3,60)</label>
-        </div>
+        {tropa_rank}
       </fieldset>
       <fieldset class="stage" id="baremo-libre">
         <legend>Méritos profesionales (libre / Colegio)</legend>
@@ -2093,11 +2172,7 @@ def gc_baremo_page(item: dict) -> str:
       <fieldset class="stage">
         <legend>Nivel académico</legend>
         <p class="help">Solo una titulación en el punto 2.1: Bachiller o superior vale 2. Filología o Traducción e Interpretación en un idioma de interés vale 9 y no se suma el 2.1.</p>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="academic" value="none" checked> Sin este mérito</label>
-          <label class="choice"><input type="radio" name="academic" value="bachiller"> Bachiller o titulación superior (2)</label>
-          <label class="choice"><input type="radio" name="academic" value="filologia"> Filología / Traducción (9)</label>
-        </div>
+        {academic}
         <div class="fields" id="baremo-degree-lang" hidden>
           <div class="input-group"><label for="degree_lang">Idioma de esa titulación</label>
           <select class="input" id="degree_lang" name="degree_lang">{lang_opts}</select></div>
@@ -2106,15 +2181,13 @@ def gc_baremo_page(item: dict) -> str:
       <fieldset class="stage">
         <legend>Idiomas</legend>
         <p class="help">Por cada idioma solo cuenta la acreditación de mayor puntuación (B2 5, C1 7, C2 9). Idiomas del apéndice: alemán, árabe, francés, inglés, italiano, portugués y ruso. El SLP exige haber pertenecido a las FAS.</p>
-        <label class="choice"><input type="checkbox" name="fas" value="1"> He pertenecido o pertenezco a las Fuerzas Armadas (necesario para SLP)</label>
+        {fas}
         {''.join(lang_rows)}
       </fieldset>
       <fieldset class="stage">
         <legend>Permisos y deportista</legend>
         <p class="help">En cada grupo de permiso solo se barema uno. Deportista de alto nivel: últimos cinco años, un solo grupo, el de mayor puntuación.</p>
-        <label class="choice"><input type="checkbox" name="perm_a" value="1"> Permiso A o A2 (3)</label>
-        <label class="choice"><input type="checkbox" name="perm_ce" value="1"> Permiso C+E o D+E (3)</label>
-        <label class="choice"><input type="checkbox" name="perm_c" value="1"> Permiso C1, C, C1+E, D1, D o D1+E (2)</label>
+        {permisos}
         <div class="fields">
           <div class="input-group"><label for="dan_group">Deportista de alto nivel</label>
           <select class="input" id="dan_group" name="dan_group">

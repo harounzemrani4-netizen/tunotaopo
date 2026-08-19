@@ -18,7 +18,7 @@
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819u">
+  <link rel="stylesheet" href="/css/app.css?v=20260819v">
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -51,15 +51,8 @@
     <form id="gc-fisicas-form" class="calculator" novalidate autocomplete="off">
       <fieldset class="stage">
         <legend>Tabla oficial</legend>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="sex" value="hombres" checked> Hombres</label>
-          <label class="choice"><input type="radio" name="sex" value="mujeres"> Mujeres</label>
-        </div>
-        <div class="fields">
-          <label class="choice"><input type="radio" name="band" value="lt35" checked> Menor de 35 años</label>
-          <label class="choice"><input type="radio" name="band" value="a35"> 35 a 39 años</label>
-          <label class="choice"><input type="radio" name="band" value="ge40"> 40 años o más</label>
-        </div>
+        <div class="choice-group"><p class="choice-group-label" id="label-sex">Sexo</p><div class="segmented" role="radiogroup" aria-labelledby="label-sex"><label class="segment"><input type="radio" name="sex" value="hombres" checked><span>Hombres</span></label><label class="segment"><input type="radio" name="sex" value="mujeres"><span>Mujeres</span></label></div></div>
+        <div class="choice-group"><p class="choice-group-label" id="label-band">Tramo de edad</p><div class="segmented" role="radiogroup" aria-labelledby="label-band"><label class="segment"><input type="radio" name="band" value="lt35" checked><span>Menor de 35 años</span></label><label class="segment"><input type="radio" name="band" value="a35"><span>35 a 39 años</span></label><label class="segment"><input type="radio" name="band" value="ge40"><span>40 años o más</span></label></div></div>
       </fieldset>
       <fieldset class="stage">
         <legend>2.000 metros (R2)</legend>
@@ -141,9 +134,9 @@
     </div>
   </div>
 </footer>
-  <script src="/js/engine/gc-fisicas.js?v=20260819u" defer></script>
-<script src="/js/components/gc-fisicas.js?v=20260819u" defer></script>
+  <script src="/js/engine/gc-fisicas.js?v=20260819v" defer></script>
+<script src="/js/components/gc-fisicas.js?v=20260819v" defer></script>
 <script src="/js/components/analytics.js" defer></script>
-<script src="/js/site.js?v=20260819u" defer></script>
+<script src="/js/site.js?v=20260819v" defer></script>
 </body>
 </html>

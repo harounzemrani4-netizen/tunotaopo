@@ -256,6 +256,63 @@ a:hover { color: var(--color-primary-hover); }
   min-height: 2.75rem;
   font-weight: 600;
 }
+.choice-group { margin: 0 0 var(--space-4); }
+.choice-group:last-child { margin-bottom: 0; }
+.choice-group-label {
+  margin: 0 0 var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.segment {
+  position: relative;
+  display: block;
+  margin: 0;
+  cursor: pointer;
+}
+.segment input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+.segment span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  text-align: center;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.segment:hover span {
+  border-color: #b8c3cc;
+  background: #f7f9fb;
+}
+.segment input:checked + span {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.segment input:focus-visible + span {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
 .plain-table {
   width: 100%;
   border-collapse: collapse;
@@ -617,7 +674,11 @@ input::placeholder { color: #8a96a1; }
 .input:hover,
 input[type="number"]:hover { border-color: #b8c3cc; }
 .input:focus,
-input:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="text"]:focus,
+input[type="search"]:focus,
+select:focus,
 button:focus-visible,
 .button:focus-visible,
 a:focus-visible {
