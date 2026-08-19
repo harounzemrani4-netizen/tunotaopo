@@ -264,6 +264,15 @@ a:hover { color: var(--color-primary-hover); }
   font-size: 0.875rem;
 }
 
+.merit-note {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4);
+  background: #f7f9fb;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid #c4a574;
+  border-radius: var(--radius);
+}
+.merit-note p { margin: 0; font-size: 0.95rem; }
 .glossary {
   margin: 0 0 var(--space-5);
   padding: var(--space-4);

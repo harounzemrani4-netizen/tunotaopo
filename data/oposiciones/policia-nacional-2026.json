@@ -22,7 +22,7 @@
   "source_date": "2026-07-10",
   "last_verified": "2026-08-19",
   "formula_version": "2026.1",
-  "formula_human": "[A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra.",
+  "formula_human": "[A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra. Carrera o grado superior no suman.",
   "fuente_oficial": {
     "id": "boe-pn-2026",
     "title": "Resolución de 7 de julio de 2026, Dirección General de la Policía, Escala Básica",
@@ -71,8 +71,10 @@
     "maximum": 2,
     "rounding": 2,
     "optional": true,
-    "help": "Opcional. Solo si acreditas un nivel superior al A2. B1 vale 0,50; B2 vale 1; C1 vale 1,50; C2 vale 2. Aunque tengas varios idiomas, el máximo es 2 puntos. Si no aplica, déjalo vacío."
+    "input_label": "Puntos de idioma",
+    "help": "Opcional. Solo idiomas por encima del A2. B1 vale 0,50; B2 vale 1; C1 vale 1,50; C2 vale 2. Aunque tengas varios, el máximo es 2. Una carrera o un grado superior no van aquí: en esta convocatoria no suman puntos."
   },
+  "merit_note": "En Escala Básica, una carrera o un grado superior no suben la nota. El título exigido es Bachiller: si tienes más estudios, te sirve para presentarte, no para sumar puntos al test. El BOE solo suma, si ya eres apto: idiomas por encima del A2 (hasta 2), servicios en las Fuerzas Armadas y deportista de alto nivel.",
   "process_rounding": 4,
   "requirements": [
     {

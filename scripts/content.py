@@ -118,7 +118,7 @@ PAGES = {
         "how": [
             "La base 6.1.1 corrige el cuestionario de conocimientos con [A − E/(n−1)] × 10/P. Hay 100 preguntas y 3 alternativas, así que n = 3 y cada error resta medio acierto. Las preguntas en blanco no restan. El resultado va de 0 a 10.",
             "Hace falta un mínimo de 3 puntos. Eso no basta para seguir: solo continúan quienes, habiendo llegado a 3, obtienen las mejores notas hasta 1,75 aspirantes por cada una de las 2.163 plazas de turno libre. Esa nota de corte la marca el resto de opositores, no esta calculadora.",
-            "La calificación final de la oposición es conocimientos más la media de las físicas (base 6.11). Aquí se calcula el test. Si acreditas un idioma prioritario o de interés policial superior a A2, puedes sumar hasta 2 puntos (B1 0,50; B2 1; C1 1,50; C2 2)."
+            "La calificación final de la oposición es conocimientos más la media de las físicas (base 6.11). Aquí se calcula el test. Si acreditas un idioma prioritario o de interés policial superior a A2, puedes sumar hasta 2 puntos (B1 0,50; B2 1; C1 1,50; C2 2). Eso se suma a quienes ya son aptos, no al test suelto.",
         ],
         "example": [
             "70 aciertos y 20 errores: [70 − 20/2] × 10 / 100 = 6 puntos.",
@@ -129,18 +129,21 @@ PAGES = {
             "Aplicar −1/3 como en Guardia Civil. Aquí hay 3 opciones: se resta E/2.",
             "Tratar el 3 como nota de corte de plaza. Es el suelo legal, no el corte real.",
             "Sumar el psicotécnico a esta nota. Se califica apto/no apto y el tribunal fija su mínimo después.",
-            "Meter físicas como si fueran aciertos de test. Van en el anexo II, de 0 a 10 por ejercicio."
+            "Meter físicas como si fueran aciertos de test. Van en el anexo II, de 0 a 10 por ejercicio.",
+            "Meter una carrera o un grado superior como si subieran la nota. En Escala Básica el título exigido es Bachiller; esos estudios no puntúan.",
         ],
         "limits": [
             "No convierte marcas de circuito, dominadas o carrera en puntos del anexo II.",
             "No califica el psicotécnico: P y el mínimo los fija el tribunal.",
+            "No convierte una carrera, un máster o un grado superior en puntos: no están en el baremo de esta Escala Básica.",
             "No evalúa entrevista, reconocimiento médico ni méritos de Fuerzas Armadas o deportista de alto nivel ítem a ítem.",
             "No inventa cuántos aspirantes caben en el 1,75 por plaza."
         ],
         "faqs": [
             ("¿Con un 3 paso?", "Alcanzas el mínimo de la prueba. Seguir depende de estar entre las mejores notas, hasta 1,75 por plaza de turno libre. Eso se publica después."),
             ("¿Cada error cuánto resta?", "Medio acierto. n = 3, así que E/(n−1) = E/2."),
-            ("¿Y si anulan preguntas?", "P deja de ser 100. Indica las preguntas válidas.")
+            ("¿Y si anulan preguntas?", "P deja de ser 100. Indica las preguntas válidas."),
+            ("¿Suma una carrera o un grado superior?", "No en Escala Básica. El título para presentarte es Bachiller o equivalente. Tener más estudios no añade puntos al test. Lo que sí suma, si ya eres apto, son idiomas por encima del A2 (hasta 2 puntos), servicios en las Fuerzas Armadas y deportista de alto nivel (bases 6.12 a 6.14)."),
         ]
     }
 }

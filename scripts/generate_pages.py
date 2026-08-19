@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819g">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819h">
 </head>"""
 
 
@@ -250,8 +250,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819g" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819g" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819h" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819h" defer></script>')
     return "\n".join(tags)
 
 
@@ -448,8 +448,12 @@ def calculator_form(cfg: dict) -> str:
         blocks.append(
             f'<fieldset class="stage"><legend>{escape(m["label"])}</legend>'
             f'<p class="help">{escape(m.get("help", "Si no tienes este apartado o no quieres sumarlo, déjalo vacío."))}</p>'
-            f'<div class="fields fields-1">{number_input(m["id"], "Puntos ya baremados", mmax, required=False, step="0.001", hint="Opcional. Vacío = no se suma nada", placeholder=mph)}</div>'
+            f'<div class="fields fields-1">{number_input(m["id"], m.get("input_label", "Puntos ya baremados"), mmax, required=False, step="0.001", hint="Opcional. Vacío = no se suma nada", placeholder=mph)}</div>'
             "</fieldset>"
+        )
+    if cfg.get("merit_note"):
+        blocks.append(
+            f'<aside class="merit-note" role="note"><p>{escape(cfg["merit_note"])}</p></aside>'
         )
     if cfg.get("aggregate"):
         tmax = cfg["aggregate"].get("maximum")
