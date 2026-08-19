@@ -90,7 +90,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="{CSP}">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#12202b">
+  <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light">
   {extra}
   <title>{escape(title)}</title>
@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819b">
 </head>"""
 
 

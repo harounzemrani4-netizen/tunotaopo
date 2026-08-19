@@ -1,16 +1,16 @@
 :root {
-  --color-primary: #18475f;
-  --color-primary-hover: #12384c;
-  --color-text: #1a2430;
-  --color-text-muted: #5a6570;
-  --color-border: #d5d0c7;
-  --color-surface: #fffdf8;
-  --color-success: #1b5e3b;
-  --color-danger: #8a2b2b;
-  --color-warning: #7a5410;
-  --color-bg: #f4f1ea;
-  --color-header: #12202b;
-  --color-focus: #0b6e99;
+  --color-primary: #173a56;
+  --color-primary-hover: #10293d;
+  --color-text: #15202b;
+  --color-text-muted: #536170;
+  --color-border: #d4dce3;
+  --color-surface: #ffffff;
+  --color-success: #0f6b3c;
+  --color-danger: #9b1c1c;
+  --color-warning: #8a4b12;
+  --color-bg: #eef2f5;
+  --color-header: #0c1924;
+  --color-focus: #1d6fa8;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -83,7 +83,10 @@ a:hover { color: var(--color-primary-hover); }
 .site-header,
 .site-footer {
   background: var(--color-header);
-  color: #e8eef3;
+  color: #edf2f6;
+}
+.site-header {
+  border-bottom: 3px solid #c4a574;
 }
 .site-header a,
 .site-footer a { color: inherit; }
@@ -298,7 +301,7 @@ a:focus-visible {
 input:disabled,
 .button:disabled,
 button:disabled {
-  background: #eeebe3;
+  background: #e6eaee;
   color: var(--color-text-muted);
   cursor: not-allowed;
 }
@@ -330,7 +333,7 @@ button[type="submit"]:hover:not(:disabled) { background: var(--color-primary-hov
 .button-secondary,
 button[type="reset"],
 .btn-secondary {
-  background: #ece7dc;
+  background: #e8edf1;
   color: var(--color-text);
 }
 .button-ghost,
@@ -464,8 +467,8 @@ button[type="reset"],
   flex-direction: column;
   height: 100%;
 }
-.card { transition: border-color 160ms ease, transform 160ms ease; }
-.card:hover { border-color: #b7c0c6; }
+.card { transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease; }
+.card:hover { border-color: var(--color-primary); box-shadow: 0 8px 20px rgba(12, 25, 36, 0.08); }
 a.card:hover { transform: translateY(-2px); }
 .card-source {
   margin: var(--space-2) 0 0;
@@ -500,7 +503,7 @@ a.card:hover { transform: translateY(-2px); }
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 700;
-  background: #e4edf2;
+  background: #e8eef3;
   color: var(--color-primary);
   border-radius: 999px;
   padding: var(--space-1) var(--space-3);
