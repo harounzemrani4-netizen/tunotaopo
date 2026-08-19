@@ -193,6 +193,37 @@ def gc_fisicas_tables() -> str:
         ["50 m natación (máx. s)", "Hombres", "70,00", "71,00", "73,00"],
         ["50 m natación (máx. s)", "Mujeres", "81,00", "83,00", "88,00"],
     ]
+    examples = [
+        ("50 m natación · mujeres, menor de 35", "81,00 s", True, "Igualas el máximo. En esta prueba no hay un 8 ni un 9: es apto."),
+        ("50 m natación · mujeres, menor de 35", "85 s o más", False, "El tiempo es superior a 81,00 s. Da igual 85, 90 o 100: no apto."),
+        ("50 m natación · hombres, menor de 35", "70,00 s", True, "Igualas el máximo."),
+        ("50 m natación · hombres, menor de 35", "75 s o más", False, "Superas 70,00 s."),
+        ("2.000 m · hombres, menor de 35", "9:25", True, "Igualas el máximo."),
+        ("2.000 m · hombres, menor de 35", "9:30 o más", False, "Superas 9:25."),
+        ("Extensiones · mujeres, menor de 35", "11 o más", True, "Llegas al mínimo. 20 no suman más puntos: siguen siendo apto."),
+        ("Extensiones · mujeres, menor de 35", "10 o menos", False, "Quedas por debajo de 11."),
+    ]
+
+    def example_row(situation: str, mark: str, passed: bool, why: str) -> str:
+        verdict = "Apto" if passed else "No apto"
+        cls = "mark-apto" if passed else "mark-noapto"
+        return (
+            "<tr>"
+            f"<td>{escape(situation)}</td>"
+            f"<td>{escape(mark)}</td>"
+            f'<td><strong class="{cls}">{verdict}</strong></td>'
+            f"<td>{escape(why)}</td>"
+            "</tr>"
+        )
+
+    example_table = (
+        '<h3>Qué sale con la marca y qué sale si la pasas</h3>'
+        "<p>No hay nota de 0 a 10. Un segundo por encima del máximo o una extensión de menos es el mismo resultado: no apto. "
+        "La calculadora de arriba aplica tu sexo y tu tramo; aquí van ejemplos del apéndice II.</p>"
+        '<div class="table-wrap"><table class="plain-table">'
+        "<thead><tr><th>Situación</th><th>Tu marca</th><th>Resultado</th><th>Por qué</th></tr></thead>"
+        f"<tbody>{''.join(example_row(*row) for row in examples)}</tbody></table></div>"
+    )
     return (
         "<h2 id=\"tablas-fisicas\">Mínimos de las físicas (apéndice II)</h2>"
         "<p>Guardia Civil <strong>no puntúa de 0 a 10</strong> las físicas, a diferencia de Policía Nacional. "
@@ -203,6 +234,7 @@ def gc_fisicas_tables() -> str:
             ["Prueba", "Sexo", "Menor de 35", "35 a 39", "40 o más"],
             rows,
         )
+        + example_table
     )
 
 

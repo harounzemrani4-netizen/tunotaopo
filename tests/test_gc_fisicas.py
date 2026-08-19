@@ -86,6 +86,34 @@ def main() -> int:
     if low_push["passed"] or low_push["tests"][2]["passed"]:
         print("[FAIL] 10 extensiones mujeres <35 debe ser no apto")
         return 1
+    swim_ok = evaluate(
+        {
+            "sex": "mujeres",
+            "band": "lt35",
+            "run_min": "11",
+            "run_sec": "14",
+            "circuit": "16.00",
+            "pushups": "11",
+            "swim": "81",
+        }
+    )
+    if not swim_ok["passed"] or not swim_ok["tests"][3]["passed"]:
+        print("[FAIL] 81 s natación mujeres <35 debe ser apto")
+        return 1
+    swim_over = evaluate(
+        {
+            "sex": "mujeres",
+            "band": "lt35",
+            "run_min": "11",
+            "run_sec": "14",
+            "circuit": "16.00",
+            "pushups": "11",
+            "swim": "85",
+        }
+    )
+    if swim_over["passed"] or swim_over["tests"][3]["passed"]:
+        print("[FAIL] 85 s natación mujeres <35 debe ser no apto")
+        return 1
     print("Físicas GC: PASS")
     return 0
 

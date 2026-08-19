@@ -326,6 +326,8 @@ a:hover { color: var(--color-primary-hover); }
   vertical-align: top;
 }
 .plain-table th { color: var(--color-text-muted); font-size: 0.8125rem; }
+.mark-apto { color: var(--color-success); }
+.mark-noapto { color: var(--color-danger); }
 .table-wrap {
   overflow-x: auto;
   margin: 0 0 var(--space-5);
