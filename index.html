@@ -7,18 +7,18 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light">
-  
-  <title>NotaOpo — calculadoras de oposiciones por convocatoria</title>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "TuNotaOpo", "alternateName": "NotaOpo", "url": "https://tunotaopo.es/", "potentialAction": {"@type": "SearchAction", "target": "https://tunotaopo.es/oposiciones/?q={search_term_string}", "query-input": "required name=search_term_string"}}</script>
+  <title>TuNotaOpo — calculadoras de nota para oposiciones</title>
   <meta name="description" content="Calcula la nota de Guardia Civil, Policía Nacional, IIPP, Auxilio Judicial y Auxiliar AGE con la fórmula de la convocatoria en vigor. En el navegador, con fuente oficial.">
   <link rel="canonical" href="https://tunotaopo.es/">
-  <meta property="og:title" content="NotaOpo — calculadoras de oposiciones por convocatoria">
+  <meta property="og:title" content="TuNotaOpo — calculadoras de nota para oposiciones">
   <meta property="og:description" content="Calcula la nota de Guardia Civil, Policía Nacional, IIPP, Auxilio Judicial y Auxiliar AGE con la fórmula de la convocatoria en vigor. En el navegador, con fuente oficial.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tunotaopo.es/">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:site_name" content="NotaOpo">
+  <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/app.css?v=20260819k">
+  <link rel="stylesheet" href="css/app.css?v=20260819n">
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -26,11 +26,11 @@
   <div class="wrap header-inner">
     <a class="brand" href="index.html">
       <img src="assets/logo.svg" width="36" height="36" alt="">
-      <span>NotaOpo</span>
+      <span>TuNotaOpo</span>
     </a>
     <nav class="nav" aria-label="Principal">
+      <a href="oposiciones/index.html">Oposiciones</a>
       <a href="calculadoras/index.html">Calculadoras</a>
-      <a href="metodologia/index.html">Metodología</a>
       <a href="fuentes/index.html">Fuentes</a>
     </nav>
   </div>
@@ -39,9 +39,13 @@
   <main id="contenido" class="wrap">
     
     <div class="hero hero-home">
-      <p class="eyebrow">Calculadoras por oposición</p>
-      <h1>Tu nota, con la fórmula del BOE</h1>
-      <p class="lede">Elige la oposición, escribe aciertos y errores, y obtienes la nota con la convocatoria que está en vigor. El año que viene esta página sigue valiendo: si cambia el boletín, se actualiza la fórmula.</p>
+      <p class="eyebrow">TuNotaOpo</p>
+      <h1>Calculadoras de nota para oposiciones</h1>
+      <p class="lede">Tu nota, con la fórmula de la convocatoria oficial. Elige el cuerpo, escribe aciertos y errores, y calcula con el boletín en vigor.</p>
+      <form class="home-search" role="search" action="oposiciones/index.html" method="get">
+        <label for="opo-search">¿Qué oposición preparas?</label>
+        <input class="input" id="opo-search" name="q" type="search" placeholder="Policía Nacional" autocomplete="off">
+      </form>
       <ul class="proof">
         <li>Convocatoria en vigor</li>
         <li>Sin cuenta ni servidor</li>
@@ -49,24 +53,19 @@
       </ul>
     </div>
     <section>
-      <h2 class="section-title">Calculadoras listas</h2>
-      <div class="catalog"><a class="card catalog-card" href="calculadoras/guardia-civil/index.html"><div class="card-meta"><span class="badge">En vigor</span><span class="card-org">Dirección General de la Guardia Civil</span></div><h2>Guardia Civil</h2><p class="card-kind">Px = Y × (A − E/(N−1)) / T, con N = 4. Ortografía y gramática: no apto con 6 o más errores.</p><p class="card-source">BOE-A-2026-9982</p><span class="card-cta">Calcular nota</span></a><a class="card catalog-card" href="calculadoras/policia-nacional/index.html"><div class="card-meta"><span class="badge">En vigor</span><span class="card-org">Dirección General de la Policía</span></div><h2>Policía Nacional</h2><p class="card-kind">[A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra. Carrera o grado superior no suman.</p><p class="card-source">BOE-A-2026-15055</p><span class="card-cta">Calcular nota</span></a><a class="card catalog-card" href="calculadoras/ayudantes-iipp/index.html"><div class="card-meta"><span class="badge">En vigor</span><span class="card-org">Ministerio del Interior — Secretaría General de Instituciones Penitenciarias</span></div><h2>Ayudantes IIPP</h2><p class="card-kind">Puntuación directa = A − E/3 por parte. Calificación 0–20 solo con umbral del tribunal de esta convocatoria.</p><p class="card-source">BOE-A-2026-13226</p><span class="card-cta">Calcular nota</span></a><a class="card catalog-card" href="calculadoras/auxilio-judicial/index.html"><div class="card-meta"><span class="badge">En vigor</span><span class="card-org">Ministerio de la Presidencia</span></div><h2>Auxilio Judicial</h2><p class="card-kind">Ejercicio 1: 0,60×A − 0,15×E (mín. 30). Ejercicio 2: 1×A − 0,25×E (mín. 20).</p><p class="card-source">BOE-A-2025-27053</p><span class="card-cta">Calcular nota</span></a><a class="card catalog-card" href="calculadoras/auxiliar-administrativo-age/index.html"><div class="card-meta"><span class="badge">En vigor</span><span class="card-org">Secretaría de Estado de Función Pública</span></div><h2>Auxiliar AGE</h2><p class="card-kind">Puntuación directa = aciertos − errores/3 por parte. Sin transformada 0–50 hasta vincular criterios CPS de esta convocatoria.</p><p class="card-source">BOE-A-2025-26262</p><span class="card-cta">Calcular nota</span></a></div>
+      <h2 class="section-title">Oposiciones</h2>
+      <div class="catalog" id="opo-catalog"><a class="card catalog-card" href="oposiciones/guardia-civil/index.html"><div class="card-meta"><span class="badge">Convocatoria 2026</span><span class="card-org">Fuente: BOE-A-2026-9982</span></div><h2>Guardia Civil</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Inglés · Psicotécnico · Ortografía · Gramática · Méritos (fase de concurso)</p><span class="card-cta">Ver oposición</span></a><a class="card catalog-card" href="oposiciones/policia-nacional/index.html"><div class="card-meta"><span class="badge">Convocatoria 2026</span><span class="card-org">Fuente: BOE-A-2026-15055</span></div><h2>Policía Nacional</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Idiomas (nivel superior a A2) · Pruebas físicas</p><span class="card-cta">Ver oposición</span></a><a class="card catalog-card" href="oposiciones/ayudantes-iipp/index.html"><div class="card-meta"><span class="badge">Convocatoria 2026</span><span class="card-org">Fuente: BOE-A-2026-13226</span></div><h2>Ayudantes IIPP</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (cuestionario) · Segunda parte (supuestos)</p><span class="card-cta">Ver oposición</span></a><a class="card catalog-card" href="oposiciones/auxilio-judicial/index.html"><div class="card-meta"><span class="badge">Convocatoria 2026</span><span class="card-org">Fuente: BOE-A-2025-27053</span></div><h2>Auxilio Judicial</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primer ejercicio (teórico) · Segundo ejercicio (práctico)</p><span class="card-cta">Ver oposición</span></a><a class="card catalog-card" href="oposiciones/auxiliar-age/index.html"><div class="card-meta"><span class="badge">Convocatoria 2026</span><span class="card-org">Fuente: BOE-A-2025-26262</span></div><h2>Auxiliar AGE</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (teoría y psicotécnicos) · Segunda parte (ofimática)</p><span class="card-cta">Ver oposición</span></a></div>
     </section>
     <aside class="ad-slot is-reserved is-inactive" data-place="home-mid" data-size="rectangle" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-rectangle"></div></aside>
     <section class="content">
       <h2>Cómo funciona</h2>
       <ol class="how-steps">
-        <li><strong>Elige la oposición.</strong> Guardia Civil, Policía Nacional, IIPP… cada una usa su boletín. No es una media genérica para todos los años mezclados.</li>
+        <li><strong>Entra en tu oposición.</strong> Ahí está la calculadora, el proceso y lo que dice el boletín. No es una media genérica para todos los cuerpos.</li>
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
-        <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al <em>mínimo oficial</em>. Eso no es la nota de corte ni una plaza.</li>
+        <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al mínimo oficial. Eso no es la nota de corte ni una plaza.</li>
       </ol>
-      <p>No hay cuenta ni se envían tus números a un servidor. El cálculo se hace en tu navegador. Consulta la <a href="metodologia/index.html">metodología</a> y las <a href="fuentes/index.html">fuentes oficiales</a>.</p>
+      <p>No hay cuenta. El cálculo se hace en tu navegador. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
       <p>Herramienta independiente de cálculo orientativo basada en la convocatoria indicada. No está afiliada ni respaldada por el organismo convocante. Ante cualquier discrepancia prevalece siempre la convocatoria oficial.</p>
-      <aside class="note-quiet">
-        <h2>Aún no publicadas</h2>
-        <p>Investigadas, sin URL propia hasta que la fuente aplicable esté cerrada.</p>
-        <ul><li><strong>Policía Local / Policía Municipal</strong> — No hay una fórmula única: cada ayuntamiento o convocatoria autonómica publica las suyas. Dinos ciudad y boletín y la atamos a esa convocatoria.</li><li><strong>TAI — Técnicos Auxiliares de Informática AGE</strong> — Pendiente de cerrar por completo los criterios oficiales aplicables a la convocatoria en curso.</li><li><strong>TCAE SAS</strong> — Pendiente de un proceso o convocatoria que permita vincular la herramienta al procedimiento vigente.</li></ul>
-      </aside>
     </section>
     
   </main>
@@ -74,10 +73,11 @@
   <footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
-      <p>NotaOpo</p>
+      <p>TuNotaOpo</p>
       <p class="footer-tag">Cálculo orientativo. Prevalece la convocatoria oficial.</p>
     </div>
     <div class="footer-links">
+      <a href="oposiciones/index.html">Oposiciones</a>
       <a href="metodologia/index.html">Metodología</a>
       <a href="fuentes/index.html">Fuentes</a>
       <a href="privacidad/index.html">Privacidad</a>

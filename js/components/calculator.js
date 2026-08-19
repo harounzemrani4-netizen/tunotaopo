@@ -302,6 +302,66 @@
     return lines.join("\n");
   }
 
+  function progressKey(slug) {
+    return "tunotaopo:progress:" + slug;
+  }
+
+  function loadProgress(slug) {
+    try {
+      var raw = localStorage.getItem(progressKey(slug));
+      var rows = raw ? JSON.parse(raw) : [];
+      return Array.isArray(rows) ? rows : [];
+    } catch (ignore) {
+      return [];
+    }
+  }
+
+  function saveProgress(config, result) {
+    var score = typeof result.process_total === "number" ? result.process_total : result.opposition_total;
+    if (typeof score !== "number" || !Number.isFinite(score)) return;
+    var rows = loadProgress(config.slug);
+    rows.push({ t: Date.now(), s: Math.round(score * 10000) / 10000 });
+    if (rows.length > 20) rows = rows.slice(-20);
+    try {
+      localStorage.setItem(progressKey(config.slug), JSON.stringify(rows));
+    } catch (ignore) {}
+  }
+
+  function renderProgress(config) {
+    var panel = $("progress-panel");
+    if (!panel) return;
+    var rows = loadProgress(config.slug);
+    if (!rows.length) {
+      panel.hidden = true;
+      panel.innerHTML = "";
+      return;
+    }
+    var first = rows[0].s;
+    var last = rows[rows.length - 1].s;
+    var delta = Math.round((last - first) * 10000) / 10000;
+    var form = $("calc-form");
+    var targetEl = form && form.elements.target_score;
+    var target = targetEl && targetEl.value ? Number(String(targetEl.value).replace(",", ".")) : NaN;
+    var items = rows.slice(-8).map(function (row) {
+      var label = new Date(row.t).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+      return "<li><span>" + escapeHtml(label) + "</span><strong>" + fmt(row.s, 2) + "</strong></li>";
+    }).join("");
+    var trend = delta >= 0 ? "↗ +" + fmt(delta, 2) : "↘ " + fmt(delta, 2);
+    var goal = "";
+    if (Number.isFinite(target) && target > 0) {
+      var left = Math.round((target - last) * 10000) / 10000;
+      if (left > 0) goal = "<p>Objetivo: " + fmt(target, 2) + ". Te faltan " + fmt(left, 2) + " puntos.</p>";
+      else goal = "<p>Objetivo: " + fmt(target, 2) + ". Ya lo superas en este simulacro.</p>";
+    }
+    panel.hidden = false;
+    panel.innerHTML =
+      "<h2>Mis últimos simulacros</h2>" +
+      '<ol class="progress-list">' + items + "</ol>" +
+      '<p class="progress-trend">' + trend + " desde el primero guardado en este navegador.</p>" +
+      goal +
+      '<p class="progress-note">Se guarda solo en este dispositivo. No hay cuenta ni servidor.</p>';
+  }
+
   function showResult(config, result) {
     var box = $("calc-result");
     hideToast();
@@ -324,6 +384,8 @@
     $("result-scenarios").innerHTML = renderScenarios(config, result);
     if ($("result-historical")) $("result-historical").innerHTML = renderHistorical(config, result);
     box.dataset.text = resultText(config, result);
+    saveProgress(config, result);
+    renderProgress(config);
     if (typeof box.scrollIntoView === "function") {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       box.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
@@ -546,6 +608,7 @@
     if (!fromQuery.rejected && Object.keys(fromQuery.data).length) {
       form.requestSubmit();
     }
+    renderProgress(config);
   }
 
   root.NotaOpoCalculator = { bind: bind };

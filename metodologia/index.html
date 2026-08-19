@@ -8,17 +8,17 @@
   <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light">
   
-  <title>Metodología de cálculo NotaOpo</title>
-  <meta name="description" content="Cómo NotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
+  <title>Metodología de cálculo TuNotaOpo</title>
+  <meta name="description" content="Cómo TuNotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <link rel="canonical" href="https://tunotaopo.es/metodologia/">
-  <meta property="og:title" content="Metodología de cálculo NotaOpo">
-  <meta property="og:description" content="Cómo NotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
+  <meta property="og:title" content="Metodología de cálculo TuNotaOpo">
+  <meta property="og:description" content="Cómo TuNotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tunotaopo.es/metodologia/">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:site_name" content="NotaOpo">
+  <meta property="og:site_name" content="TuNotaOpo">
   <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/app.css?v=20260819k">
+  <link rel="stylesheet" href="../css/app.css?v=20260819n">
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -26,11 +26,11 @@
   <div class="wrap header-inner">
     <a class="brand" href="../index.html">
       <img src="../assets/logo.svg" width="36" height="36" alt="">
-      <span>NotaOpo</span>
+      <span>TuNotaOpo</span>
     </a>
     <nav class="nav" aria-label="Principal">
+      <a href="../oposiciones/index.html">Oposiciones</a>
       <a href="../calculadoras/index.html">Calculadoras</a>
-      <a href="../metodologia/index.html">Metodología</a>
       <a href="../fuentes/index.html">Fuentes</a>
     </nav>
   </div>
@@ -63,7 +63,7 @@
       <p>Cada oposición tiene una <strong>página estable</strong>. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, se actualiza esa misma dirección y la convocatoria anterior queda en una URL de archivo. No se mezcla la fórmula de un año con la de otro.</p>
       <p>La fórmula sale del boletín enlazado en cada página y en <a href="../fuentes/index.html">Fuentes oficiales</a>, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.</p>
       <p>No hay cuenta. El cálculo se ejecuta en tu navegador: aciertos y errores no se envían a un servidor. Si usas «Compartir URL», los números van en la dirección, no en una cookie, y se descartan al cambiar de página.</p>
-      <p>Ante cualquier discrepancia prevalece la convocatoria oficial. NotaOpo es independiente: no está afiliada ni respaldada por el organismo convocante.</p>
+      <p>Ante cualquier discrepancia prevalece la convocatoria oficial. TuNotaOpo es independiente: no está afiliada ni respaldada por el organismo convocante.</p>
 
       <h2 id="glosario">Tres ideas que no son lo mismo</h2>
       <aside class="glossary" role="note">
@@ -88,7 +88,7 @@
 
       <h2 id="motor">Cómo calcula el motor</h2>
       <p>Cada calculadora arranca de un archivo de datos con la convocatoria, la fórmula, la fuente y la fecha de verificación. El motor (notaopo-engine-2.0) interpreta modelos; no hay lógica del tipo «si la oposición es Guardia Civil haz esto».</p>
-      <dl class="source-facts"><div><dt>Puntuación neta</dt><dd>Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.</dd></div><div><dt>Escala oficial</dt><dd>La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.</dd></div><div><dt>Valor fijo</dt><dd>Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.</dd></div><div><dt>Apto / no apto</dt><dd>No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.</dd></div><div><dt>Transformada</dt><dd>Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, NotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».</dd></div><div><dt>Suma y concurso</dt><dd>Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.</dd></div></dl>
+      <dl class="source-facts"><div><dt>Puntuación neta</dt><dd>Aciertos por el valor de cada acierto, menos errores por la penalización. En Auxiliar AGE y Ayudantes IIPP cada error resta un tercio: A − E/3. El resultado es puntuación directa, no una nota sobre 10 ni sobre 50.</dd></div><div><dt>Escala oficial</dt><dd>La convocatoria fija un máximo Y (o 10) y un número de preguntas válidas T (o P). Guardia Civil usa Px = Y × (A − E/(N−1)) / T, con N = 4. Policía Nacional usa [A − E/(n−1)] × 10/P, con n = 3. No es la misma cuenta.</dd></div><div><dt>Valor fijo</dt><dd>Cada acierto y cada error valen lo que dice el boletín, no 1 y 1/3. Auxilio Judicial: 0,60/−0,15 en el teórico y 1/−0,25 en el práctico.</dd></div><div><dt>Apto / no apto</dt><dd>No hay nota numérica. En Guardia Civil, ortografía y gramática excluyen con 6 o más errores. Un 5 no es no apto.</dd></div><div><dt>Transformada</dt><dd>Pasa de puntuación directa a una escala (por ejemplo 0–20) con un umbral que publica el tribunal. Sin ese umbral de esta convocatoria, TuNotaOpo no interpola ni afirma el 10. En IIPP el recuadro es opcional y vacío significa «sin umbral».</dd></div><div><dt>Suma y concurso</dt><dd>Las pruebas que puntúan se suman. El concurso o los idiomas, si los escribes, son un total ya baremado: la casilla no calcula ítem a ítem.</dd></div></dl>
       <p>Cuando la prueba tiene un mínimo, el motor también puede decir, con tus aciertos, cuántos errores te puedes permitir, o cuántos aciertos harían falta para un objetivo. Solo si la cuenta es resoluble con esa fórmula.</p>
 
       <h2 id="oposiciones">Por oposición</h2>
@@ -173,10 +173,6 @@
       <p>Antes de publicar una calculadora se ejecutan casos independientes: todo correcto, todo a cero, mezcla, justo el mínimo, justo por debajo, apto/no apto, desbordes (más aciertos que preguntas) y valores no enteros donde toca entero. Si el BOE y el motor no coinciden, prevalece el BOE y no se publica esa cuenta.</p>
       <p>Última revisión de estas reglas: 19 de agosto de 2026. Las normas concretas están en <a href="../fuentes/index.html">Fuentes oficiales</a>.</p>
 
-      <h2>Próximas calculadoras</h2>
-      <p>No se abre una URL de cálculo hasta que hay convocatoria y fórmula cerradas.</p>
-      <ul><li><strong>Policía Local / Policía Municipal</strong> — No hay una fórmula única: cada ayuntamiento o convocatoria autonómica publica las suyas. Dinos ciudad y boletín y la atamos a esa convocatoria.</li><li><strong>TAI — Técnicos Auxiliares de Informática AGE</strong> — Pendiente de cerrar por completo los criterios oficiales aplicables a la convocatoria en curso.</li><li><strong>TCAE SAS</strong> — Pendiente de un proceso o convocatoria que permita vincular la herramienta al procedimiento vigente.</li></ul>
-
       <p class="notice">Herramienta independiente de cálculo orientativo basada en la convocatoria indicada. No está afiliada ni respaldada por el organismo convocante. Ante cualquier discrepancia prevalece siempre la convocatoria oficial.</p>
     </section>
     
@@ -185,10 +181,11 @@
   <footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
-      <p>NotaOpo</p>
+      <p>TuNotaOpo</p>
       <p class="footer-tag">Cálculo orientativo. Prevalece la convocatoria oficial.</p>
     </div>
     <div class="footer-links">
+      <a href="../oposiciones/index.html">Oposiciones</a>
       <a href="../metodologia/index.html">Metodología</a>
       <a href="../fuentes/index.html">Fuentes</a>
       <a href="../privacidad/index.html">Privacidad</a>

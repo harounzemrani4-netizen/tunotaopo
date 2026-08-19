@@ -28,6 +28,7 @@ PUBLIC_DIRS = (
     "fuentes",
     "js",
     "metodologia",
+    "oposiciones",
     "privacidad",
 )
 
