@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260819t"
+ASSET_V = "20260819u"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
 PROGRESO_PATH = "oposiciones/progreso/"
 DATA_DIR = ROOT / "data" / "oposiciones"
@@ -419,7 +419,6 @@ def page_shell(
     website: bool = False,
     tools: tuple[str, ...] = (),
 ) -> str:
-    prefix = rel_prefix(depth)
     canonical = f"{SITE}/{path}" if path else f"{SITE}/"
     extras = []
     if noindex:
@@ -432,17 +431,17 @@ def page_shell(
         resolved = ("calculator",) + resolved
     if fisicas:
         resolved = ("fisicas",) + resolved
-    return f"""{head(title, description, canonical, prefix, extra_head)}
-<body data-root="{prefix}">
+    return f"""{head(title, description, canonical, "/", extra_head)}
+<body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
-  {nav(prefix)}
+  {nav("/")}
   <div class="wrap">{ad_slot("top")}</div>
   <main id="contenido" class="wrap">
     {body}
   </main>
   <div class="wrap">{ad_slot("bottom")}</div>
-  {footer(prefix)}
-  {scripts(prefix, resolved)}
+  {footer("/")}
+  {scripts("/", resolved)}
 </body>
 </html>
 """
@@ -890,7 +889,7 @@ def home(all_items: list[dict]) -> str:
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al mínimo oficial. Eso no es la nota de corte ni una plaza.</li>
       </ol>
-      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="{PROGRESO_PATH}index.html">Mi progreso</a>. <a href="fuentes/index.html">Fuentes oficiales</a>.</p>
+      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="/{PROGRESO_PATH}index.html">Mi progreso</a>. <a href="/fuentes/index.html">Fuentes oficiales</a>.</p>
       <p>{escape(DISCLAIMER)}</p>
     </section>
     """
@@ -2384,7 +2383,7 @@ def build() -> None:
                 "El cálculo se ejecuta en el navegador. El historial de simulacros, si lo usas, se guarda solo en este dispositivo (almacenamiento local) y no se envía a un servidor. Puedes verlo en Mi progreso.",
                 "No hay cookies de analítica, AdSense ni redes publicitarias activas. Cuando exista un Publisher ID y un consentimiento válido, esta página se actualizará y se activará un CMP antes de cargar esos scripts.",
             ],
-            extra=f'<p><a href="{rel_prefix(1)}{PROGRESO_PATH}index.html">Abrir Mi progreso</a>.</p>',
+            extra='<p><a href="/oposiciones/progreso/index.html">Abrir Mi progreso</a>.</p>',
             lead=legal_identity(),
         ),
     )
@@ -2429,8 +2428,8 @@ def build() -> None:
       <p class="eyebrow">Error 404</p>
       <h1>Esta página no existe</h1>
       <p class="lede">Comprueba la dirección o entra por el índice. No hay calculadoras ocultas ni URLs por provincia.</p>
-      <p class="hero-actions"><a class="button button-primary" href="index.html">Ir al inicio</a>
-      <a class="button button-secondary" href="oposiciones/index.html">Ver oposiciones</a></p>
+      <p class="hero-actions"><a class="button button-primary" href="/index.html">Ir al inicio</a>
+      <a class="button button-secondary" href="/oposiciones/index.html">Ver oposiciones</a></p>
     </div>
             """,
             noindex=True,
