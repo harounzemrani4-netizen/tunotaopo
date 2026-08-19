@@ -48,6 +48,7 @@ body {
 main {
   flex: 1 0 auto;
   align-self: center;
+  width: 100%;
   padding-bottom: var(--space-8);
 }
 .site-header,
@@ -76,8 +77,8 @@ a:hover { color: var(--color-primary-hover); }
   max-width: var(--max);
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1rem, 4vw, 2.5rem);
-  padding-right: clamp(1rem, 4vw, 2.5rem);
+  padding-left: clamp(1.25rem, 5.5vw, 2.5rem);
+  padding-right: clamp(1.25rem, 5.5vw, 2.5rem);
 }
 
 .site-header,
@@ -124,9 +125,10 @@ a:hover { color: var(--color-primary-hover); }
 .page h1 {
   margin: 0 0 var(--space-2);
   font-family: var(--serif);
-  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-size: clamp(1.5rem, 6.5vw, 2.35rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.22;
+  overflow-wrap: break-word;
 }
 .lede {
   margin: 0;
@@ -490,7 +492,7 @@ a.card:hover { transform: translateY(-2px); }
   align-items: center;
 }
 .card-org,
-.card-kind { margin: 0; color: var(--color-text-muted); font-size: 0.875rem; }
+.card-kind { margin: 0; color: var(--color-text-muted); font-size: 0.875rem; overflow-wrap: break-word; }
 .card-cta {
   display: inline-block;
   margin-top: auto;
@@ -615,6 +617,52 @@ a.card:hover { transform: translateY(-2px); }
   height: 1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+}
+
+@media (max-width: 720px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    padding: var(--space-3) 0 var(--space-2);
+  }
+  .brand { min-height: 44px; }
+  .nav {
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid rgba(237, 242, 246, 0.16);
+    padding-top: var(--space-1);
+  }
+  .nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    border-bottom: 1px solid rgba(237, 242, 246, 0.1);
+  }
+  .proof {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .proof li { text-align: center; }
+  .lede { font-size: 1rem; }
+  .hero-home { padding: var(--space-5) 0 var(--space-4); }
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footer-links {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  .footer-links a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .input-group label { min-height: 0; }
+  .catalog-card h2 { font-size: 1.05rem; }
 }
 
 @media (max-width: 560px) {

@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819b">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819c">
 </head>"""
 
 
