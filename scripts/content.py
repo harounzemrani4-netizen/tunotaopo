@@ -7,7 +7,7 @@ DISCLAIMER = (
 PAGES = {
     "guardia-civil-2026": {
         "how": [
-            "La base 7.3 fija la puntuación de cada prueba que suma como Px = Y × (A − E/(N−1)) / T. En 2026, N = 4, así que cada error resta un tercio de acierto. Las preguntas en blanco no restan.",
+            "La base 7.3 fija la puntuación de cada prueba que suma como Px = Y × (A − E/(N−1)) / T. En esta convocatoria, N = 4, así que cada error resta un tercio de acierto. Las preguntas en blanco no restan.",
             "Conocimientos: Y = 100 y T = 100 (mínimo 50). Inglés: Y = 20 y T = 20 (mínimo 8). Psicotécnico de aptitudes intelectuales: Y = 30 y T = 80 (mínimo 12). T es el número de preguntas válidas del cuestionario: si el tribunal anula alguna y entra reserva, T cambia.",
             "Ortografía y gramática no puntúan. La base 7.4 y 7.5 las califica como apto o no apto: seis o más errores excluyen del proceso. Superar el mínimo de una prueba no equivale a obtener plaza ni a un corte publicado después.",
             "La fase de oposición es la suma de las tres pruebas que puntúan (máximo 150). El concurso, si lo introduces, es un total ya baremado entre 0 y 45 (base 7.1). El total del proceso es la suma de ambas fases (base 7.9)."

@@ -164,6 +164,20 @@ a:hover { color: var(--color-primary-hover); }
   font-size: 1.25rem;
   margin: 0 0 var(--space-4);
 }
+.convocatoria-line,
+.archive-note {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  max-width: var(--read);
+  font-size: 0.95rem;
+}
+.archive-note {
+  background: #f7f9fb;
+  color: var(--color-text-muted);
+}
 .formula-note {
   margin: var(--space-4) 0 0;
   padding: var(--space-3) var(--space-4);

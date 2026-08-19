@@ -103,7 +103,7 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="NotaOpo">
   <link rel="icon" href="{prefix}assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819e">
+  <link rel="stylesheet" href="{prefix}css/app.css?v=20260819f">
 </head>"""
 
 
@@ -151,23 +151,59 @@ def ad_slot(place: str, size: str | None = None) -> str:
     )
 
 
+FEATURED_FAMILIES = [
+    "guardia-civil",
+    "policia-nacional",
+    "ayudantes-iipp",
+    "auxilio-judicial",
+    "auxiliar-age",
+]
+
+
+def family_id(item: dict) -> str:
+    if item.get("family"):
+        return item["family"]
+    slug = item.get("slug", "")
+    return slug.rsplit("-", 1)[0] if slug else slug
+
+
+def live_path(item: dict) -> str:
+    if item.get("is_current") and item.get("family_path"):
+        return item["family_path"]
+    return item["path"]
+
+
+def path_depth(path: str) -> int:
+    return len([part for part in path.strip("/").split("/") if part])
+
+
+def current_by_family(items: list[dict]) -> list[dict]:
+    chosen: dict[str, dict] = {}
+    for item in items:
+        fid = family_id(item)
+        prev = chosen.get(fid)
+        if prev is None:
+            chosen[fid] = item
+            continue
+        if item.get("is_current") and not prev.get("is_current"):
+            chosen[fid] = item
+        elif item.get("is_current") == prev.get("is_current") and (item.get("anio") or 0) > (prev.get("anio") or 0):
+            chosen[fid] = item
+    order = {fid: i for i, fid in enumerate(FEATURED_FAMILIES)}
+    return sorted(chosen.values(), key=lambda x: order.get(family_id(x), 99))
+
+
 def catalog_cards(items: list[dict], href_prefix: str = "") -> str:
-    featured = [
-        "guardia-civil-2026",
-        "policia-nacional-2026",
-        "ayudantes-iipp-2026",
-        "auxilio-judicial-2026",
-        "auxiliar-age-2026",
-    ]
-    order = {slug: i for i, slug in enumerate(featured)}
     cards = []
-    for item in sorted(items, key=lambda x: order.get(x["slug"], 99)):
+    for item in current_by_family(items):
         org = item["administracion"].split(",")[0].split(" / ")[0]
+        name = item.get("family_name") or item["short_name"]
+        badge = "En vigor" if item.get("is_current") else str(item.get("anio", ""))
         cards.append(
-            f'<a class="card catalog-card" href="{href_prefix}{item["path"]}index.html">'
-            f'<div class="card-meta"><span class="badge">{escape(str(item["anio"]))}</span>'
+            f'<a class="card catalog-card" href="{href_prefix}{live_path(item)}index.html">'
+            f'<div class="card-meta"><span class="badge">{escape(badge)}</span>'
             f'<span class="card-org">{escape(org)}</span></div>'
-            f"<h2>{escape(item['short_name'])}</h2>"
+            f"<h2>{escape(name)}</h2>"
             f'<p class="card-kind">{escape(item.get("formula_human") or calc_kind(item))}</p>'
             f'<p class="card-source">{escape(item.get("source_identifier", ""))}</p>'
             f'<span class="card-cta">Calcular nota</span></a>'
@@ -214,8 +250,8 @@ def scripts(prefix: str, calculator: bool) -> str:
         f'<script src="{prefix}js/site.js" defer></script>',
     ]
     if calculator:
-        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819e" defer></script>')
-        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819e" defer></script>')
+        tags.insert(1, f'<script src="{prefix}js/engine/scoring.js?v=20260819f" defer></script>')
+        tags.insert(2, f'<script src="{prefix}js/components/calculator.js?v=20260819f" defer></script>')
     return "\n".join(tags)
 
 
@@ -475,13 +511,15 @@ def calculator_form(cfg: dict) -> str:
 
 def related_cards(current: dict, all_items: list[dict], prefix: str) -> str:
     cards = []
-    for item in all_items:
-        if item["slug"] == current["slug"]:
+    current_family = family_id(current)
+    for item in current_by_family(all_items):
+        if family_id(item) == current_family:
             continue
-        href = prefix + item["path"] + "index.html"
+        href = prefix + live_path(item) + "index.html"
+        name = item.get("family_name") or item["short_name"]
         cards.append(
-            f'<a class="card" href="{href}"><span class="badge">{escape(str(item["anio"]))}</span>'
-            f'<h3>{escape(item["short_name"])}</h3><p>{escape(calc_kind(item))}</p>'
+            f'<a class="card" href="{href}"><span class="badge">En vigor</span>'
+            f'<h3>{escape(name)}</h3><p>{escape(calc_kind(item))}</p>'
             f'<span class="card-cta">Calcular nota</span></a>'
         )
     if not cards:
@@ -527,20 +565,52 @@ def source_link(cfg: dict) -> str:
     return f'<a class="source-link" data-track="official-source" href="{escape(url)}">Ver fuente oficial</a>'
 
 
-def calculator_page(cfg: dict, all_items: list[dict]) -> str:
+def calculator_page(
+    cfg: dict,
+    all_items: list[dict],
+    page_path: str,
+    canonical_path: str,
+    variant: str,
+) -> str:
     copy = PAGES[cfg["slug"]]
-    depth = 3
+    depth = path_depth(page_path)
     prefix = rel_prefix(depth)
     src = cfg.get("fuente_oficial") or {}
-    body = f"""
-    {crumbs([
+    family_name = cfg.get("family_name") or cfg["short_name"]
+    family_path = cfg.get("family_path") or cfg["path"]
+    crumb_items = [
         ("Inicio", prefix + "index.html"),
         ("Calculadoras", prefix + "calculadoras/index.html"),
-        (cfg["short_name"], ""),
-    ])}
+    ]
+    if variant == "archive":
+        crumb_items.append((family_name, prefix + family_path + "index.html"))
+        crumb_items.append((f"Convocatoria {cfg['anio']}", ""))
+        banner = (
+            f'<p class="archive-note">Esta URL guarda la convocatoria de {escape(str(cfg["anio"]))} '
+            f"({escape(cfg.get('source_identifier', ''))}). La calculadora estable de {escape(family_name)}, "
+            f"la que se actualiza cuando sale el siguiente boletín, está en "
+            f'<a href="{prefix}{family_path}index.html">{escape(family_name)}</a>.</p>'
+        )
+    else:
+        crumb_items.append((family_name, ""))
+        banner = (
+            f'<p class="convocatoria-line"><strong>Convocatoria en vigor:</strong> {escape(cfg["convocatoria"])} '
+            f'({escape(cfg.get("source_identifier", ""))}). Esta página no caduca el 1 de enero: cuando salga el '
+            "siguiente boletín, actualizamos la fórmula aquí y dejamos la anterior en archivo.</p>"
+        )
+    faqs = [
+        (
+            "¿Sirve el año que viene?",
+            "Sí. Esta es la calculadora de la oposición, no de un único año. Usas siempre la convocatoria en vigor. "
+            "Si el próximo boletín cambia la fórmula, se actualiza esta página y la anterior queda en una URL de archivo.",
+        )
+    ] + list(copy["faqs"])
+    body = f"""
+    {crumbs(crumb_items)}
     <div class="hero">
       <h1>{escape(cfg["h1"])}</h1>
       <p class="lede">{escape(cfg["lede"])}</p>
+      {banner}
       <div class="formula-note">
         <h2>Fórmula de esta convocatoria</h2>
         <p>{escape(cfg["formula_human"])}</p>
@@ -574,13 +644,13 @@ def calculator_page(cfg: dict, all_items: list[dict]) -> str:
       <p>El enlace abre el boletín. Consultado el {escape(str(src.get("accessed_at", cfg.get("last_verified", ""))))}.</p>
       <p>{source_link(cfg)}.</p>
       {list_block("Qué no calcula esta página", copy["limits"])}
-      {faq_block(copy["faqs"])}
+      {faq_block(faqs)}
       {affiliate_slot()}
       {related_cards(cfg, all_items, prefix)}
     </section>
     <script type="application/json" id="oposicion-config">{json.dumps(cfg, ensure_ascii=False)}</script>
     """
-    return page_shell(cfg["title"], cfg["meta_description"], cfg["path"], depth, body, calculator=True)
+    return page_shell(cfg["title"], cfg["meta_description"], canonical_path, depth, body, calculator=True)
 
 
 def home(all_items: list[dict]) -> str:
@@ -590,11 +660,11 @@ def home(all_items: list[dict]) -> str:
     )
     body = f"""
     <div class="hero hero-home">
-      <p class="eyebrow">Calculadoras por convocatoria</p>
+      <p class="eyebrow">Calculadoras por oposición</p>
       <h1>Tu nota, con la fórmula del BOE</h1>
-      <p class="lede">Elige la convocatoria, escribe aciertos y errores, y obtienes la nota con la fórmula del boletín. No es una media genérica ni un corte inventado.</p>
+      <p class="lede">Elige la oposición, escribe aciertos y errores, y obtienes la nota con la convocatoria que está en vigor. El año que viene esta página sigue valiendo: si cambia el boletín, se actualiza la fórmula.</p>
       <ul class="proof">
-        <li>Fórmula del BOE</li>
+        <li>Convocatoria en vigor</li>
         <li>Sin cuenta ni servidor</li>
         <li>Fuente oficial enlazada</li>
       </ul>
@@ -607,7 +677,7 @@ def home(all_items: list[dict]) -> str:
     <section class="content">
       <h2>Cómo funciona</h2>
       <ol class="how-steps">
-        <li><strong>Elige la oposición.</strong> Cada calculadora está atada a un boletín concreto (BOE) y a un apartado de las bases.</li>
+        <li><strong>Elige la oposición.</strong> Guardia Civil, Policía Nacional, IIPP… cada una usa su boletín. No es una media genérica para todos los años mezclados.</li>
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al <em>mínimo oficial</em>. Eso no es la nota de corte ni una plaza.</li>
       </ol>
@@ -622,7 +692,7 @@ def home(all_items: list[dict]) -> str:
     """
     return page_shell(
         "NotaOpo — calculadoras de oposiciones por convocatoria",
-        "Calcula la nota de Guardia Civil, Policía Nacional, IIPP, Auxilio Judicial y Auxiliar AGE con la fórmula del BOE. En el navegador, con fuente oficial.",
+        "Calcula la nota de Guardia Civil, Policía Nacional, IIPP, Auxilio Judicial y Auxiliar AGE con la fórmula de la convocatoria en vigor. En el navegador, con fuente oficial.",
         "",
         0,
         body,
@@ -633,13 +703,13 @@ def calculadoras_index(all_items: list[dict]) -> str:
     body = f"""
     {crumbs([("Inicio", "../index.html"), ("Calculadoras", "")])}
     <div class="hero">
-      <h1>Calculadoras por convocatoria</h1>
-      <p class="lede">Una página por convocatoria. Entras, pones aciertos y errores, y ves la nota según las bases. Si cambia el boletín, cambia esta página: no hay clones genéricos.</p>
+      <h1>Calculadoras por oposición</h1>
+      <p class="lede">Una página estable por cuerpo. Hoy usa el boletín en vigor. El año que viene sigue siendo la misma dirección: si cambia la fórmula, se actualiza aquí y la convocatoria anterior queda en archivo.</p>
     </div>
     <section class="content">
       <h2>Cómo usar una calculadora</h2>
       <ol class="how-steps">
-        <li><strong>Abre la de tu convocatoria.</strong> Guardia Civil no usa la misma fórmula que Policía Nacional ni que Auxilio Judicial.</li>
+        <li><strong>Abre la de tu oposición.</strong> Guardia Civil no usa la misma fórmula que Policía Nacional ni que Auxilio Judicial.</li>
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Las casillas opcionales se pueden dejar como están.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás si llegas al mínimo de las bases. Eso no es plaza ni la nota de corte.</li>
       </ol>
@@ -648,8 +718,8 @@ def calculadoras_index(all_items: list[dict]) -> str:
     {ad_slot("catalog")}
     """
     return page_shell(
-        "Calculadoras NotaOpo 2026",
-        "Índice de calculadoras NotaOpo: Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE 2026.",
+        "Calculadoras NotaOpo",
+        "Índice de calculadoras NotaOpo: Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.",
         "calculadoras/",
         1,
         body,
@@ -681,6 +751,7 @@ def simple_page(
 
 def remove_retired_urls(published: list[dict]) -> None:
     keep = {item["path"].rstrip("/") for item in published}
+    keep.update(item["family_path"].rstrip("/") for item in published if item.get("family_path"))
     calc_root = ROOT / "calculadoras"
     if not calc_root.exists():
         return
@@ -698,7 +769,22 @@ def build() -> None:
     write(ROOT / "index.html", home(opos))
     write(ROOT / "calculadoras" / "index.html", calculadoras_index(opos))
     for cfg in opos:
-        write(ROOT / cfg["path"] / "index.html", calculator_page(cfg, opos))
+        year_path = cfg["path"]
+        family = cfg.get("family_path")
+        if cfg.get("is_current") and family:
+            write(
+                ROOT / family / "index.html",
+                calculator_page(cfg, opos, family, family, "current"),
+            )
+            write(
+                ROOT / year_path / "index.html",
+                calculator_page(cfg, opos, year_path, family, "archive"),
+            )
+        else:
+            write(
+                ROOT / year_path / "index.html",
+                calculator_page(cfg, opos, year_path, year_path, "archive"),
+            )
 
     write(
         ROOT / "metodologia" / "index.html",
@@ -708,7 +794,7 @@ def build() -> None:
             "Cómo NotaOpo calcula la nota de cada oposición: fórmula del BOE, qué significa cada casilla y qué queda fuera.",
             "metodologia/",
             [
-                "Cada calculadora es una convocatoria concreta. No hay una media genérica ni un «simulador de oposiciones» que mezcle bases distintas. Si el boletín cambia, cambia esa página.",
+                "Cada oposición tiene una página estable. Hoy calcula con el boletín en vigor. Cuando salga el siguiente, actualizamos esa misma página y dejamos la convocatoria anterior en una URL de archivo. No se mezcla la fórmula de un año con la de otro.",
                 "Escribes aciertos y errores. Los blancos se calculan solos (preguntas válidas menos aciertos menos errores). En las convocatorias publicadas aquí, las blancas no restan.",
                 "La fórmula sale del boletín oficial enlazado en cada página, no de un blog ni de una academia. Un resumen de YouTube no manda sobre el BOE.",
                 "Tres ideas que no son lo mismo: la puntuación que sacas con tus aciertos; el mínimo oficial de esa prueba en las bases; y la nota de corte, que depende del resto de aspirantes y se publica después. Superar un mínimo no es plaza.",
@@ -721,7 +807,7 @@ def build() -> None:
     )
 
     fuente_items = "".join(
-        f'<li><a href="{escape(o.get("source_url") or o["fuente_oficial"]["url"])}">{escape(o.get("source_identifier", o["short_name"]))}</a> — {escape(o["short_name"])} ({escape(o.get("source_section", ""))})</li>'
+        f'<li><a href="{escape(o.get("source_url") or o["fuente_oficial"]["url"])}">{escape(o.get("source_identifier", o["short_name"]))}</a> — {escape(o.get("family_name") or o["short_name"])} ({escape(o.get("source_section", ""))})</li>'
         for o in opos
     )
     write(
@@ -816,7 +902,12 @@ def build() -> None:
     )
 
     urls = [f"{SITE}/", f"{SITE}/calculadoras/"]
-    urls.extend(f"{SITE}/{o['path']}" for o in opos)
+    seen_paths = set()
+    for o in opos:
+        for p in (o.get("family_path"), o["path"]):
+            if p and p not in seen_paths:
+                seen_paths.add(p)
+                urls.append(f"{SITE}/{p}")
     for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/"):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
