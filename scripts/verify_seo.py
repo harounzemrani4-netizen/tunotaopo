@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from html.parser import HTMLParser
@@ -118,6 +119,20 @@ def main() -> int:
         rel = path.relative_to(ROOT).as_posix()
         if "OpoRuta" in html:
             errors.append(f"{rel}: menciona un competidor")
+        if "BreadcrumbList" in html:
+            for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html):
+                try:
+                    data = json.loads(block)
+                except json.JSONDecodeError:
+                    continue
+                if data.get("@type") != "BreadcrumbList":
+                    continue
+                for el in data.get("itemListElement") or []:
+                    item = el.get("item") if isinstance(el, dict) else None
+                    if not item:
+                        errors.append(f"{rel}: breadcrumb sin campo item")
+                    elif not str(item).startswith(SITE):
+                        errors.append(f"{rel}: breadcrumb item no canónico: {item}")
         is_embed = rel.startswith("embed/")
         page_url = f"{SITE}/" if rel == "index.html" else f"{SITE}/{rel.replace('/index.html', '/')}"
         if rel.endswith("404.html"):

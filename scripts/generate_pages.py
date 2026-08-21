@@ -6,7 +6,7 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
 from xml.sax.saxutils import escape
 
 from content import DISCLAIMER, PAGES
@@ -315,7 +315,35 @@ def head(title: str, description: str, canonical: str, prefix: str, extra: str =
 </head>"""
 
 
-def crumbs(items: list[tuple[str, str]]) -> str:
+def canonical_url(path: str) -> str:
+    clean = (path or "").strip("/")
+    return f"{SITE}/" if not clean else f"{SITE}/{clean}/"
+
+
+def crumb_abs_url(href: str, page_path: str) -> str:
+    current = canonical_url(page_path)
+    if not href:
+        return current
+    if href.startswith(("http://", "https://")):
+        raw = href
+    elif href.startswith("/"):
+        raw = urljoin(f"{SITE}/", href.lstrip("/"))
+    else:
+        raw = urljoin(current, href)
+    if raw.endswith("/index.html"):
+        raw = raw[: -len("index.html")]
+    elif raw.endswith("index.html"):
+        raw = raw[: -len("index.html")]
+    if raw in {SITE, f"{SITE}/"}:
+        return f"{SITE}/"
+    if raw.endswith(".html"):
+        return raw
+    if not raw.endswith("/"):
+        raw += "/"
+    return raw
+
+
+def crumbs(items: list[tuple[str, str]], page_path: str = "") -> str:
     lis = []
     schema = []
     for i, (name, href) in enumerate(items, start=1):
@@ -323,10 +351,14 @@ def crumbs(items: list[tuple[str, str]]) -> str:
             lis.append(f'<li><a href="{href}">{escape(name)}</a></li>')
         else:
             lis.append(f"<li>{escape(name)}</li>")
-        item = {"@type": "ListItem", "position": i, "name": name}
-        if href and href.startswith("http"):
-            item["item"] = href
-        schema.append(item)
+        schema.append(
+            {
+                "@type": "ListItem",
+                "position": i,
+                "name": name,
+                "item": crumb_abs_url(href, page_path),
+            }
+        )
     data = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": schema}
     return (
         '<nav class="crumbs" aria-label="Migas de pan"><ol>'
@@ -999,7 +1031,7 @@ def calculator_page(
         + f'<a href="{prefix}fuentes/index.html">Fuentes</a></nav>'
     )
     body = f"""
-    {crumbs(crumb_items)}
+    {crumbs(crumb_items, canonical_path)}
     <div class="hero hero-calc">
       <h1>{escape(heading)}</h1>
       {banner}
@@ -1099,7 +1131,7 @@ def home(all_items: list[dict]) -> str:
 
 def calculadoras_index(all_items: list[dict]) -> str:
     body = f"""
-    {crumbs([("Inicio", "../index.html"), ("Calculadoras", "")])}
+    {crumbs([("Inicio", "../index.html"), ("Calculadoras", "")], "calculadoras/")}
     <div class="hero">
       <h1>Calculadoras de nota</h1>
       <p class="lede">Una calculadora por cuerpo, atada al boletín en vigor. Si cambia la fórmula, se actualiza aquí.</p>
@@ -1272,7 +1304,7 @@ def fuentes_page(opos: list[dict]) -> str:
         for item in items
     )
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Fuentes oficiales", "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Fuentes oficiales", "")], "fuentes/")}
     <div class="hero">
       <h1>Fuentes oficiales</h1>
       <p class="lede">Normas, listas y portales que sustentan las calculadoras. Cada fórmula sale de un boletín concreto, no de una academia ni de un vídeo. Verificado el 19 de agosto de 2026.</p>
@@ -1388,7 +1420,7 @@ def metodologia_page(opos: list[dict]) -> str:
         f"<div><dt>{escape(name)}</dt><dd>{escape(text)}</dd></div>" for name, text in models
     )
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Metodología", "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Metodología", "")], "metodologia/")}
     <div class="hero">
       <h1>Metodología</h1>
       <p class="lede">Cómo se calcula cada nota: de qué archivo sale la fórmula, qué significa cada casilla y qué queda fuera. El motor no tiene un «si es Guardia Civil»: lee el boletín modelado en datos. Verificado el 19 de agosto de 2026.</p>
@@ -1521,7 +1553,7 @@ def hub_nav(family: str, prefix: str, current: str) -> str:
 
 def oposiciones_index(opos: list[dict]) -> str:
     body = f"""
-    {crumbs([("Inicio", "../index.html"), ("Oposiciones", "")])}
+    {crumbs([("Inicio", "../index.html"), ("Oposiciones", "")], "oposiciones/")}
     <div class="hero">
       <h1>Oposiciones</h1>
       <p class="lede">Tu convocatoria, tus pruebas y tu calculadora. Cinco cuerpos, cada uno con su boletín. Sin temario de academia ni cortes inventados.</p>
@@ -1584,7 +1616,7 @@ def hub_home(item: dict, hub: dict) -> str:
             "Calcular baremo</a>"
         )
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), (name, "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), (name, "")], f"oposiciones/{family}/")}
     <div class="hero">
       <p class="eyebrow">{escape(hub["eyebrow"])}</p>
       <h1>{escape(hub["h1"])}</h1>
@@ -1619,7 +1651,7 @@ def hub_section(item: dict, hub: dict, slug: str, nav_key: str, title: str, h1: 
         ("Oposiciones", prefix + "oposiciones/index.html"),
         (name, prefix + f"oposiciones/{family}/index.html"),
         (title, ""),
-    ])}
+    ], f"oposiciones/{family}/{slug}/")}
     <div class="hero">
       <h1>{escape(h1)}</h1>
       {hub_nav(family, prefix, nav_key)}
@@ -1808,7 +1840,7 @@ def generic_hub(item: dict) -> str:
     year = item.get("anio")
     calc = prefix + live_path(item) + "index.html"
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), (name, "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), (name, "")], f"oposiciones/{family}/")}
     <div class="hero">
       <p class="eyebrow">Convocatoria {escape(str(year))}</p>
       <h1>{escape(item.get("name") or name)}</h1>
@@ -1860,7 +1892,7 @@ def pn_hub(item: dict) -> str:
         for href, title, text in tiles
     )
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), ("Policía Nacional", "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Oposiciones", prefix + "oposiciones/index.html"), ("Policía Nacional", "")], "oposiciones/policia-nacional/")}
     <div class="hero">
       <p class="eyebrow">Escala Básica · categoría de Policía</p>
       <h1>Policía Nacional — oposición 2026</h1>
@@ -1896,7 +1928,7 @@ def pn_simple_section(item: dict, slug: str, title: str, h1: str, description: s
         ("Oposiciones", prefix + "oposiciones/index.html"),
         ("Policía Nacional", prefix + "oposiciones/policia-nacional/index.html"),
         (title, ""),
-    ])}
+    ], f"oposiciones/{family}/{slug}/")}
     <div class="hero">
       <h1>{escape(h1)}</h1>
       {hub_nav(family, prefix, current)}
@@ -2111,7 +2143,7 @@ def pn_fisicas_page(item: dict) -> str:
         ("Oposiciones", prefix + "oposiciones/index.html"),
         ("Policía Nacional", prefix + "oposiciones/policia-nacional/index.html"),
         ("Pruebas físicas", ""),
-    ])}
+    ], "oposiciones/policia-nacional/pruebas-fisicas/")}
     <div class="hero hero-calc">
       <h1>Calculadora de pruebas físicas Policía Nacional 2026</h1>
       <p class="calc-badge">Anexo II · BOE-A-2026-15055 · BOE oficial</p>
@@ -2236,7 +2268,7 @@ def gc_fisicas_page(item: dict) -> str:
         ("Oposiciones", prefix + "oposiciones/index.html"),
         ("Guardia Civil", prefix + "oposiciones/guardia-civil/index.html"),
         ("Pruebas físicas", ""),
-    ])}
+    ], "oposiciones/guardia-civil/pruebas-fisicas/")}
     <div class="hero hero-calc">
       <h1>Calculadora de pruebas físicas Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice II · BOE-A-2026-9982 · BOE oficial</p>
@@ -2415,7 +2447,7 @@ def gc_baremo_page(item: dict) -> str:
         ("Oposiciones", prefix + "oposiciones/index.html"),
         ("Guardia Civil", prefix + "oposiciones/guardia-civil/index.html"),
         ("Baremo", ""),
-    ])}
+    ], "oposiciones/guardia-civil/baremo/")}
     <div class="hero hero-calc">
       <h1>Calculadora de baremo Guardia Civil 2026</h1>
       <p class="calc-badge">Apéndice I · BOE-A-2026-9982 · BOE oficial</p>
@@ -2522,7 +2554,7 @@ def progreso_page(opos: list[dict]) -> str:
         ("Inicio", prefix + "index.html"),
         ("Oposiciones", prefix + "oposiciones/index.html"),
         ("Mi progreso", ""),
-    ])}
+    ], PROGRESO_PATH)}
     <div class="hero">
       <h1>Mi progreso</h1>
       <p class="lede">Calcular no guarda nada. Solo se añade un simulacro si pulsas <strong>Guardar en Mi progreso</strong> en la calculadora. El historial queda en este navegador, no en una cuenta ni en un servidor.</p>
@@ -2555,7 +2587,7 @@ def simple_page(
     depth = 1
     prefix = rel_prefix(depth)
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), (h1, "")])}
+    {crumbs([("Inicio", prefix + "index.html"), (h1, "")], path)}
     <div class="hero"><h1>{escape(h1)}</h1></div>
     <section class="content">
       {lead}
@@ -2632,7 +2664,7 @@ def academias_page(opos: list[dict]) -> str:
         f'&body={quote("Oposición que preparo:\\nConvocatoria (si la conoces):\\n\\nNo es una petición de plazo ni una promesa de inclusión.")}">Solicitar / contactar</a></p>'
     )
     body = f"""
-    {crumbs([("Inicio", prefix + "index.html"), ("Academias y preparadores", "")])}
+    {crumbs([("Inicio", prefix + "index.html"), ("Academias y preparadores", "")], ACADEMIAS_PATH)}
     <div class="hero">
       <h1>TuNotaOpo para academias y preparadores</h1>
       <p class="lede">Las herramientas de TuNotaOpo pueden utilizarse gratuitamente con alumnos y opositores. Sin registro, sin servidor de notas y con la fórmula de cada convocatoria.</p>
