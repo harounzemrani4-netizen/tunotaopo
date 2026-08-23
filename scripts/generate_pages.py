@@ -224,18 +224,23 @@ def write(path: Path, text: str) -> None:
     path.write_text(text.replace("\r\n", "\n"), encoding="utf-8", newline="\n")
 
 
+def pretty_href(path: str) -> str:
+    clean = (path or "").replace("index.html", "").strip("/")
+    return "/" if not clean else f"/{clean}/"
+
+
 def nav(prefix: str) -> str:
     return f"""<header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="{prefix}index.html">
+    <a class="brand" href="/">
       <img src="{prefix}assets/logo.svg" width="36" height="36" alt="">
       <span>{BRAND}</span>
     </a>
     <nav class="nav" aria-label="Principal">
-      <a href="{prefix}oposiciones/index.html">Oposiciones</a>
-      <a href="{prefix}calculadoras/index.html">Calculadoras</a>
-      <a href="{prefix}{PROGRESO_PATH}index.html">Mi progreso</a>
-      <a href="{prefix}fuentes/index.html">Fuentes</a>
+      <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
+      <a href="{pretty_href(PROGRESO_PATH)}">Mi progreso</a>
+      <a href="/fuentes/">Fuentes</a>
     </nav>
   </div>
 </header>"""
@@ -249,15 +254,15 @@ def footer(prefix: str) -> str:
       <p class="footer-tag">Cálculo orientativo. Prevalece la convocatoria oficial.</p>
     </div>
     <div class="footer-links">
-      <a href="{prefix}oposiciones/index.html">Oposiciones</a>
-      <a href="{prefix}{PROGRESO_PATH}index.html">Mi progreso</a>
-      <a href="{prefix}metodologia/index.html">Metodología</a>
-      <a href="{prefix}fuentes/index.html">Fuentes</a>
-      <a href="{prefix}privacidad/index.html">Privacidad</a>
-      <a href="{prefix}cookies/index.html">Cookies</a>
-      <a href="{prefix}aviso-legal/index.html">Aviso legal</a>
-      <a href="{prefix}{ACADEMIAS_PATH}index.html">Academias</a>
-      <a href="{prefix}contacto/index.html">Contacto</a>
+      <a href="/oposiciones/">Oposiciones</a>
+      <a href="{pretty_href(PROGRESO_PATH)}">Mi progreso</a>
+      <a href="/metodologia/">Metodología</a>
+      <a href="/fuentes/">Fuentes</a>
+      <a href="/privacidad/">Privacidad</a>
+      <a href="/cookies/">Cookies</a>
+      <a href="/aviso-legal/">Aviso legal</a>
+      <a href="{pretty_href(ACADEMIAS_PATH)}">Academias</a>
+      <a href="/contacto/">Contacto</a>
     </div>
   </div>
 </footer>"""
@@ -347,8 +352,10 @@ def crumbs(items: list[tuple[str, str]], page_path: str = "") -> str:
     lis = []
     schema = []
     for i, (name, href) in enumerate(items, start=1):
+        abs_url = crumb_abs_url(href, page_path)
         if href:
-            lis.append(f'<li><a href="{href}">{escape(name)}</a></li>')
+            pretty = abs_url[len(SITE):] if abs_url.startswith(SITE) else href
+            lis.append(f'<li><a href="{pretty}">{escape(name)}</a></li>')
         else:
             lis.append(f"<li>{escape(name)}</li>")
         schema.append(
@@ -356,7 +363,7 @@ def crumbs(items: list[tuple[str, str]], page_path: str = "") -> str:
                 "@type": "ListItem",
                 "position": i,
                 "name": name,
-                "item": crumb_abs_url(href, page_path),
+                "item": abs_url,
             }
         )
     data = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": schema}
@@ -1083,7 +1090,16 @@ def calculator_page(
     <script type="application/json" id="oposicion-config">{json.dumps(with_historical(cfg), ensure_ascii=False)}</script>
     """
     title = heading if heading == cfg["title"] else heading
-    return page_shell(f"{title} | {BRAND}", cfg["meta_description"], canonical_path, depth, body, calculator=True)
+    archive_alias = variant == "archive" and canonical_path.rstrip("/") != page_path.rstrip("/")
+    return page_shell(
+        f"{title} | {BRAND}",
+        cfg["meta_description"],
+        canonical_path,
+        depth,
+        body,
+        calculator=True,
+        noindex=archive_alias,
+    )
 
 
 def home(all_items: list[dict]) -> str:
@@ -1092,7 +1108,7 @@ def home(all_items: list[dict]) -> str:
       <p class="eyebrow">{BRAND}</p>
       <h1>Calculadoras de nota para oposiciones</h1>
       <p class="lede">Tu nota, con la fórmula de la convocatoria oficial. Elige el cuerpo, escribe aciertos y errores, y calcula con el boletín en vigor.</p>
-      <form class="home-search" role="search" action="oposiciones/index.html" method="get">
+      <form class="home-search" role="search" action="/oposiciones/" method="get">
         <label for="opo-search">¿Qué oposición preparas?</label>
         <input class="input" id="opo-search" name="q" type="search" placeholder="Policía Nacional" autocomplete="off">
       </form>
@@ -1115,7 +1131,7 @@ def home(all_items: list[dict]) -> str:
         <li><strong>Escribe aciertos y errores.</strong> Los blancos se calculan solos. Si el tribunal anuló preguntas, cambia el número de preguntas válidas.</li>
         <li><strong>Lee el resultado con calma.</strong> Verás la puntuación y si llegas al mínimo oficial. Eso no es la nota de corte ni una plaza.</li>
       </ol>
-      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="/{PROGRESO_PATH}index.html">Mi progreso</a>. <a href="/fuentes/index.html">Fuentes oficiales</a>.</p>
+      <p>No hay cuenta. El cálculo se hace en tu navegador. Los simulacros se quedan en este dispositivo: <a href="{pretty_href(PROGRESO_PATH)}">Mi progreso</a>. <a href="/fuentes/">Fuentes oficiales</a>.</p>
       <p>{escape(DISCLAIMER)}</p>
     </section>
     """
@@ -1557,7 +1573,7 @@ def oposiciones_index(opos: list[dict]) -> str:
     <div class="hero">
       <h1>Oposiciones</h1>
       <p class="lede">Tu convocatoria, tus pruebas y tu calculadora. Cinco cuerpos, cada uno con su boletín. Sin temario de academia ni cortes inventados.</p>
-      <form class="home-search" role="search" action="index.html" method="get">
+      <form class="home-search" role="search" action="/oposiciones/" method="get">
         <label for="opo-search">¿Qué oposición preparas?</label>
         <input class="input" id="opo-search" name="q" type="search" placeholder="Policía Nacional" autocomplete="off">
       </form>
@@ -2785,7 +2801,7 @@ def build() -> None:
                 "No se piden nombre, DNI ni correo para usar las calculadoras. El correo de contacto solo se usa si tú escribes.",
                 "No hay cookies de analítica, AdSense ni redes publicitarias activas. Cuando exista un Publisher ID y un consentimiento válido, esta página se actualizará y se activará un CMP antes de cargar esos scripts.",
             ],
-            extra='<p><a href="/oposiciones/progreso/index.html">Abrir Mi progreso</a>.</p>',
+            extra='<p><a href="/oposiciones/progreso/">Abrir Mi progreso</a>.</p>',
             lead=legal_identity(),
         ),
     )
@@ -2830,8 +2846,8 @@ def build() -> None:
       <p class="eyebrow">Error 404</p>
       <h1>Esta página no existe</h1>
       <p class="lede">Comprueba la dirección o entra por el índice. No hay calculadoras ocultas ni URLs por provincia.</p>
-      <p class="hero-actions"><a class="button button-primary" href="/index.html">Ir al inicio</a>
-      <a class="button button-secondary" href="/oposiciones/index.html">Ver oposiciones</a></p>
+      <p class="hero-actions"><a class="button button-primary" href="/">Ir al inicio</a>
+      <a class="button button-secondary" href="/oposiciones/">Ver oposiciones</a></p>
     </div>
             """,
             noindex=True,
@@ -2841,7 +2857,11 @@ def build() -> None:
     urls = [f"{SITE}/", f"{SITE}/calculadoras/"] + hub_urls
     seen_paths = set()
     for o in opos:
-        for p in (o.get("family_path"), o["path"]):
+        if o.get("is_current") and o.get("family_path"):
+            candidates = [o["family_path"]]
+        else:
+            candidates = [o.get("path")]
+        for p in candidates:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")

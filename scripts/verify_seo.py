@@ -93,6 +93,15 @@ def resolve_href(page: Path, href: str) -> Path | None:
         elif not path.endswith(".html") and "." not in path.rsplit("/", 1)[-1]:
             path = path.rstrip("/") + "/index.html"
         return ROOT / path.lstrip("/")
+    if href.startswith("/"):
+        path = href.lstrip("/")
+        if not path:
+            return ROOT / "index.html"
+        if path.endswith("/"):
+            return ROOT / path / "index.html"
+        if not path.endswith(".html"):
+            return ROOT / path / "index.html"
+        return ROOT / path
     base = page.parent.as_posix() + "/"
     joined = urljoin("file:///" + base, href)
     local = joined.replace("file:///", "")
@@ -112,6 +121,7 @@ def main() -> int:
     self_titles: dict[str, str] = {}
     self_descriptions: dict[str, str] = {}
     pages = html_pages()
+    loc_set = {url.rstrip("/") for url in sitemap_locs()}
     for path in pages:
         html = path.read_text(encoding="utf-8")
         parser = Page()
@@ -138,6 +148,11 @@ def main() -> int:
         if rel.endswith("404.html"):
             page_url = f"{SITE}/404.html"
         canonical_self = parser.canonical and parser.canonical.rstrip("/") == page_url.rstrip("/")
+        if page_url.rstrip("/") in loc_set and parser.canonical and not canonical_self and not is_embed:
+            errors.append(f"{rel}: está en sitemap pero su canónica es {parser.canonical}")
+        if "calculadora-nota-" in rel and parser.canonical and not canonical_self:
+            if not parser.robots or "noindex" not in parser.robots:
+                errors.append(f"{rel}: archivo duplicado sin noindex")
         if not parser.title:
             errors.append(f"{rel}: title vacío")
         elif canonical_self and not is_embed and parser.title in self_titles:
