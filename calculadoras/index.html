@@ -2,23 +2,33 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="asset-v" content="20260904aa">
   
   <title>Calculadoras de nota oposiciones | TuNotaOpo</title>
-  <meta name="description" content="Calculadoras de Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.">
+  <meta name="description" content="Calculadoras de Guardia Civil, Policía Nacional, Policía Local por municipio, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.">
   <link rel="canonical" href="https://tunotaopo.es/calculadoras/">
   <meta property="og:title" content="Calculadoras de nota oposiciones | TuNotaOpo">
-  <meta property="og:description" content="Calculadoras de Guardia Civil, Policía Nacional, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.">
+  <meta property="og:description" content="Calculadoras de Guardia Civil, Policía Nacional, Policía Local por municipio, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tunotaopo.es/calculadoras/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
+  <meta property="og:image" content="https://tunotaopo.es/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TuNotaOpo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://tunotaopo.es/assets/og.png">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
+  <link rel="apple-touch-icon" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css?v=20260904aa">
+  <script src="/js/theme-boot.js?v=20260904aa"></script>
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -28,12 +38,18 @@
       <img src="/assets/logo.svg" width="36" height="36" alt="">
       <span>TuNotaOpo</span>
     </a>
-    <nav class="nav" aria-label="Principal">
-      <a href="/oposiciones/">Oposiciones</a>
-      <a href="/calculadoras/">Calculadoras</a>
-      <a href="/oposiciones/progreso/">Mi progreso</a>
-      <a href="/fuentes/">Fuentes</a>
-    </nav>
+    <div class="header-tools">
+      <nav class="nav" aria-label="Principal">
+        <a href="/oposiciones/">Oposiciones</a>
+        <a href="/calculadoras/" class="is-current" aria-current="page"><span class="nav-long">Calculadoras</span><span class="nav-short">Calcular</span></a>
+        <a href="/oposiciones/progreso/"><span class="nav-long">Mi progreso</span><span class="nav-short">Progreso</span></a>
+        <a href="/fuentes/">Fuentes</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A8.8 8.8 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.4 5.4l1.4 1.4M17.2 17.2l1.4 1.4M18.6 5.4l-1.4 1.4M6.8 17.2l-1.4 1.4"/></g></svg>
+      </button>
+    </div>
   </div>
 </header>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="top" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -44,7 +60,7 @@
       <h1>Calculadoras de nota</h1>
       <p class="lede">Una calculadora por cuerpo, atada al boletín en vigor. Si cambia la fórmula, se actualiza aquí.</p>
     </div>
-    <div class="catalog"><a class="card catalog-card" href="../calculadoras/guardia-civil/index.html" data-aliases="gc guardia guardia civil benemerita benemérita cabos y guardias"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 08/05/2026</span><span class="card-org">Fuente: BOE-A-2026-9982</span></div><h2>Guardia Civil</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Inglés · Psicotécnico · Ortografía · Gramática · Méritos (fase de concurso) · Pruebas físicas · Baremo</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/policia-nacional/index.html" data-aliases="pn policia policía policia nacional policía nacional escala basica escala básica"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 10/07/2026</span><span class="card-org">Fuente: BOE-A-2026-15055</span></div><h2>Policía Nacional</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Idiomas (nivel superior a A2) · Pruebas físicas</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/ayudantes-iipp/index.html" data-aliases="iipp prisiones penitenciarias ayudantes instituciones penitenciarias"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 18/06/2026</span><span class="card-org">Fuente: BOE-A-2026-13226</span></div><h2>Ayudantes IIPP</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (cuestionario) · Segunda parte (supuestos)</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/auxilio-judicial/index.html" data-aliases="auxilio justicia judicial auxilio judicial"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 30/12/2025</span><span class="card-org">Fuente: BOE-A-2025-27053</span></div><h2>Auxilio Judicial</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primer ejercicio (teórico) · Segundo ejercicio (práctico)</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/auxiliar-administrativo-age/index.html" data-aliases="age auxiliar c2 administrativo auxiliar administrativo inap"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 22/12/2025</span><span class="card-org">Fuente: BOE-A-2025-26262</span></div><h2>Auxiliar AGE</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (teoría y psicotécnicos) · Segunda parte (ofimática)</p><span class="card-cta">Calcular mi nota</span></a></div>
+    <div class="catalog"><a class="card catalog-card" href="../calculadoras/guardia-civil/index.html" data-aliases="gc guardia guardia civil benemerita benemérita cabos y guardias"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 08/05/2026</span><span class="card-org">Fuente: BOE-A-2026-9982</span></div><h2>Guardia Civil</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Inglés · Psicotécnico · Ortografía · Gramática · Méritos (fase de concurso) · Pruebas físicas · Baremo</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/policia-nacional/index.html" data-aliases="pn cnp nacional policia policía policia nacional policía nacional escala basica escala básica"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 10/07/2026</span><span class="card-org">Fuente: BOE-A-2026-15055</span></div><h2>Policía Nacional</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Conocimientos · Idiomas (nivel superior a A2) · Pruebas físicas</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../oposiciones/policia-local/index.html" data-aliases="pl local policia local policía local policia municipal policía municipal municipal guardia urbana urbana ayuntamiento ciudad municipio madrid ayuntamiento madrid"><div class="card-meta"><span class="badge">Directorio por municipio</span><span class="card-org">Fuente: INE + BOE Madrid</span></div><h2>Policía Local</h2><p class="card-kind">Todas las ciudades. Calculadora solo con boletín oficial.</p><p class="card-source">Listado INE 2026 · Madrid con fórmula</p><span class="card-cta">Elige tu ciudad</span></a><a class="card catalog-card" href="../calculadoras/ayudantes-iipp/index.html" data-aliases="iipp prisiones penitenciarias ayudantes instituciones penitenciarias carcel cárcel"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 18/06/2026</span><span class="card-org">Fuente: BOE-A-2026-13226</span></div><h2>Ayudantes IIPP</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (cuestionario) · Segunda parte (supuestos)</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/auxilio-judicial/index.html" data-aliases="auxilio justicia judicial auxilio judicial"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 30/12/2025</span><span class="card-org">Fuente: BOE-A-2025-27053</span></div><h2>Auxilio Judicial</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primer ejercicio (teórico) · Segundo ejercicio (práctico)</p><span class="card-cta">Calcular mi nota</span></a><a class="card catalog-card" href="../calculadoras/auxiliar-administrativo-age/index.html" data-aliases="age auxiliar c2 administrativo auxiliar administrativo inap estado funcionario"><div class="card-meta"><span class="badge">Proceso 2026 · convocatoria publicada el 22/12/2025</span><span class="card-org">Fuente: BOE-A-2025-26262</span></div><h2>Auxiliar AGE</h2><p class="card-kind">Calcula tu nota de la convocatoria 2026</p><p class="card-source">Primera parte (teoría y psicotécnicos) · Segunda parte (ofimática)</p><span class="card-cta">Calcular mi nota</span></a></div>
     <aside class="ad-slot is-reserved is-inactive" data-place="catalog" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside>
     
   </main>
@@ -57,6 +73,7 @@
     </div>
     <div class="footer-links">
       <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
       <a href="/oposiciones/progreso/">Mi progreso</a>
       <a href="/metodologia/">Metodología</a>
       <a href="/fuentes/">Fuentes</a>
@@ -68,8 +85,8 @@
     </div>
   </div>
 </footer>
-  <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819aa" defer></script>
-<script src="/js/site.js?v=20260819aa" defer></script>
+  <script src="/js/components/analytics.js?v=20260904aa" defer></script>
+<script src="/js/components/tools.js?v=20260904aa" defer></script>
+<script src="/js/site.js?v=20260904aa" defer></script>
 </body>
 </html>

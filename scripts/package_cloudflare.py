@@ -16,6 +16,9 @@ PUBLIC_FILES = (
     "robots.txt",
     "sitemap.xml",
     "_headers",
+    "sw.js",
+    "offline.html",
+    "manifest.webmanifest",
 )
 
 PUBLIC_DIRS = (
@@ -25,11 +28,14 @@ PUBLIC_DIRS = (
     "contacto",
     "cookies",
     "css",
+    "embed",
     "fuentes",
     "js",
     "metodologia",
     "oposiciones",
     "privacidad",
+    ".well-known",
+    "functions",
 )
 
 BLOCKED = {
@@ -58,7 +64,11 @@ def main() -> None:
         src = ROOT / name
         if not src.is_dir():
             raise SystemExit(f"missing public directory: {name}")
-        shutil.copytree(src, DIST / name, ignore=shutil.ignore_patterns(".*"))
+        shutil.copytree(
+            src,
+            DIST / name,
+            ignore=None if name.startswith(".") else shutil.ignore_patterns(".*"),
+        )
 
     leaked = [p.name for p in DIST.iterdir() if p.name in BLOCKED]
     if leaked:

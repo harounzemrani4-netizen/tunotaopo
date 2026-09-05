@@ -1,0 +1,4 @@
+Contact: mailto:contacto@tunotaopo.es
+Expires: 2027-09-03T00:00:00.000Z
+Preferred-Languages: es
+Canonical: https://tunotaopo.es/.well-known/security.txt

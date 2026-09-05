@@ -113,6 +113,40 @@ PAGES = {
             ("¿Las 5 de reserva cuentan?", "Solo si sustituyen preguntas anuladas. Entonces cambia el número de preguntas válidas.")
         ]
     },
+    "policia-local-madrid-2026": {
+        "how": [
+            "Esta calculadora es de Policía Municipal del Ayuntamiento de Madrid. En la mayoría de España el cuerpo se llama Policía Local, pero cada ayuntamiento publica su propia convocatoria. La fórmula de Barcelona, Valencia o un pueblo no es esta.",
+            "La base 5.2.a) del BOAM núm. 9829 califica el temario y el idioma, cada uno de 0 a 10. Hay que llegar a 5 en las dos partes. El error resta un tercio del valor del acierto. Las blancas no restan. Tres alternativas.",
+            "Escala de cada parte: 10 × (A − E/3) / T. Temario T = 80 (3 de reserva). Idioma T = 10 (2 de reserva). El cuestionario completo son 95 preguntas en 95 minutos.",
+            "La nota cultural es 90 % temario + 10 % idioma. Superar el 5 no es plaza: solo siguen quienes, habiendo llegado a 5 en ambas partes, tienen las mejores notas hasta 3,5 aspirantes por plaza. El tribunal puede bajar ese 50 % si caben menos de esa ratio."
+        ],
+        "example": [
+            "56 aciertos y 8 errores en temario: 10 × (56 − 8/3) / 80 = 6,6667 puntos.",
+            "7 aciertos y 1 error en idioma: 10 × (7 − 1/3) / 10 = 6,6667 puntos.",
+            "Nota cultural: 0,90 × 6,6667 + 0,10 × 6,6667 = 6,6667. Eso no dice si entras en el 3,5 por plaza."
+        ],
+        "mistakes": [
+            "Usar la fórmula de Policía Nacional (error = E/2). Aquí el boletín dice un tercio, no la mitad.",
+            "Aplicar esta nota a otra Policía Local. Cada municipio tiene su boletín.",
+            "Tratar el 5 como corte de plaza. Es el suelo de cada parte; el recorte es 3,5 aspirantes por plaza.",
+            "Sumar el psicotécnico o las físicas a esta cifra. El psicotécnico es apto o no apto. Las físicas van en el anexo II, de 5 a 10.",
+            "Meter el concurso (máximo 2 puntos) como si ya formara parte de esta nota cultural."
+        ],
+        "limits": [
+            "No calcula el concurso ítem a ítem (tope 2 puntos, fase posterior).",
+            "No califica inteligencia ni personalidad: el tribunal fija el umbral y el perfil.",
+            "No inventa quién entra en el 3,5 por plaza ni un corte de esta convocatoria.",
+            "No sirve para Policía Local de otra ciudad.",
+            "Si hay anulaciones, debes indicar las preguntas válidas."
+        ],
+        "faqs": [
+            ("¿Es lo mismo Policía Local y Policía Municipal?", "En Madrid el cuerpo se llama Policía Municipal. En casi el resto de España, Policía Local. Esta herramienta cubre solo Madrid. Otra ciudad necesita su propio boletín."),
+            ("¿Con un 5 paso?", "Alcanzas el mínimo de esa parte. Seguir depende de tener 5 en las dos y de estar entre las mejores notas, hasta 3,5 aspirantes por plaza. Eso se publica después."),
+            ("¿Cada error cuánto resta?", "Un tercio de acierto. No es E/2 como en Policía Nacional."),
+            ("¿Y si anulan preguntas?", "T deja de ser 80 o 10. Indica las preguntas válidas. Las de reserva solo entran si sustituyen a una anulada."),
+            ("¿Cuándo es el examen?", "El día no está en el BOE de la convocatoria. Aparece cuando el Ayuntamiento de Madrid lo publique. Aquí no se estima.")
+        ]
+    },
     "policia-nacional-2026": {
         "how": [
             "La base 6.1.1 corrige el cuestionario de conocimientos con [A − E/(n−1)] × 10/P. Hay 100 preguntas y 3 alternativas, así que n = 3 y cada error resta medio acierto. Las preguntas en blanco no restan. El resultado va de 0 a 10.",
@@ -150,8 +184,8 @@ PAGES = {
 
 UPCOMING = [
     {
-        "name": "Policía Local / Policía Municipal",
-        "reason": "No hay una fórmula única: cada ayuntamiento o convocatoria autonómica publica las suyas. Dinos ciudad y boletín y la atamos a esa convocatoria."
+        "name": "Calculadoras de más Policías Locales",
+        "reason": "El directorio ya lista todos los municipios INE. Falta el boletín de cada ayuntamiento: no se clona Madrid."
     },
     {
         "name": "TAI — Técnicos Auxiliares de Informática AGE",

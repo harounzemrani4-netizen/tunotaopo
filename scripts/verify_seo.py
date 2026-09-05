@@ -26,6 +26,26 @@ SKIP_DIRS = {
     "functions",
     "dist",
 }
+PL_HUB_DIRS = {
+    "requisitos",
+    "pruebas",
+    "pruebas-fisicas",
+    "temario",
+    "fechas",
+    "notas-corte",
+    "examenes-oficiales",
+}
+
+
+def is_pl_municipio_page(rel: str) -> bool:
+    parts = Path(rel).parts
+    if len(parts) != 6 or parts[0] != "oposiciones" or parts[1] != "policia-local":
+        return False
+    if parts[5] != "index.html" or parts[2] in PL_HUB_DIRS:
+        return False
+    if parts[2] == "comunidad-de-madrid" and parts[3] == "madrid" and parts[4] == "madrid":
+        return False
+    return True
 
 
 class Page(HTMLParser):
@@ -72,6 +92,8 @@ def html_pages() -> list[Path]:
     for path in ROOT.rglob("*.html"):
         rel = path.relative_to(ROOT)
         if any(part in SKIP_DIRS for part in rel.parts):
+            continue
+        if is_pl_municipio_page(rel.as_posix()):
             continue
         pages.append(path)
     return sorted(pages)
@@ -202,7 +224,9 @@ def main() -> int:
         ROOT / "calculadoras" / "ayudantes-iipp" / "index.html",
         ROOT / "calculadoras" / "auxilio-judicial" / "index.html",
         ROOT / "calculadoras" / "auxiliar-administrativo-age" / "index.html",
+        ROOT / "calculadoras" / "policia-local" / "index.html",
         ROOT / "oposiciones" / "policia-nacional" / "pruebas-fisicas" / "index.html",
+        ROOT / "oposiciones" / "policia-local" / "pruebas-fisicas" / "index.html",
         ROOT / "oposiciones" / "guardia-civil" / "pruebas-fisicas" / "index.html",
         ROOT / "oposiciones" / "guardia-civil" / "baremo" / "index.html",
     ]

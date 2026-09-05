@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="asset-v" content="20260904aa">
   
   <title>TuNotaOpo para academias y preparadores | TuNotaOpo</title>
   <meta name="description" content="Usa las calculadoras de TuNotaOpo en clase: modo aula, QR y embed gratuito, sin registro ni servidor de notas.">
@@ -17,8 +18,17 @@
   <meta property="og:url" content="https://tunotaopo.es/oposiciones/academias/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
+  <meta property="og:image" content="https://tunotaopo.es/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TuNotaOpo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://tunotaopo.es/assets/og.png">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
+  <link rel="apple-touch-icon" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css?v=20260904aa">
+  <script src="/js/theme-boot.js?v=20260904aa"></script>
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -28,12 +38,18 @@
       <img src="/assets/logo.svg" width="36" height="36" alt="">
       <span>TuNotaOpo</span>
     </a>
-    <nav class="nav" aria-label="Principal">
-      <a href="/oposiciones/">Oposiciones</a>
-      <a href="/calculadoras/">Calculadoras</a>
-      <a href="/oposiciones/progreso/">Mi progreso</a>
-      <a href="/fuentes/">Fuentes</a>
-    </nav>
+    <div class="header-tools">
+      <nav class="nav" aria-label="Principal">
+        <a href="/oposiciones/">Oposiciones</a>
+        <a href="/calculadoras/"><span class="nav-long">Calculadoras</span><span class="nav-short">Calcular</span></a>
+        <a href="/oposiciones/progreso/"><span class="nav-long">Mi progreso</span><span class="nav-short">Progreso</span></a>
+        <a href="/fuentes/">Fuentes</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A8.8 8.8 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.4 5.4l1.4 1.4M17.2 17.2l1.4 1.4M18.6 5.4l-1.4 1.4M6.8 17.2l-1.4 1.4"/></g></svg>
+      </button>
+    </div>
   </div>
 </header>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="top" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -56,7 +72,7 @@
     </ul>
     <section class="content">
       <h2>Herramientas disponibles</h2>
-      <div class="catalog"><a class="card" href="/calculadoras/guardia-civil/index.html"><h3>Guardia Civil</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/policia-nacional/index.html"><h3>Policía Nacional</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/ayudantes-iipp/index.html"><h3>Ayudantes IIPP</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/auxilio-judicial/index.html"><h3>Auxilio Judicial</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/auxiliar-administrativo-age/index.html"><h3>Auxiliar AGE</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a></div>
+      <div class="catalog"><a class="card" href="/calculadoras/guardia-civil/index.html"><h3>Guardia Civil</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/policia-nacional/index.html"><h3>Policía Nacional</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/policia-local/index.html"><h3>Policía Local</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/ayudantes-iipp/index.html"><h3>Ayudantes IIPP</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/auxilio-judicial/index.html"><h3>Auxilio Judicial</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a><a class="card" href="/calculadoras/auxiliar-administrativo-age/index.html"><h3>Auxiliar AGE</h3><p>Calculadora de la convocatoria 2026.</p><span class="card-cta">Ver herramientas</span></a></div>
       <h2>Úsalo en clase</h2>
       <ol class="how-steps">
         <li><strong>Abre la calculadora</strong> de la oposición en el navegador.</li>
@@ -66,7 +82,7 @@
       </ol>
       <h2>Calculadora embebible</h2>
       <p>Misma fórmula que la página pública. Sin menú, sin anuncios y con <code>noindex</code>. Ejemplo:</p>
-      <h3>Guardia Civil</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/guardia-civil/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Guardia Civil&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/guardia-civil/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/guardia-civil/index.html">Ver embed</a></p><h3>Policía Nacional</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/policia-nacional/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Policía Nacional&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/policia-nacional/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/policia-nacional/index.html">Ver embed</a></p><h3>Ayudantes IIPP</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/ayudantes-iipp/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Ayudantes IIPP&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/ayudantes-iipp/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/ayudantes-iipp/index.html">Ver embed</a></p><h3>Auxilio Judicial</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/auxilio-judicial/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Auxilio Judicial&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/auxilio-judicial/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/auxilio-judicial/index.html">Ver embed</a></p><h3>Auxiliar AGE</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/auxiliar-administrativo-age/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Auxiliar AGE&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/auxiliar-administrativo-age/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/auxiliar-administrativo-age/index.html">Ver embed</a></p>
+      <h3>Guardia Civil</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/guardia-civil/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Guardia Civil&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/guardia-civil/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/guardia-civil/index.html">Ver embed</a></p><h3>Policía Nacional</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/policia-nacional/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Policía Nacional&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/policia-nacional/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/policia-nacional/index.html">Ver embed</a></p><h3>Policía Local</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/policia-local/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Policía Local&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/policia-local/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/policia-local/index.html">Ver embed</a></p><h3>Ayudantes IIPP</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/ayudantes-iipp/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Ayudantes IIPP&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/ayudantes-iipp/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/ayudantes-iipp/index.html">Ver embed</a></p><h3>Auxilio Judicial</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/auxilio-judicial/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Auxilio Judicial&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/auxilio-judicial/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/auxilio-judicial/index.html">Ver embed</a></p><h3>Auxiliar AGE</h3><pre><code>&lt;iframe src=&quot;https://tunotaopo.es/embed/auxiliar-administrativo-age/&quot; width=&quot;100%&quot; height=&quot;700&quot; loading=&quot;lazy&quot; title=&quot;Calculadora Auxiliar AGE&quot;&gt;&lt;/iframe&gt;</code></pre><p><a href="/calculadoras/auxiliar-administrativo-age/index.html?mode=classroom">Abrir modo aula</a> · <a href="/embed/auxiliar-administrativo-age/index.html">Ver embed</a></p>
       <h2>¿Falta la oposición que preparas?</h2>
       <p>Puedes escribirnos. No prometemos incluirla ni damos plazo. Solo se publica con fuente oficial y tests.</p>
       <p><a class="button button-secondary" href="mailto:contacto@tunotaopo.es?subject=Solicitar%20oposici%C3%B3n%20en%20TuNotaOpo&body=Oposici%C3%B3n%20que%20preparo%3A%5CnConvocatoria%20%28si%20la%20conoces%29%3A%5Cn%5CnNo%20es%20una%20petici%C3%B3n%20de%20plazo%20ni%20una%20promesa%20de%20inclusi%C3%B3n.">Solicitar / contactar</a></p>
@@ -82,6 +98,7 @@
     </div>
     <div class="footer-links">
       <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
       <a href="/oposiciones/progreso/">Mi progreso</a>
       <a href="/metodologia/">Metodología</a>
       <a href="/fuentes/">Fuentes</a>
@@ -93,8 +110,8 @@
     </div>
   </div>
 </footer>
-  <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819aa" defer></script>
-<script src="/js/site.js?v=20260819aa" defer></script>
+  <script src="/js/components/analytics.js?v=20260904aa" defer></script>
+<script src="/js/components/tools.js?v=20260904aa" defer></script>
+<script src="/js/site.js?v=20260904aa" defer></script>
 </body>
 </html>

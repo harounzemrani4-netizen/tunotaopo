@@ -521,6 +521,60 @@
       "config": "policia-nacional-2026",
       "inputs": { "cg_hits": 80, "cg_errors": 30 },
       "expected": { "error": true }
+    },
+    {
+      "id": "pl-perfect",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 80, "temario_errors": 0, "idioma_hits": 10, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 10, "byId.idioma.rounded": 10, "opposition_total": 10, "all_required_passed": true }
+    },
+    {
+      "id": "pl-zero",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 0, "temario_errors": 0, "idioma_hits": 0, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 0, "byId.idioma.rounded": 0, "opposition_total": 0, "all_required_passed": false }
+    },
+    {
+      "id": "pl-min-exact",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 40, "temario_errors": 0, "idioma_hits": 5, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 5, "byId.idioma.rounded": 5, "opposition_total": 5, "all_required_passed": true }
+    },
+    {
+      "id": "pl-below-min",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 39, "temario_errors": 0, "idioma_hits": 5, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 4.875, "byId.temario.passed": false, "opposition_total": 4.8875, "all_required_passed": false }
+    },
+    {
+      "id": "pl-mix",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 56, "temario_errors": 8, "idioma_hits": 7, "idioma_errors": 1 },
+      "expected": { "byId.temario.rounded": 6.6667, "byId.idioma.rounded": 6.6667, "opposition_total": 6.6667, "all_required_passed": true }
+    },
+    {
+      "id": "pl-third-not-half",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 60, "temario_errors": 6, "idioma_hits": 8, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 7.25, "byId.idioma.rounded": 8, "opposition_total": 7.325 }
+    },
+    {
+      "id": "pl-all-errors-clamp",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 0, "temario_errors": 80, "idioma_hits": 0, "idioma_errors": 10 },
+      "expected": { "byId.temario.rounded": 0, "byId.idioma.rounded": 0, "opposition_total": 0 }
+    },
+    {
+      "id": "pl-idioma-fail",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 50, "temario_errors": 0, "idioma_hits": 4, "idioma_errors": 0 },
+      "expected": { "byId.temario.rounded": 6.25, "byId.idioma.rounded": 4, "byId.idioma.passed": false, "opposition_total": 6.025, "all_required_passed": false }
+    },
+    {
+      "id": "pl-overflow",
+      "config": "policia-local-madrid-2026",
+      "inputs": { "temario_hits": 70, "temario_errors": 20, "idioma_hits": 0, "idioma_errors": 0 },
+      "expected": { "error": true }
     }
   ]
 }

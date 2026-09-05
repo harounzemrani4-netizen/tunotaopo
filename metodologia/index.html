@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="asset-v" content="20260904aa">
   
   <title>Metodología de cálculo | TuNotaOpo</title>
   <meta name="description" content="Cómo TuNotaOpo calcula la nota: modelos del motor, mínimo frente a corte, blancos y reserva, y la fórmula de cada oposición según su BOE.">
@@ -17,8 +18,17 @@
   <meta property="og:url" content="https://tunotaopo.es/metodologia/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
+  <meta property="og:image" content="https://tunotaopo.es/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TuNotaOpo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://tunotaopo.es/assets/og.png">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
+  <link rel="apple-touch-icon" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css?v=20260904aa">
+  <script src="/js/theme-boot.js?v=20260904aa"></script>
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -28,12 +38,18 @@
       <img src="/assets/logo.svg" width="36" height="36" alt="">
       <span>TuNotaOpo</span>
     </a>
-    <nav class="nav" aria-label="Principal">
-      <a href="/oposiciones/">Oposiciones</a>
-      <a href="/calculadoras/">Calculadoras</a>
-      <a href="/oposiciones/progreso/">Mi progreso</a>
-      <a href="/fuentes/">Fuentes</a>
-    </nav>
+    <div class="header-tools">
+      <nav class="nav" aria-label="Principal">
+        <a href="/oposiciones/">Oposiciones</a>
+        <a href="/calculadoras/"><span class="nav-long">Calculadoras</span><span class="nav-short">Calcular</span></a>
+        <a href="/oposiciones/progreso/"><span class="nav-long">Mi progreso</span><span class="nav-short">Progreso</span></a>
+        <a href="/fuentes/">Fuentes</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A8.8 8.8 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.4 5.4l1.4 1.4M17.2 17.2l1.4 1.4M18.6 5.4l-1.4 1.4M6.8 17.2l-1.4 1.4"/></g></svg>
+      </button>
+    </div>
   </div>
 </header>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="top" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -53,7 +69,7 @@
           <li><a href="#casillas">Qué haces en el formulario</a></li>
           <li><a href="#motor">Cómo calcula el motor</a></li>
           <li><a href="#oposiciones">Por oposición</a></li>
-          <li><a href="#metodo-guardia-civil">Guardia Civil</a></li><li><a href="#metodo-policia-nacional">Policía Nacional</a></li><li><a href="#metodo-ayudantes-iipp">Ayudantes IIPP</a></li><li><a href="#metodo-auxilio-judicial">Auxilio Judicial</a></li><li><a href="#metodo-auxiliar-age">Auxiliar AGE</a></li>
+          <li><a href="#metodo-guardia-civil">Guardia Civil</a></li><li><a href="#metodo-policia-nacional">Policía Nacional</a></li><li><a href="#metodo-policia-local">Policía Local</a></li><li><a href="#metodo-ayudantes-iipp">Ayudantes IIPP</a></li><li><a href="#metodo-auxilio-judicial">Auxilio Judicial</a></li><li><a href="#metodo-auxiliar-age">Auxiliar AGE</a></li>
           <li><a href="#historico-metodo">Histórico del año pasado</a></li>
           <li><a href="#limites">Qué no se inventa</a></li>
           <li><a href="#pruebas">Cómo se comprueba</a></li>
@@ -116,6 +132,17 @@
       <h4>Qué no calcula</h4><ul><li>No convierte marcas de circuito, dominadas o carrera en puntos del anexo II.</li><li>No califica el psicotécnico: P y el mínimo los fija el tribunal.</li><li>No convierte una carrera, un máster o un grado superior en puntos: no están en el baremo de esta Escala Básica.</li><li>No evalúa entrevista, reconocimiento médico ni méritos de Fuerzas Armadas o deportista de alto nivel ítem a ítem.</li><li>No inventa cuántos aspirantes caben en el 1,75 por plaza.</li></ul>
       <p>Si hay comparación histórica, se contrasta tu nota de conocimientos con el corte oficial aproximado del año pasado. No hay lista pública de todos los examinados, así que no se da un número de orden.</p>
       <p class="source-links"><a href="../calculadoras/policia-nacional/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-policia-nacional">Fuente oficial</a></p>
+    </article><article class="source-entry" id="metodo-policia-local">
+      <p class="source-kicker">Escala oficial</p>
+      <h3>Policía Local</h3>
+      <p class="source-id">BOE-A-2025-25740 · BOAM 9829, base 5.2.a) (pruebas culturales). Convocatoria de plazas: BOE-A-2025-25740</p>
+      <p><strong>Fórmula:</strong> Cada parte: 10 × (A − E/3) / T, de 0 a 10. Temario T = 80 (mínimo 5). Idioma T = 10 (mínimo 5). Tres opciones; el error resta un tercio, no la mitad. Nota cultural = 0,90×temario + 0,10×idioma. El 5 no es el corte: solo siguen 3,5 aspirantes por plaza.</p>
+      <p>Esta calculadora es de Policía Municipal del Ayuntamiento de Madrid. En la mayoría de España el cuerpo se llama Policía Local, pero cada ayuntamiento publica su propia convocatoria. La fórmula de Barcelona, Valencia o un pueblo no es esta.</p><p>La base 5.2.a) del BOAM núm. 9829 califica el temario y el idioma, cada uno de 0 a 10. Hay que llegar a 5 en las dos partes. El error resta un tercio del valor del acierto. Las blancas no restan. Tres alternativas.</p><p>Escala de cada parte: 10 × (A − E/3) / T. Temario T = 80 (3 de reserva). Idioma T = 10 (2 de reserva). El cuestionario completo son 95 preguntas en 95 minutos.</p><p>La nota cultural es 90 % temario + 10 % idioma. Superar el 5 no es plaza: solo siguen quienes, habiendo llegado a 5 en ambas partes, tienen las mejores notas hasta 3,5 aspirantes por plaza. El tribunal puede bajar ese 50 % si caben menos de esa ratio.</p>
+      <h4>Un ejemplo con números</h4><ul><li>56 aciertos y 8 errores en temario: 10 × (56 − 8/3) / 80 = 6,6667 puntos.</li><li>7 aciertos y 1 error en idioma: 10 × (7 − 1/3) / 10 = 6,6667 puntos.</li><li>Nota cultural: 0,90 × 6,6667 + 0,10 × 6,6667 = 6,6667. Eso no dice si entras en el 3,5 por plaza.</li></ul>
+      <h4>Errores frecuentes</h4><ul><li>Usar la fórmula de Policía Nacional (error = E/2). Aquí el boletín dice un tercio, no la mitad.</li><li>Aplicar esta nota a otra Policía Local. Cada municipio tiene su boletín.</li><li>Tratar el 5 como corte de plaza. Es el suelo de cada parte; el recorte es 3,5 aspirantes por plaza.</li><li>Sumar el psicotécnico o las físicas a esta cifra. El psicotécnico es apto o no apto. Las físicas van en el anexo II, de 5 a 10.</li><li>Meter el concurso (máximo 2 puntos) como si ya formara parte de esta nota cultural.</li></ul>
+      <h4>Qué no calcula</h4><ul><li>No calcula el concurso ítem a ítem (tope 2 puntos, fase posterior).</li><li>No califica inteligencia ni personalidad: el tribunal fija el umbral y el perfil.</li><li>No inventa quién entra en el 3,5 por plaza ni un corte de esta convocatoria.</li><li>No sirve para Policía Local de otra ciudad.</li><li>Si hay anulaciones, debes indicar las preguntas válidas.</li></ul>
+      
+      <p class="source-links"><a href="../calculadoras/policia-local/index.html">Calculadora</a> · <a href="../fuentes/index.html#fuente-policia-local">Fuente oficial</a></p>
     </article><article class="source-entry" id="metodo-ayudantes-iipp">
       <p class="source-kicker">Puntuación directa</p>
       <h3>Ayudantes IIPP</h3>
@@ -187,6 +214,7 @@
     </div>
     <div class="footer-links">
       <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
       <a href="/oposiciones/progreso/">Mi progreso</a>
       <a href="/metodologia/">Metodología</a>
       <a href="/fuentes/">Fuentes</a>
@@ -198,8 +226,8 @@
     </div>
   </div>
 </footer>
-  <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819aa" defer></script>
-<script src="/js/site.js?v=20260819aa" defer></script>
+  <script src="/js/components/analytics.js?v=20260904aa" defer></script>
+<script src="/js/components/tools.js?v=20260904aa" defer></script>
+<script src="/js/site.js?v=20260904aa" defer></script>
 </body>
 </html>

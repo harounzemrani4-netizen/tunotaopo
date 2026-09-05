@@ -1,0 +1,44 @@
+name: QA TuNotaOpo
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Localizar notaopo
+        id: root
+        run: |
+          if [ -f tests/test_engine.py ]; then echo "dir=." >> "$GITHUB_OUTPUT"
+          elif [ -f notaopo/tests/test_engine.py ]; then echo "dir=notaopo" >> "$GITHUB_OUTPUT"
+          else echo "No se encuentra el proyecto" && exit 1
+          fi
+      - name: Regenerar páginas
+        working-directory: ${{ steps.root.outputs.dir }}
+        run: python scripts/generate_pages.py
+      - name: Motor y físicas
+        working-directory: ${{ steps.root.outputs.dir }}
+        run: |
+          python tests/test_engine.py
+          python tests/test_engine_parity.py
+          python tests/test_fisicas.py
+          python tests/test_pl_fisicas.py
+          python tests/test_gc_fisicas.py
+          python tests/test_gc_baremo.py
+      - name: Directorio, SEO y seguridad
+        working-directory: ${{ steps.root.outputs.dir }}
+        run: |
+          python tests/test_pl_directorio.py
+          python tests/test_security.py
+          python tests/test_modules.py
+          python tests/test_site_assets.py
+          python scripts/verify_seo.py
+      - name: Paquete Cloudflare
+        working-directory: ${{ steps.root.outputs.dir }}
+        run: python scripts/package_cloudflare.py

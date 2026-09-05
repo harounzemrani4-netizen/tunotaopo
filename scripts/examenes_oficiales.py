@@ -47,6 +47,22 @@ AGE_SEDES_2026 = [
 
 
 EXAMENES = {
+    "policia-local": {
+        "lead": "El Ayuntamiento de Madrid publica cuestionarios y plantillas en la ficha del proceso. No hay un PDF permanente todavía de esta convocatoria. Esta calculadora es solo de Madrid: otra Policía Local tiene otro examen.",
+        "groups": [
+            {
+                "year": "Convocatoria diciembre 2025 (561 plazas)",
+                "note": "El examen cultural aún no tiene fecha en el BOE. Cuando el tribunal cuelgue el PDF, el enlace oficial estará en la ficha del Ayuntamiento.",
+                "links": [
+                    (
+                        "https://www.madrid.es/portales/munimadrid/es/Inicio/Seguridad-y-emergencias/Policia-Municipal/Policia-del-Cuerpo-de-Policia-Municipal-del-Ayuntamiento-de-Madrid-concurso-oposicion-libre-con-reserva-de-plazas-tropa-y-marineria-convocatoria-diciembre-2025-reserva-turno-libre/?vgnextchannel=3926bb21278fe410VgnVCM1000000b205a0aRCRD&vgnextoid=987256187a8ea910VgnVCM200000f921e388RCRD",
+                        "Ficha oficial del proceso",
+                    ),
+                    ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-25740", "Convocatoria en el BOE"),
+                ],
+            }
+        ],
+    },
     "policia-nacional": {
         "lead": "La Policía Nacional no cuelga un PDF público permanente del cuestionario. Quien se examinó lo descarga, identificado, en el Portal del Aspirante. No hay un examen distinto publicado por ciudad: el tribunal usa modelos nacionales y las sedes solo cambian el aula.",
         "groups": [

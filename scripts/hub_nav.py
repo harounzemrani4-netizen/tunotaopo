@@ -1,0 +1,51 @@
+"""Navegación interna de cada oposición."""
+
+from __future__ import annotations
+
+from xml.sax.saxutils import escape
+
+from hubs_data import HUBS
+
+NAV_LABELS = {
+    "requisitos": "Requisitos",
+    "pruebas": "Pruebas",
+    "fisicas": "Físicas",
+    "baremo": "Baremo",
+    "temario": "Temario",
+    "fechas": "Fechas",
+    "notas": "Notas",
+    "examenes": "Exámenes",
+}
+HUB_SLUGS = {
+    "requisitos": "requisitos",
+    "pruebas": "pruebas",
+    "fisicas": "pruebas-fisicas",
+    "baremo": "baremo",
+    "temario": "temario",
+    "fechas": "fechas",
+    "notas": "notas-corte",
+    "examenes": "examenes-oficiales",
+}
+
+
+def hub_nav(family: str, prefix: str, current: str) -> str:
+    calc_folder = "auxiliar-administrativo-age" if family == "auxiliar-age" else family
+    if family == "policia-local":
+        items = [
+            ("Ciudades", f"{prefix}oposiciones/{family}/index.html", "hub"),
+            ("Calcular Madrid", f"{prefix}calculadoras/{calc_folder}/index.html", "calc"),
+        ]
+    else:
+        items = [
+            ("Resumen", f"{prefix}oposiciones/{family}/index.html", "hub"),
+            ("Calcular nota", f"{prefix}calculadoras/{calc_folder}/index.html", "calc"),
+        ]
+    for key in (HUBS.get(family) or {}).get("pages") or []:
+        items.append(
+            (NAV_LABELS[key], f"{prefix}oposiciones/{family}/{HUB_SLUGS[key]}/index.html", key)
+        )
+    bits = []
+    for label, href, key in items:
+        extra = ' class="is-current" aria-current="page"' if key == current else ""
+        bits.append(f'<a href="{href}"{extra}>{escape(label)}</a>')
+    return f'<nav class="opp-links" aria-label="Secciones">{"".join(bits)}</nav>'

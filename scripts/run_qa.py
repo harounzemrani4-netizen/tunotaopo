@@ -19,13 +19,20 @@ def run(cmd: list[str]) -> None:
 def main() -> int:
     run([sys.executable, str(ROOT / "scripts" / "generate_pages.py")])
     run([sys.executable, str(ROOT / "tests" / "test_engine.py")])
+    run([sys.executable, str(ROOT / "tests" / "test_engine_parity.py")])
     run([sys.executable, str(ROOT / "tests" / "test_fisicas.py")])
+    run([sys.executable, str(ROOT / "tests" / "test_pl_fisicas.py")])
+    run([sys.executable, str(ROOT / "tests" / "test_pl_directorio.py")])
     run([sys.executable, str(ROOT / "tests" / "test_gc_fisicas.py")])
     run([sys.executable, str(ROOT / "tests" / "test_gc_baremo.py")])
     run([sys.executable, str(ROOT / "tests" / "test_security.py")])
+    run([sys.executable, str(ROOT / "tests" / "test_modules.py")])
+    run([sys.executable, str(ROOT / "tests" / "test_site_assets.py")])
     run([sys.executable, str(ROOT / "scripts" / "verify_seo.py")])
-    run([sys.executable, str(SKILL / "validate_project_manifest.py"), str(ROOT / "project-manifest.json")])
-    run([sys.executable, str(SKILL / "verify_project.py"), "--project", str(ROOT)])
+    run([sys.executable, str(ROOT / "scripts" / "package_cloudflare.py")])
+    if (SKILL / "validate_project_manifest.py").exists():
+        run([sys.executable, str(SKILL / "validate_project_manifest.py"), str(ROOT / "project-manifest.json")])
+        run([sys.executable, str(SKILL / "verify_project.py"), "--project", str(ROOT)])
     return 0
 
 

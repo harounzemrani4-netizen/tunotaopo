@@ -61,8 +61,99 @@
     }).join(" ");
     return (
       '<svg class="progress-chart" viewBox="0 0 ' + w + " " + h + '" width="220" height="40" role="img" aria-label="Evolución">' +
-      '<polyline fill="none" stroke="#173a56" stroke-width="2" points="' + pts + '"/></svg>'
+      '<polyline fill="none" stroke="currentColor" stroke-width="2" points="' + pts + '"/></svg>'
     );
+  }
+
+  function numericRows(rows) {
+    return rows.filter(function (row) {
+      return typeof row.s === "number" && Number.isFinite(row.s);
+    });
+  }
+
+  function compareBox(rows) {
+    var scores = numericRows(rows);
+    if (scores.length < 2) return "";
+    var prev = scores[scores.length - 2];
+    var last = scores[scores.length - 1];
+    var step = Math.round((last.s - prev.s) * 10000) / 10000;
+    return (
+      '<div class="progress-compare" aria-label="Comparar los dos últimos simulacros">' +
+      "<div><span>Anterior</span><strong>" + fmt(prev.s, 2) + "</strong></div>" +
+      "<div><span>Último</span><strong>" + fmt(last.s, 2) + "</strong><p>" +
+      (step >= 0 ? "+" : "") + fmt(step, 2) + " respecto al anterior</p></div></div>"
+    );
+  }
+
+  function collectBackup() {
+    var keys = {};
+    var i;
+    for (i = 0; i < localStorage.length; i += 1) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf("tunotaopo:") === 0) {
+        keys[key] = localStorage.getItem(key);
+      }
+    }
+    return {
+      app: "tunotaopo",
+      exported_at: new Date().toISOString(),
+      keys: keys
+    };
+  }
+
+  function applyBackup(data) {
+    if (!data || data.app !== "tunotaopo" || !data.keys || typeof data.keys !== "object") {
+      return "El archivo no es una exportación de TuNotaOpo.";
+    }
+    var key;
+    for (key in data.keys) {
+      if (!Object.prototype.hasOwnProperty.call(data.keys, key)) continue;
+      if (key.indexOf("tunotaopo:") !== 0) continue;
+      localStorage.setItem(key, String(data.keys[key]));
+    }
+    return "";
+  }
+
+  function note(message) {
+    var node = $("progress-backup-note");
+    if (!node) return;
+    node.hidden = !message;
+    node.textContent = message || "";
+  }
+
+  function bindBackup(onChange) {
+    var exp = $("progress-export");
+    var inp = $("progress-import");
+    if (exp) {
+      exp.addEventListener("click", function () {
+        var blob = new Blob([JSON.stringify(collectBackup(), null, 2)], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "tunotaopo-progreso.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        note("Exportado. El archivo solo tiene lo guardado en este navegador.");
+      });
+    }
+    if (inp) {
+      inp.addEventListener("change", function () {
+        var file = inp.files && inp.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var err = applyBackup(JSON.parse(String(reader.result || "")));
+            note(err || "Importado. Revisa las tarjetas.");
+            if (!err) onChange();
+          } catch (ignore) {
+            note("No se pudo leer el JSON.");
+          }
+          inp.value = "";
+        };
+        reader.readAsText(file);
+      });
+    }
   }
 
   function bind() {
@@ -77,6 +168,21 @@
     }
     if (!Array.isArray(trackers) || !trackers.length) return;
     var prefix = document.body.getAttribute("data-root") || "../";
+
+    function renderUsage() {
+      var box = $("usage-local");
+      if (!box || !root.NotaOpoAnalytics || !root.NotaOpoAnalytics.summary) return;
+      var info = root.NotaOpoAnalytics.summary();
+      if (!info.total) {
+        box.hidden = true;
+        return;
+      }
+      box.hidden = false;
+      box.textContent =
+        "En este navegador se han registrado " +
+        info.total +
+        " eventos locales (páginas y cálculos). No salen de este dispositivo.";
+    }
 
     function render() {
       var cards = [];
@@ -127,6 +233,7 @@
             (rows.length ? " · " + rows.length + " simulacro" + (rows.length === 1 ? "" : "s") : "") +
             "</p>" +
             sparkline(rows) +
+            compareBox(rows) +
             list +
             trend +
             goal +
@@ -147,8 +254,10 @@
           render();
         });
       });
+      renderUsage();
     }
 
+    bindBackup(render);
     render();
   }
 

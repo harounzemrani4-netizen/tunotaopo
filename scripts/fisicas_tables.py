@@ -238,9 +238,64 @@ def gc_fisicas_tables() -> str:
     )
 
 
+def pl_fisicas_tables() -> str:
+    run800 = [
+        ["5", "2:50", "3:30"],
+        ["6", "2:39", "3:19"],
+        ["7", "2:28", "3:08"],
+        ["8", "2:17", "2:57"],
+        ["9", "2:06", "2:46"],
+        ["10", "1:55 o menos", "2:35 o menos"],
+    ]
+    run60 = [
+        ["5", "9,10 s", "10,40 s"],
+        ["6", "8,68 s", "9,98 s"],
+        ["7", "8,26 s", "9,56 s"],
+        ["8", "7,84 s", "9,14 s"],
+        ["9", "7,42 s", "8,72 s"],
+        ["10", "7,00 s o menos", "8,30 s o menos"],
+    ]
+    ball = [
+        ["5", "5,50 m", "5,50 m (balón 3 kg)"],
+        ["6", "6,50 m", "6,50 m"],
+        ["7", "7,50 m", "7,50 m"],
+        ["8", "8,50 m", "8,50 m"],
+        ["9", "9,50 m", "9,50 m"],
+        ["10", "10,50 m o más", "10,50 m o más"],
+    ]
+    jump = [
+        ["5", "2,15 m", "1,85 m"],
+        ["6", "2,35 m", "2,05 m"],
+        ["7", "2,55 m", "2,25 m"],
+        ["8", "2,75 m", "2,45 m"],
+        ["9", "2,95 m", "2,65 m"],
+        ["10", "3,15 m o más", "2,85 m o más"],
+    ]
+    swim = [
+        ["5", "24,0 s", "26,0 s"],
+        ["6", "21,2 s", "23,2 s"],
+        ["7", "18,4 s", "20,4 s"],
+        ["8", "15,6 s", "17,6 s"],
+        ["9", "12,8 s", "14,8 s"],
+        ["10", "10,0 s o menos", "12,0 s o menos"],
+    ]
+    return (
+        "<h2 id=\"tablas-fisicas\">Marcas del anexo II (Madrid)</h2>"
+        "<p>La tabla empieza en 5 puntos. Las marcas que no están escritas se interpolan con la anterior y la posterior. "
+        "Peor que la marca de 5 no tiene puntuación oficial: no se inventa una escala 0–4.</p>"
+        + _score_table("800 metros", ["Puntos", "Hombres", "Mujeres"], run800)
+        + _score_table("60 metros", ["Puntos", "Hombres", "Mujeres"], run60)
+        + _score_table("Balón medicinal (hombres 5 kg, mujeres 3 kg)", ["Puntos", "Hombres", "Mujeres"], ball)
+        + _score_table("Salto de longitud parado", ["Puntos", "Hombres", "Mujeres"], jump)
+        + _score_table("Natación 25 metros", ["Puntos", "Hombres", "Mujeres"], swim)
+    )
+
+
 def fisicas_tables_html(family: str) -> str:
     if family == "policia-nacional":
         return pn_fisicas_tables()
     if family == "guardia-civil":
         return gc_fisicas_tables()
+    if family == "policia-local":
+        return pl_fisicas_tables()
     return ""

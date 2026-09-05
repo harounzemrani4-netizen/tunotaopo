@@ -9,7 +9,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = list(ROOT.glob("*.html")) + list(ROOT.rglob("*/index.html"))
-HTML = [p for p in HTML if "node_modules" not in p.parts and "research" not in p.parts]
+HTML = [
+    p
+    for p in HTML
+    if "node_modules" not in p.parts
+    and "research" not in p.parts
+    and "dist" not in p.parts
+]
 
 
 def fail(msg: str) -> None:
@@ -37,7 +43,16 @@ def main() -> int:
         if needle not in ht:
             err(f".htaccess missing {needle}")
 
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from site_config import CSP, CSP_EMBED  # noqa: E402
+
     headers = (ROOT / "_headers").read_text(encoding="utf-8")
+    if f"Content-Security-Policy: {CSP}" not in headers:
+        err("_headers no usa el CSP de site_config")
+    if f"Content-Security-Policy: {CSP_EMBED}" not in headers:
+        err("_headers embed no usa CSP_EMBED")
+    if f'Content-Security-Policy "{CSP}"' not in ht:
+        err(".htaccess no usa el CSP de site_config")
     for needle in (
         "X-Content-Type-Options",
         "Content-Security-Policy",

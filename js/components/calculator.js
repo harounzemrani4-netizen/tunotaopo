@@ -349,7 +349,7 @@
     }).join(" ");
     return (
       '<svg class="progress-chart" viewBox="0 0 ' + w + " " + h + '" width="240" height="48" role="img" aria-label="Evolución de la nota">' +
-      '<polyline fill="none" stroke="#173a56" stroke-width="2" points="' + pts + '"/></svg>'
+      '<polyline fill="none" stroke="currentColor" stroke-width="2" points="' + pts + '"/></svg>'
     );
   }
 
@@ -401,10 +401,21 @@
       if (left > 0) goal = "<p>Objetivo: " + fmt(target, 2) + ". Te faltan " + fmt(left, 2) + ".</p>";
       else goal = "<p>Objetivo: " + fmt(target, 2) + ". Ya lo superas en este simulacro.</p>";
     }
+    var compare = "";
+    if (rows.length >= 2 && typeof first === "number" && typeof last === "number") {
+      var prev = rows[rows.length - 2].s;
+      var step = Math.round((last - prev) * 10000) / 10000;
+      compare =
+        '<div class="progress-compare" aria-label="Comparar los dos últimos">' +
+        "<div><span>Anterior</span><strong>" + fmt(prev, 2) + "</strong></div>" +
+        "<div><span>Último</span><strong>" + fmt(last, 2) +
+        "</strong><p>" + (step >= 0 ? "+" : "") + fmt(step, 2) + "</p></div></div>";
+    }
     panel.hidden = false;
     panel.innerHTML =
       "<h2>Mis simulacros</h2>" +
       sparkline(rows) +
+      compare +
       '<ol class="progress-list">' + items + "</ol>" +
       '<p class="progress-trend">' + trend + "</p>" +
       goal +
@@ -438,7 +449,7 @@
     clearInvalid();
     box.hidden = false;
     if ($("result-placeholder")) $("result-placeholder").hidden = true;
-    $("result-kicker").textContent = "Puntuación de la oposición";
+    $("result-kicker").textContent = (config.aggregate && config.aggregate.label) || "Puntuación de la oposición";
     $("result-value").textContent = fmt(result.opposition_total, 4);
     var maxOpp = config.aggregate && typeof config.aggregate.maximum === "number" ? config.aggregate.maximum : null;
     var scale = $("result-scale");
@@ -558,7 +569,6 @@
       hideToast();
       clearInvalid();
       if ($("result-placeholder")) $("result-placeholder").hidden = false;
-      localStorage.removeItem("notaopo:" + config.slug);
     }
 
     var fromQuery = inputsFromQuery(form);
@@ -566,8 +576,6 @@
       showError("La URL compartida contiene un parámetro no válido. Introduce los datos de nuevo.", form, config);
     } else if (Object.keys(fromQuery.data).length) {
       applyInputs(form, fromQuery.data);
-    } else {
-      localStorage.removeItem("notaopo:" + config.slug);
     }
 
     window.addEventListener("pageshow", function (event) {
@@ -606,7 +614,6 @@
       clearInvalid();
       if ($("result-placeholder")) $("result-placeholder").hidden = false;
       if ($("save-progress")) $("save-progress").hidden = true;
-      localStorage.removeItem("notaopo:" + config.slug);
       history.replaceState({}, "", location.pathname);
     });
 

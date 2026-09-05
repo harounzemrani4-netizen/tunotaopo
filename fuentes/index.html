@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="asset-v" content="20260904aa">
   
   <title>Fuentes oficiales | TuNotaOpo</title>
   <meta name="description" content="Boletines del BOE, PDFs, listas históricas y portales oficiales que controlan las fórmulas de TuNotaOpo. Verificado el 19 de agosto de 2026.">
@@ -17,8 +18,17 @@
   <meta property="og:url" content="https://tunotaopo.es/fuentes/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
+  <meta property="og:image" content="https://tunotaopo.es/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TuNotaOpo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://tunotaopo.es/assets/og.png">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
+  <link rel="apple-touch-icon" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css?v=20260904aa">
+  <script src="/js/theme-boot.js?v=20260904aa"></script>
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -28,12 +38,18 @@
       <img src="/assets/logo.svg" width="36" height="36" alt="">
       <span>TuNotaOpo</span>
     </a>
-    <nav class="nav" aria-label="Principal">
-      <a href="/oposiciones/">Oposiciones</a>
-      <a href="/calculadoras/">Calculadoras</a>
-      <a href="/oposiciones/progreso/">Mi progreso</a>
-      <a href="/fuentes/">Fuentes</a>
-    </nav>
+    <div class="header-tools">
+      <nav class="nav" aria-label="Principal">
+        <a href="/oposiciones/">Oposiciones</a>
+        <a href="/calculadoras/"><span class="nav-long">Calculadoras</span><span class="nav-short">Calcular</span></a>
+        <a href="/oposiciones/progreso/"><span class="nav-long">Mi progreso</span><span class="nav-short">Progreso</span></a>
+        <a href="/fuentes/" class="is-current" aria-current="page">Fuentes</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A8.8 8.8 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.4 5.4l1.4 1.4M17.2 17.2l1.4 1.4M18.6 5.4l-1.4 1.4M6.8 17.2l-1.4 1.4"/></g></svg>
+      </button>
+    </div>
   </div>
 </header>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="top" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -50,13 +66,13 @@
         <p class="source-kicker">En esta página</p>
         <ul>
           <li><a href="#formulas">Fórmulas en vigor</a></li>
-          <li><a href="#fuente-guardia-civil">Guardia Civil</a></li><li><a href="#fuente-policia-nacional">Policía Nacional</a></li><li><a href="#fuente-ayudantes-iipp">Ayudantes IIPP</a></li><li><a href="#fuente-auxilio-judicial">Auxilio Judicial</a></li><li><a href="#fuente-auxiliar-age">Auxiliar AGE</a></li>
+          <li><a href="#fuente-guardia-civil">Guardia Civil</a></li><li><a href="#fuente-policia-nacional">Policía Nacional</a></li><li><a href="#fuente-policia-local">Policía Local</a></li><li><a href="#fuente-ayudantes-iipp">Ayudantes IIPP</a></li><li><a href="#fuente-auxilio-judicial">Auxilio Judicial</a></li><li><a href="#fuente-auxiliar-age">Auxiliar AGE</a></li>
           <li><a href="#historico">Histórico del año pasado</a></li>
           <li><a href="#portales">Portales institucionales</a></li>
         </ul>
       </nav>
       <h2 id="formulas">Fórmulas en vigor</h2>
-      <p>Estas cinco normas controlan el cálculo publicado. El enlace HTML y el PDF son del BOE; la calculadora es la URL estable de cada oposición.</p>
+      <p>Estas normas controlan el cálculo publicado. El enlace HTML y el PDF son del boletín; la calculadora es la URL estable de cada oposición.</p>
       <div class="source-catalog"><article class="source-entry" id="fuente-guardia-civil">
       <p class="source-kicker">Convocatoria en vigor</p>
       <h3>Guardia Civil</h3>
@@ -69,6 +85,12 @@
       <p class="source-id">BOE-A-2026-15055</p>
       <dl class="source-facts"><div><dt>Cuerpo</dt><dd>Policía Nacional — Escala Básica, categoría de Policía</dd></div><div><dt>Organismo</dt><dd>Dirección General de la Policía, Ministerio del Interior</dd></div><div><dt>Convocatoria</dt><dd>Resolución de 7 de julio de 2026 (Escala Básica, promoción 43)</dd></div><div><dt>Apartado usado</dt><dd>6.1.1, 6.11 y 6.14</dd></div><div><dt>Qué controla el cálculo</dt><dd>Fórmula 6.1.1, mínimo 3, proporción 1,75, idiomas 6.14. Sin físicas ni psicotécnico como nota de corte inventada.</dd></div><div><dt>Fórmula</dt><dd>[A − E/(n−1)] × 10/P, con n = 3 y P = 100. Escala 0–10. Mínimo 3 puntos. Idiomas superiores a A2: hasta 2 puntos extra. Carrera o grado superior no suman.</dd></div><div><dt>Fecha de la norma</dt><dd>7 de julio de 2026</dd></div><div><dt>Publicación en el BOE</dt><dd>10 de julio de 2026</dd></div><div><dt>Consultado / verificado</dt><dd>19 de agosto de 2026</dd></div></dl>
       <p class="source-links"><a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-15055" rel="noopener noreferrer">Texto en el BOE</a> · <a href="https://www.boe.es/boe/dias/2026/07/10/pdfs/BOE-A-2026-15055.pdf" rel="noopener noreferrer">PDF del BOE</a> · <a href="../calculadoras/policia-nacional/index.html">Calculadora</a></p>
+    </article><article class="source-entry" id="fuente-policia-local">
+      <p class="source-kicker">Convocatoria en vigor</p>
+      <h3>Policía Local</h3>
+      <p class="source-id">BOE-A-2025-25740</p>
+      <dl class="source-facts"><div><dt>Cuerpo</dt><dd>Policía del Cuerpo de Policía Municipal del Ayuntamiento de Madrid</dd></div><div><dt>Organismo</dt><dd>Ayuntamiento de Madrid — Coordinador General de Seguridad y Emergencias</dd></div><div><dt>Convocatoria</dt><dd>Resolución de 5 de diciembre de 2025 (BOE-A-2025-25740). Bases: Decreto de 27 de febrero de 2025, BOAM núm. 9829, rectificado en el núm. 9836</dd></div><div><dt>Apartado usado</dt><dd>BOAM 9829, base 5.2.a) (pruebas culturales). Convocatoria de plazas: BOE-A-2025-25740</dd></div><div><dt>Qué controla el cálculo</dt><dd>Fórmula cultural de la base 5.2.a) del BOAM núm. 9829: 0–10 por parte, penalización 1/3, mínimo 5, ponderación 90/10 y ratio 3,5. Plazas 448+113 en BOE-A-2025-25740. Sin corte inventado ni fórmula de otra ciudad.</dd></div><div><dt>Fórmula</dt><dd>Cada parte: 10 × (A − E/3) / T, de 0 a 10. Temario T = 80 (mínimo 5). Idioma T = 10 (mínimo 5). Tres opciones; el error resta un tercio, no la mitad. Nota cultural = 0,90×temario + 0,10×idioma. El 5 no es el corte: solo siguen 3,5 aspirantes por plaza.</dd></div><div><dt>Fecha de la norma</dt><dd>27 de febrero de 2025</dd></div><div><dt>Publicación en el BOE</dt><dd>16 de diciembre de 2025</dd></div><div><dt>Consultado / verificado</dt><dd>3 de septiembre de 2026</dd></div></dl>
+      <p class="source-links"><a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-25740" rel="noopener noreferrer">Texto en el BOE</a> · <a href="https://www.boe.es/boe/dias/2025/12/16/pdfs/BOE-A-2025-25740.pdf" rel="noopener noreferrer">PDF del BOE</a> · <a href="https://www.madrid.es/UnidadWeb/Contenidos/Oposiciones/2025/PoliciaTL2025/Ficheros/BasesPoliciaMunicipalboam9829.pdf" rel="noopener noreferrer">Bases BOAM 9829 (fórmula)</a> · <a href="../calculadoras/policia-local/index.html">Calculadora</a></p>
     </article><article class="source-entry" id="fuente-ayudantes-iipp">
       <p class="source-kicker">Convocatoria en vigor</p>
       <h3>Ayudantes IIPP</h3>
@@ -131,6 +153,10 @@
       <h3>Sede electrónica de la Guardia Civil</h3>
       <p>Sede oficial citada en las convocatorias para la solicitud de ingreso. No sustituye al BOE como fuente de la fórmula.</p>
       <p class="source-links"><a href="https://sede.guardiacivil.gob.es/" rel="noopener noreferrer">Abrir portal</a></p>
+    </article><article class="source-entry">
+      <h3>Ayuntamiento de Madrid — Policía Municipal</h3>
+      <p>Ficha del proceso de Policía Municipal de Madrid. Las bases (BOAM 9829) fijan la fórmula; el BOE solo anuncia las 561 plazas.</p>
+      <p class="source-links"><a href="https://www.madrid.es/portales/munimadrid/es/Inicio/Seguridad-y-emergencias/Policia-Municipal/Policia-del-Cuerpo-de-Policia-Municipal-del-Ayuntamiento-de-Madrid-concurso-oposicion-libre-con-reserva-de-plazas-tropa-y-marineria-convocatoria-diciembre-2025-reserva-turno-libre/?vgnextchannel=3926bb21278fe410VgnVCM1000000b205a0aRCRD&amp;vgnextoid=987256187a8ea910VgnVCM200000f921e388RCRD" rel="noopener noreferrer">Abrir portal</a></p>
     </article></div>
       <h2>Qué no es fuente</h2>
       <p>Blogs de academias, resúmenes de YouTube, foros o calculadoras genéricas no mandan sobre el BOE. Si una cifra no está en las normas o portales de esta página, TuNotaOpo no la usa.</p>
@@ -146,6 +172,7 @@
     </div>
     <div class="footer-links">
       <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
       <a href="/oposiciones/progreso/">Mi progreso</a>
       <a href="/metodologia/">Metodología</a>
       <a href="/fuentes/">Fuentes</a>
@@ -157,8 +184,8 @@
     </div>
   </div>
 </footer>
-  <script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819aa" defer></script>
-<script src="/js/site.js?v=20260819aa" defer></script>
+  <script src="/js/components/analytics.js?v=20260904aa" defer></script>
+<script src="/js/components/tools.js?v=20260904aa" defer></script>
+<script src="/js/site.js?v=20260904aa" defer></script>
 </body>
 </html>

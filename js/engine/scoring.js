@@ -327,7 +327,7 @@
     throw new Error("Modelo no soportado: " + model);
   }
 
-  function sumStages(results, ids) {
+  function sumStages(results, ids, weights) {
     var total = 0;
     var i;
     for (i = 0; i < ids.length; i += 1) {
@@ -335,7 +335,11 @@
       if (!item || !isFiniteNumber(item.rounded)) {
         return null;
       }
-      total += item.rounded;
+      var weight = 1;
+      if (weights && isFiniteNumber(weights[ids[i]])) {
+        weight = weights[ids[i]];
+      }
+      total += item.rounded * weight;
     }
     return total;
   }
@@ -348,7 +352,7 @@
     var out = {};
     aggregates.forEach(function (agg) {
       var ids = agg.include || agg.stages || [];
-      var total = sumStages(byId, ids);
+      var total = sumStages(byId, ids, agg.weights);
       if (total !== null && isFiniteNumber(agg.rounding)) {
         total = roundTo(total, agg.rounding);
       }
@@ -366,10 +370,23 @@
     return out;
   }
 
+  function firstPresent(inputs, keys) {
+    var i;
+    for (i = 0; i < keys.length; i += 1) {
+      if (Object.prototype.hasOwnProperty.call(inputs, keys[i])) {
+        return inputs[keys[i]];
+      }
+    }
+    return undefined;
+  }
+
   function evaluateMerits(config, inputs) {
     if (!config.merits) return null;
     var merits = config.merits;
-    var value = optionalNumber(inputs[merits.id] || inputs.merits || inputs.concurso, merits.label || "méritos");
+    var value = optionalNumber(
+      firstPresent(inputs, [merits.id, "merits", "concurso"]),
+      merits.label || "méritos"
+    );
     if (value === null) return null;
     var min = isFiniteNumber(merits.minimum) ? merits.minimum : 0;
     var max = isFiniteNumber(merits.maximum) ? merits.maximum : undefined;
@@ -480,10 +497,14 @@
         var stage = stages.filter(function (s) { return s.id === id; })[0];
         var current = byId[id];
         if (!stage || !current || !isFiniteNumber(current.rounded)) return;
+        var weights = agg.weights || null;
         var others = include.filter(function (x) { return x !== id; }).reduce(function (sum, x) {
-          return sum + (byId[x] && isFiniteNumber(byId[x].rounded) ? byId[x].rounded : 0);
+          var part = byId[x] && isFiniteNumber(byId[x].rounded) ? byId[x].rounded : 0;
+          var weight = weights && isFiniteNumber(weights[x]) ? weights[x] : 1;
+          return sum + part * weight;
         }, 0);
-        var neededScore = target - others;
+        var ownWeight = weights && isFiniteNumber(weights[id]) ? weights[id] : 1;
+        var neededScore = ownWeight === 0 ? null : (target - others) / ownWeight;
         var hits = hitsNeededForScore(stage, current.errors, neededScore, current.valid_questions);
         lines.push({
           type: "hits_for_target",

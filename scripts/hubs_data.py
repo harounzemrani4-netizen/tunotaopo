@@ -74,6 +74,54 @@ PN_PORTAL_NEWS = "https://www.policia.es/portalaspirantes/web/escala-basica-ejec
 INAP_AGE = "https://sede.inap.gob.es/es/procedimientos-y-servicios/seleccion/procesos-selectivos-de-cuerpos-y-escalas-generales/cuerpo-general-auxiliar-de-la-administracion-del-estado-ingreso-libre-convocatoria-2025"
 JUSTICIA_AUXILIO = "https://www.mjusticia.gob.es/es/ciudadania/empleo-publico/acceso-convocatorias-perfiles/auxilio-judicial"
 IIPP_WEB = "https://www.institucionpenitenciaria.es/"
+MADRID_PL = "https://www.madrid.es/portales/munimadrid/es/Inicio/Seguridad-y-emergencias/Policia-Municipal/Policia-del-Cuerpo-de-Policia-Municipal-del-Ayuntamiento-de-Madrid-concurso-oposicion-libre-con-reserva-de-plazas-tropa-y-marineria-convocatoria-diciembre-2025-reserva-turno-libre/?vgnextchannel=3926bb21278fe410VgnVCM1000000b205a0aRCRD&vgnextoid=987256187a8ea910VgnVCM200000f921e388RCRD"
+MADRID_PL_BASES = "https://www.madrid.es/UnidadWeb/Contenidos/Oposiciones/2025/PoliciaTL2025/Ficheros/BasesPoliciaMunicipalboam9829.pdf"
+BOE_PL = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-25740"
+
+PL_TEMAS = {
+    "Anexo I — temario oficial": [
+        (1, "Constitución Española (I): estructura, principios y reforma."),
+        (2, "Constitución Española (II): derechos y deberes, amparo, Defensor del Pueblo y suspensión."),
+        (3, "Constitución Española (III): Corona, Cortes, Gobierno, organización territorial, CCAA, provincia y municipio."),
+        (4, "Derecho, Administración, legalidad, fuentes y potestad reglamentaria local."),
+        (5, "Comunidad de Madrid: origen, Estatuto de Autonomía e instituciones."),
+        (6, "Administración Local, municipio, organización y competencias."),
+        (7, "Reglamento Orgánico del Ayuntamiento de Madrid y Juntas de Distrito."),
+        (8, "Reglamento del Cuerpo de Policía Municipal de 1995: funcionamiento y saludo."),
+        (9, "Ley Orgánica 4/2010, régimen disciplinario del CNP (apartados citados)."),
+        (10, "Ley 1/2018 de Coordinación de Policías Locales de la Comunidad de Madrid."),
+        (11, "Reglamento Marco de Policías Locales de Madrid (I): ordenación, estructura y promoción."),
+        (12, "Reglamento Marco (II): formación, régimen disciplinario, uniformidad y armamento."),
+        (13, "Ordenanza del Taxi de Madrid (títulos citados)."),
+        (14, "Ordenanza de Protección del Medio Ambiente Urbano: zonas verdes."),
+        (15, "Ordenanza de Limpieza y residuos; Ordenanza de Salubridad Pública (alimentos)."),
+        (16, "Ordenanza de Movilidad Sostenible: circulación, aparcamiento y disciplina viaria."),
+        (17, "Ordenanza de Protección contra la Contaminación Acústica y Térmica."),
+        (18, "Ordenanza de Venta Ambulante."),
+        (19, "Espectáculos y actividades recreativas: Ley 17/1997 y Decreto 184/1998."),
+        (20, "Tribunales, jurisdicción penal y procedimientos penales."),
+        (21, "Código Penal (I): garantías, infracción penal y responsables."),
+        (22, "Código Penal (II): penas, medidas de seguridad y extinción."),
+        (23, "Código Penal (III): homicidio, lesiones, libertad, integridad moral y trata."),
+        (24, "Código Penal (IV): libertad sexual y patrimonio (capítulos I a V)."),
+        (25, "Código Penal (V): salud pública."),
+        (26, "Código Penal (VI): seguridad vial."),
+        (27, "Código Penal (VII): Administración Pública y delitos relativos a derechos fundamentales."),
+        (28, "Normas de circulación, organismos de tráfico y requisitos para circular."),
+        (29, "Señalización y control automático del tráfico."),
+        (30, "Denuncias de circulación, procedimiento, inmovilización y vehículos abandonados."),
+        (31, "Accidentes de tráfico: concepto, clases y actuación."),
+        (32, "Alcoholemia, etilómetros y pruebas de detección de drogas."),
+        (33, "Modelo policial español, FCS, policías autonómicas y locales, protección civil."),
+        (34, "Ley Orgánica 4/2015 de Protección de la Seguridad Ciudadana (capítulos citados)."),
+        (35, "Ley Orgánica 4/2000 de extranjería (títulos citados)."),
+        (36, "Ley 5/2002 de drogodependencias (títulos citados)."),
+        (37, "Ley Orgánica 1/2004 de violencia de género y Ley 27/2003 de orden de protección."),
+        (38, "Ley Orgánica 3/2007 de igualdad y Plan de Igualdad del Ayuntamiento de Madrid."),
+        (39, "Ley 4/2023 de igualdad trans y derechos LGTBI (títulos citados)."),
+        (40, "Ley 31/1995 de prevención de riesgos laborales y acuerdo de condiciones del Ayuntamiento."),
+    ]
+}
 
 HUBS = {
     "policia-nacional": {
@@ -742,6 +790,110 @@ HUBS = {
                     ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13226", "Convocatoria"),
                     (IIPP_WEB, "Secretaría General de IIPP"),
                 ],
+            }
+        ],
+    },
+    "policia-local": {
+        "name": "Policía Local (Madrid)",
+        "h1": "Policía Local de Madrid — oposición 2026",
+        "eyebrow": "Cuerpo de Policía Municipal · Ayuntamiento de Madrid",
+        "badge": "Proceso 2026 · 561 plazas · BOE-A-2025-25740 · bases BOAM 9829",
+        "process_label": "Proceso 2026 · convocatoria publicada el 16/12/2025",
+        "pages": ["requisitos", "pruebas", "fisicas", "temario", "fechas", "notas", "examenes"],
+        "status": [
+            ("Plazas", "561", "448 turno libre · 113 tropa y marinería"),
+            ("Convocatoria", "Publicada", "16 de diciembre de 2025"),
+            ("Solicitudes", "Plazo cerrado", "17 de diciembre de 2025 al 16 de enero de 2026"),
+            ("Examen", "Por anunciar", "El Ayuntamiento lo publica. Aquí no se estima."),
+        ],
+        "tiles": [
+            ("calc", "Calculadora de nota", "Temario 90 % e idioma 10 %. Error −1/3. Solo Madrid."),
+            ("fisicas", "Pruebas físicas", "800 m, 60 m, balón, salto y 25 m. Anexo II."),
+            ("temario", "Temario", "Índice oficial del anexo I. 40 temas, no el manual."),
+            ("requisitos", "Requisitos", "Nacionalidad, 18 años, Bachiller o Técnico, permiso B."),
+            ("fechas", "Fechas", "BOE y BOAM. Sin día de examen inventado."),
+            ("pruebas", "Pruebas", "Culturales, psicotécnico, físicas y médico."),
+            ("notas", "Notas anteriores", "Sin corte inventado de esta convocatoria."),
+            ("examenes", "Exámenes oficiales", "Cuando el Ayuntamiento cuelgue el PDF."),
+        ],
+        "portal": (MADRID_PL, "Ayuntamiento de Madrid · proceso", "Bases, convocatoria y listas oficiales."),
+        "requisitos": [
+            ("Nacionalidad", "Tener la nacionalidad española."),
+            ("Edad", "Tener dieciocho años."),
+            ("Estudios", "Título de Bachiller, Técnico o equivalente, o certificación académica de los estudios completos."),
+            ("Capacidad", "Condiciones físicas y psíquicas exigibles. El anexo III lista exclusiones psicofísicas."),
+            ("Habilitación", "No separado del servicio ni inhabilitado para empleo público."),
+            ("Antecedentes", "Carecer de antecedentes penales."),
+            ("Permiso de conducir", "Permiso B o equivalente. Puede acreditarse antes de terminar el curso selectivo."),
+            ("Armas", "Compromiso de portar armas y utilizarlas en los casos previstos en la ley."),
+            ("Delitos sexuales", "No condenado por sentencia firme por delito contra la libertad sexual."),
+            ("Tropa y marinería", "Para las 113 plazas reservadas: más de cinco años de servicio como militar profesional de tropa y marinería."),
+        ],
+        "requisitos_lead": "Requisitos de la base 2 de las bases específicas (BOAM núm. 9829). En Madrid el cuerpo se llama Policía Municipal.",
+        "requisitos_extra": [
+            "Esto no es la Policía Local de otra ciudad. Cada ayuntamiento convoca la suya.",
+            "El permiso B puede obtenerse durante el curso selectivo. El resto de requisitos hay que tenerlos al cierre de instancias y mantenerlos hasta la toma de posesión.",
+        ],
+        "pruebas": [
+            ("Pruebas culturales — temario 80+3 e idioma 10+2. Cada parte 0–10, mínimo 5. Ponderación 90/10. Siguen 3,5 aspirantes por plaza.", "calc", ["Eliminatoria", "Puntuable"]),
+            ("Psicotécnicas — inteligencia (80+5, apto/no apto, ratio 1,2) y personalidad (160 ítems, perfil del tribunal).", None, ["Eliminatoria", "Apto / no apto"]),
+            ("Pruebas físicas — 800 m, 60 m, balón medicinal, salto y 25 m de natación. Mínimo 5 en cada una. Media aritmética.", "fisicas", ["Eliminatoria", "Puntuable"]),
+            ("Reconocimiento médico — apto o no apto, anexo III.", None, ["Eliminatoria", "Apto / no apto"]),
+            ("Concurso — máximo 2 puntos (servicios, titulaciones e idiomas). Solo si superaste la oposición.", None, ["Baremo"]),
+            ("Curso selectivo de formación — 0 a 10, mínimo 5 en cada asignatura.", None, ["Formación"]),
+        ],
+        "pruebas_lead": "Concurso-oposición. La fase de oposición pondera 60 % culturales y 40 % físicas. Cada prueba es eliminatoria.",
+        "pruebas_extra": [
+            "La calculadora de nota cubre solo las pruebas culturales. El 5 es el suelo de cada parte, no el corte: el recorte es 3,5 aspirantes por plaza.",
+            "La fase de oposición, si superas las cuatro pruebas, es 60 % culturales + 40 % físicas. El concurso (máximo 2) se suma después. Aquí no se fabrica esa suma si no has metido las físicas.",
+            "El psicotécnico y el médico los califica el tribunal. No hay fórmula pública de aciertos que convierta el test de personalidad en una nota.",
+            "Usa la calculadora de nota para el temario y el idioma, y la de físicas para el anexo II. Las listas salen en el Ayuntamiento de Madrid.",
+        ],
+        "timeline": [
+            {"label": "Bases", "date": "28 de febrero de 2025", "state": "done", "source_url": MADRID_PL_BASES, "source_label": "BOAM núm. 9829"},
+            {"label": "Convocatoria en el BOE", "date": "16 de diciembre de 2025", "state": "done", "source_url": BOE_PL, "source_label": "BOE-A-2025-25740"},
+            {"label": "Solicitudes", "date": "Cerradas", "state": "done", "note": "Del 17 de diciembre de 2025 al 16 de enero de 2026."},
+            {"label": "Admitidos definitivos", "date": "Abril de 2026", "state": "done", "note": "Resolución de 13 de abril de 2026 del Coordinador General de Seguridad y Emergencias."},
+            {"label": "Examen cultural", "date": "Pendiente de publicación oficial", "state": "current"},
+            {"label": "Psicotécnico, físicas y médico", "date": "Pendiente de publicación oficial", "state": "todo"},
+        ],
+        "updates": [
+            {"date": "2025-02-28", "text": "Publicadas las bases específicas en el BOAM núm. 9829.", "source_url": MADRID_PL_BASES, "source_label": "BOAM núm. 9829"},
+            {"date": "2025-03-11", "text": "Rectificación de errores materiales (OEP y opciones del psicotécnico). No cambia la fórmula cultural.", "source_url": "https://www.madrid.es/UnidadWeb/Contenidos/Oposiciones/2025/PoliciaTL2025/Ficheros/ErroBasesPoliMpalfeb2025.pdf", "source_label": "BOAM núm. 9836"},
+            {"date": "2025-12-16", "text": "Publicada en el BOE la convocatoria de 561 plazas.", "source_url": BOE_PL, "source_label": "BOE-A-2025-25740"},
+        ],
+        "fechas_extra": [
+            "El plazo de instancias (20 días hábiles desde el 17 de diciembre de 2025) ya terminó. El día del examen cultural no está en el BOE: no se copia una fecha de academia.",
+            "Los admitidos definitivos se publicaron en abril de 2026. Físicas, psicotécnico y médico aparecen cuando el tribunal cite.",
+        ],
+        "notas_extra": [
+            "El 5 de cada parte cultural no es el corte. El recorte es 3,5 aspirantes por plaza, y el tribunal puede bajar el 50 % si caben menos.",
+            "No se copia el corte de otra ciudad ni de otra convocatoria de Madrid.",
+        ],
+        "examenes_extra": [
+            "Cuando el Ayuntamiento publique cuestionario y plantilla, el enlace oficial estará en la ficha del proceso, no en un blog.",
+        ],
+        "temario": PL_TEMAS,
+        "temario_lead": "Índice del anexo I de las bases. No es el temario desarrollado: no sustituye el boletín ni un manual.",
+        "fechas": [
+            ("Bases en el BOAM", "28 de febrero de 2025 (núm. 9829). Rectificación el 11 de marzo de 2025 (núm. 9836)."),
+            ("Convocatoria en el BOE", "16 de diciembre de 2025 (BOE-A-2025-25740)."),
+            ("Plazo de solicitudes", "Del 17 de diciembre de 2025 al 16 de enero de 2026. Ese plazo ya terminó."),
+            ("Admitidos definitivos", "Resolución de 13 de abril de 2026 del Coordinador General de Seguridad y Emergencias."),
+            ("Examen cultural", "Pendiente de publicación oficial. No se estima aquí."),
+        ],
+        "fechas_lead": "Las fechas cerradas salen del BOE o del Ayuntamiento. El día del examen no se inventa.",
+        "notas_lead": "El mínimo 5 no es el corte. El corte de esta convocatoria aún no existe.",
+        "notas": [
+            ("2026", "Pendiente", "Corte cultural / lista de esta convocatoria", "Aún no publicado"),
+        ],
+        "notas_note": "No se fabrica un histórico con cortes de otras ciudades.",
+        "examenes_lead": "El Ayuntamiento de Madrid publica cuestionarios y plantillas en la ficha del proceso cuando el tribunal los acuerda.",
+        "examenes": [
+            {
+                "year": "Convocatoria diciembre 2025 (561 plazas)",
+                "note": "El examen cultural aún no tiene fecha en el BOE. Cuando salga el PDF, el enlace oficial estará en la ficha del Ayuntamiento.",
+                "links": [(MADRID_PL, "Ficha oficial del proceso"), (BOE_PL, "Convocatoria en el BOE")],
             }
         ],
     },

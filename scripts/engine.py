@@ -256,10 +256,14 @@ def evaluate(config: dict[str, Any], inputs: dict[str, Any] | None = None) -> di
     aggregates = {}
     for agg in aggregates_cfg:
         ids = agg.get("include") or agg.get("stages") or []
+        weights = agg.get("weights") or {}
         if any(i not in by_id or not is_finite(by_id[i].get("rounded")) for i in ids):
             total = None
         else:
-            total = sum(by_id[i]["rounded"] for i in ids)
+            total = 0.0
+            for i in ids:
+                weight = weights[i] if is_finite(weights.get(i)) else 1
+                total += by_id[i]["rounded"] * weight
             if is_finite(agg.get("rounding")):
                 total = round_to(total, agg["rounding"])
         aggregates[agg["id"]] = {"id": agg["id"], "label": agg.get("label", agg["id"]), "value": total, "maximum": agg.get("maximum")}

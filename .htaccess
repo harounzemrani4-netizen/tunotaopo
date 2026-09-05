@@ -1,5 +1,5 @@
 # NotaOpo — Apache / LiteSpeed (Hostinger).
-# No aplica en Nginx. Activa el redirect HTTPS cuando el certificado esté listo.
+# No aplica en Nginx. HTTPS + HSTS activos (localhost y 127.0.0.1 no redirigen).
 
 AddDefaultCharset UTF-8
 Options -Indexes
@@ -8,6 +8,11 @@ ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule ^(?:research|tests|scripts|release|data|node_modules)(/|$) - [F,L]
+  RewriteCond %{HTTP_HOST} !^localhost [NC]
+  RewriteCond %{HTTP_HOST} !^127\.0\.0\.1$
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -44,6 +49,7 @@ ErrorDocument 404 /404.html
   Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), clipboard-write=(self)"
   Header always set Cross-Origin-Opener-Policy "same-origin"
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
 
 <IfModule mod_mime.c>
@@ -61,11 +67,3 @@ ErrorDocument 404 /404.html
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
 </IfModule>
-
-# Cuando el dominio tenga SSL, descomenta:
-# <IfModule mod_rewrite.c>
-#   RewriteEngine On
-#   RewriteCond %{HTTPS} !=on
-#   RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-# </IfModule>
-# Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"

@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0c1924">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="asset-v" content="20260904aa">
   
   <title>Mi progreso | TuNotaOpo</title>
   <meta name="description" content="Historial de simulacros de nota y físicas guardado en este navegador. Sin cuenta ni servidor.">
@@ -17,8 +18,17 @@
   <meta property="og:url" content="https://tunotaopo.es/oposiciones/progreso/">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="TuNotaOpo">
+  <meta property="og:image" content="https://tunotaopo.es/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="TuNotaOpo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://tunotaopo.es/assets/og.png">
   <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/css/app.css?v=20260819aa">
+  <link rel="apple-touch-icon" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css?v=20260904aa">
+  <script src="/js/theme-boot.js?v=20260904aa"></script>
 </head>
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -28,12 +38,18 @@
       <img src="/assets/logo.svg" width="36" height="36" alt="">
       <span>TuNotaOpo</span>
     </a>
-    <nav class="nav" aria-label="Principal">
-      <a href="/oposiciones/">Oposiciones</a>
-      <a href="/calculadoras/">Calculadoras</a>
-      <a href="/oposiciones/progreso/">Mi progreso</a>
-      <a href="/fuentes/">Fuentes</a>
-    </nav>
+    <div class="header-tools">
+      <nav class="nav" aria-label="Principal">
+        <a href="/oposiciones/">Oposiciones</a>
+        <a href="/calculadoras/"><span class="nav-long">Calculadoras</span><span class="nav-short">Calcular</span></a>
+        <a href="/oposiciones/progreso/" class="is-current" aria-current="page"><span class="nav-long">Mi progreso</span><span class="nav-short">Progreso</span></a>
+        <a href="/fuentes/">Fuentes</a>
+      </nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A8.8 8.8 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.4 5.4l1.4 1.4M17.2 17.2l1.4 1.4M18.6 5.4l-1.4 1.4M6.8 17.2l-1.4 1.4"/></g></svg>
+      </button>
+    </div>
   </div>
 </header>
   <div class="wrap"><aside class="ad-slot is-reserved is-inactive" data-place="top" data-size="leaderboard" hidden aria-hidden="true"><p class="ad-kicker">Publicidad</p><div class="ad-box ad-box-leaderboard"></div></aside></div>
@@ -43,11 +59,18 @@
     <div class="hero">
       <h1>Mi progreso</h1>
       <p class="lede">Calcular no guarda nada. Solo se añade un simulacro si pulsas <strong>Guardar en Mi progreso</strong> en la calculadora. El historial queda en este navegador, no en una cuenta ni en un servidor.</p>
+      <p class="hero-actions">
+        <button type="button" class="button button-secondary" id="progress-export">Exportar JSON</button>
+        <label class="button button-ghost" for="progress-import">Importar JSON</label>
+        <input id="progress-import" type="file" accept="application/json,.json" hidden>
+      </p>
     </div>
-    <script type="application/json" id="progreso-config">[{"key": "tunotaopo:progress:guardia-civil-2026", "name": "Guardia Civil", "href": "calculadoras/guardia-civil/", "kind": "nota"}, {"key": "tunotaopo:progress:guardia-civil-fisicas-2026", "name": "Guardia Civil · físicas", "href": "oposiciones/guardia-civil/pruebas-fisicas/", "kind": "fisicas"}, {"key": "tunotaopo:progress:guardia-civil-baremo-2026", "name": "Guardia Civil · baremo", "href": "oposiciones/guardia-civil/baremo/", "kind": "baremo"}, {"key": "tunotaopo:progress:policia-nacional-2026", "name": "Policía Nacional", "href": "calculadoras/policia-nacional/", "kind": "nota"}, {"key": "tunotaopo:progress:policia-nacional-fisicas-2026", "name": "Policía Nacional · físicas", "href": "oposiciones/policia-nacional/pruebas-fisicas/", "kind": "fisicas"}, {"key": "tunotaopo:progress:ayudantes-iipp-2026", "name": "Ayudantes IIPP", "href": "calculadoras/ayudantes-iipp/", "kind": "nota"}, {"key": "tunotaopo:progress:auxilio-judicial-2026", "name": "Auxilio Judicial", "href": "calculadoras/auxilio-judicial/", "kind": "nota"}, {"key": "tunotaopo:progress:auxiliar-age-2026", "name": "Auxiliar AGE", "href": "calculadoras/auxiliar-administrativo-age/", "kind": "nota"}]</script>
+    <p id="progress-backup-note" class="search-empty" hidden></p>
+    <script type="application/json" id="progreso-config">[{"key": "tunotaopo:progress:guardia-civil-2026", "name": "Guardia Civil", "href": "calculadoras/guardia-civil/", "kind": "nota"}, {"key": "tunotaopo:progress:guardia-civil-fisicas-2026", "name": "Guardia Civil · físicas", "href": "oposiciones/guardia-civil/pruebas-fisicas/", "kind": "fisicas"}, {"key": "tunotaopo:progress:guardia-civil-baremo-2026", "name": "Guardia Civil · baremo", "href": "oposiciones/guardia-civil/baremo/", "kind": "baremo"}, {"key": "tunotaopo:progress:policia-nacional-2026", "name": "Policía Nacional", "href": "calculadoras/policia-nacional/", "kind": "nota"}, {"key": "tunotaopo:progress:policia-nacional-fisicas-2026", "name": "Policía Nacional · físicas", "href": "oposiciones/policia-nacional/pruebas-fisicas/", "kind": "fisicas"}, {"key": "tunotaopo:progress:policia-local-madrid-2026", "name": "Policía Local", "href": "calculadoras/policia-local/", "kind": "nota"}, {"key": "tunotaopo:progress:policia-local-madrid-fisicas-2026", "name": "Policía Local Madrid · físicas", "href": "oposiciones/policia-local/pruebas-fisicas/", "kind": "fisicas"}, {"key": "tunotaopo:progress:ayudantes-iipp-2026", "name": "Ayudantes IIPP", "href": "calculadoras/ayudantes-iipp/", "kind": "nota"}, {"key": "tunotaopo:progress:auxilio-judicial-2026", "name": "Auxilio Judicial", "href": "calculadoras/auxilio-judicial/", "kind": "nota"}, {"key": "tunotaopo:progress:auxiliar-age-2026", "name": "Auxiliar AGE", "href": "calculadoras/auxiliar-administrativo-age/", "kind": "nota"}]</script>
     <div id="progreso-root" class="progress-board"></div>
     <section class="content">
-      <p>Si cambias de dispositivo o borras los datos del sitio, se pierde. No se sincroniza entre el móvil y el ordenador.</p>
+      <p>Si cambias de dispositivo, exporta el JSON y lo importas en el otro. No se sincroniza solo. Borrar los datos del sitio también borra esto.</p>
+      <p id="usage-local" class="note-quiet" hidden></p>
     </section>
     
   </main>
@@ -60,6 +83,7 @@
     </div>
     <div class="footer-links">
       <a href="/oposiciones/">Oposiciones</a>
+      <a href="/calculadoras/">Calculadoras</a>
       <a href="/oposiciones/progreso/">Mi progreso</a>
       <a href="/metodologia/">Metodología</a>
       <a href="/fuentes/">Fuentes</a>
@@ -71,9 +95,9 @@
     </div>
   </div>
 </footer>
-  <script src="/js/components/progreso.js?v=20260819aa" defer></script>
-<script src="/js/components/analytics.js" defer></script>
-<script src="/js/components/tools.js?v=20260819aa" defer></script>
-<script src="/js/site.js?v=20260819aa" defer></script>
+  <script src="/js/components/progreso.js?v=20260904aa" defer></script>
+<script src="/js/components/analytics.js?v=20260904aa" defer></script>
+<script src="/js/components/tools.js?v=20260904aa" defer></script>
+<script src="/js/site.js?v=20260904aa" defer></script>
 </body>
 </html>

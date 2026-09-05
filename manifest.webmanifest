@@ -1,0 +1,19 @@
+{
+  "name": "TuNotaOpo",
+  "short_name": "TuNotaOpo",
+  "description": "Calculadoras de nota de oposiciones con la fórmula del boletín oficial.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef2f5",
+  "theme_color": "#0c1924",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
