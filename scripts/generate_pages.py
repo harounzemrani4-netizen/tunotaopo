@@ -38,6 +38,8 @@ from site_config import (
     CONTACT_EMAIL,
     DATA_DIR,
     FEATURED_FAMILIES,
+    LASTMOD,
+    PL_CRAWL_ALLOW,
     PROGRESO_PATH,
     ROOT,
     SITE,
@@ -80,7 +82,7 @@ def load_oposiciones() -> list[dict]:
     return items
 
 
-def related_cards(current: dict, all_items: list[dict], prefix: str) -> str:
+def related_cards(current: dict, all_items: list[dict], prefix: str, ads: bool = True) -> str:
     cards = []
     current_family = family_id(current)
     for item in current_by_family(all_items):
@@ -107,7 +109,7 @@ def related_cards(current: dict, all_items: list[dict], prefix: str) -> str:
         '<section class="related-block"><h2>Calculadoras relacionadas</h2><div class="related">'
         + "".join(cards)
         + "</div></section>"
-        + ad_slot("after-related")
+        + (ad_slot("after-related") if ads else "")
     )
 
 
@@ -210,7 +212,7 @@ def calculator_page(
     <div class="layout">
       <article class="tool">
         {calculator_form(cfg, prefix, f"{SITE}/{canonical_path}")}
-        {ad_slot("after-result")}
+        {"" if variant == "archive" else ad_slot("after-result")}
         <section class="source-card">
           <p class="source-kicker">De dónde sale la fórmula</p>
           <p class="source-id">{escape(cfg.get("source_identifier", ""))}</p>
@@ -240,7 +242,7 @@ def calculator_page(
         <h2>Fórmula de esta convocatoria</h2>
         <p>{escape(cfg["formula_human"])}</p>
       </div>
-      {ad_slot("in-content")}
+      {"" if variant == "archive" else ad_slot("in-content")}
       {list_block("Un ejemplo con números", copy["example"])}
       {list_block("Errores frecuentes al calcular", copy["mistakes"])}
       <h2>Fuente oficial</h2>
@@ -248,7 +250,7 @@ def calculator_page(
       <p>{source_link(cfg)}.</p>
       {list_block("Qué no calcula esta página", copy["limits"])}
       {faq_block(faqs)}
-      {related_cards(cfg, all_items, prefix)}
+      {related_cards(cfg, all_items, prefix, ads=variant != "archive")}
     </section>
     <script type="application/json" id="oposicion-config">{json.dumps(with_historical(cfg), ensure_ascii=False)}</script>
     """
@@ -800,7 +802,7 @@ def simple_page(
       {extra}
     </section>
     """
-    return page_shell(slug_title, description, path, depth, body)
+    return page_shell(slug_title, description, path, depth, body, ads=False)
 
 
 def embed_family_slug(item: dict) -> str:
@@ -923,6 +925,25 @@ def remove_retired_urls(published: list[dict]) -> None:
         rel = f"calculadoras/{child.name}"
         if not any(path.startswith(rel) for path in keep):
             shutil.rmtree(child)
+
+
+def robots_txt() -> str:
+    allow = "".join(f"Allow: {path}\n" for path in PL_CRAWL_ALLOW)
+    shared = (
+        "Disallow: /research/\nDisallow: /tests/\nDisallow: /scripts/\n"
+        "Disallow: /release/\nDisallow: /data/\nDisallow: /embed/\n"
+        f"{allow}"
+        "Disallow: /oposiciones/policia-local/\n"
+    )
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+        f"{shared}\n"
+        "User-agent: AdsBot-Google\n"
+        "User-agent: Mediapartners-Google\n"
+        f"{shared}\n"
+        f"Sitemap: {SITE}/sitemap.xml\n"
+    )
 
 
 def build() -> None:
@@ -1062,17 +1083,11 @@ def build() -> None:
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:
         sitemap.append(
-            f"  <url><loc>{url}</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq></url>"
+            f"  <url><loc>{url}</loc><lastmod>{LASTMOD}</lastmod><changefreq>monthly</changefreq></url>"
         )
     sitemap.append("</urlset>")
     write(ROOT / "sitemap.xml", "\n".join(sitemap) + "\n")
-    write(
-        ROOT / "robots.txt",
-        "User-agent: *\nAllow: /\n"
-        "Disallow: /research/\nDisallow: /tests/\nDisallow: /scripts/\n"
-        "Disallow: /release/\nDisallow: /data/\nDisallow: /embed/\n"
-        f"Sitemap: {SITE}/sitemap.xml\n",
-    )
+    write(ROOT / "robots.txt", robots_txt())
     write(
         ROOT / "ads.txt",
         "# ads.txt pendiente de Publisher ID real.\n"

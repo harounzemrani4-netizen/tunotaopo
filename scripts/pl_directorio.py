@@ -141,6 +141,7 @@ def ccaa_page(ccaa: dict, catalog: dict) -> str:
         ccaa["path"],
         3,
         body,
+        noindex=True,
     )
 
 
@@ -183,6 +184,7 @@ def provincia_page(ccaa: dict, prov: dict) -> str:
         prov["path"],
         4,
         body,
+        noindex=True,
     )
 
 
@@ -313,10 +315,8 @@ def write_all(item: dict, hub: dict) -> list[str]:
     urls = [f"{SITE}/oposiciones/{FAMILY}/"]
     for ccaa in catalog["comunidades"]:
         write(ROOT / ccaa["path"] / "index.html", ccaa_page(ccaa, catalog))
-        urls.append(f"{SITE}/{ccaa['path']}")
         for prov in ccaa["provincias"]:
             write(ROOT / prov["path"] / "index.html", provincia_page(ccaa, prov))
-            urls.append(f"{SITE}/{prov['path']}")
             for muni in prov["municipios"]:
                 write(ROOT / muni["path"] / "index.html", municipio_page(item, ccaa, prov, muni))
                 if muni.get("ready"):

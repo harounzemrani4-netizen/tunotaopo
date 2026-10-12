@@ -37,6 +37,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html {
   font-size: 100%;
   width: 100%;
@@ -287,6 +288,7 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   max-height: 18rem;
   overflow: auto;
 }
+.opo-suggest-list:empty { display: none; }
 .opo-suggest-list a {
   display: block;
   padding: 0.7rem 0.85rem;
@@ -1614,6 +1616,7 @@ a.card:hover .card-cta { color: var(--color-primary); }
   max-height: 18rem;
   overflow: auto;
 }
+.pl-results:empty { display: none; }
 .pl-results a {
   display: block;
   padding: 0.7rem 0.85rem;

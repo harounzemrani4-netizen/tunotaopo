@@ -197,6 +197,8 @@ def main() -> int:
             errors.append(f"{rel}: canonical no usa {SITE}: {parser.canonical}")
         if is_embed and (not parser.robots or "noindex" not in parser.robots):
             errors.append(f"{rel}: embed sin noindex")
+        if page_url.rstrip("/") in loc_set and parser.robots and "noindex" in parser.robots:
+            errors.append(f"{rel}: noindex no puede ir en el sitemap")
         for href in parser.links:
             target = resolve_href(path, href)
             if target is None:

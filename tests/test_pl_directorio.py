@@ -89,6 +89,25 @@ def main() -> int:
         fail("las fichas vacías no deben versionar el CSS: si no, un hover reescribe 8000 HTML")
     if "css/app.css?v=" not in madrid_html:
         fail("Madrid sí debe versionar el CSS")
+    if "ad-slot" in empty_html:
+        fail("una ficha sin boletín no debe llevar huecos de publicidad")
+    if "ad-slot" not in madrid_html:
+        fail("Madrid sí puede reservar publicidad: tiene calculadora")
+    ccaa = (ROOT / "oposiciones" / "policia-local" / "andalucia" / "index.html").read_text(encoding="utf-8")
+    if "noindex" not in ccaa:
+        fail("las páginas de CCAA sin calculadora propia deben ir noindex")
+    robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
+    if "Disallow: /oposiciones/policia-local/" not in robots:
+        fail("robots.txt debe cerrar el árbol de fichas INE")
+    if "Allow: /oposiciones/policia-local/comunidad-de-madrid/" not in robots:
+        fail("robots.txt debe dejar pasar Madrid")
+    if "AdsBot-Google" not in robots or "Mediapartners-Google" not in robots:
+        fail("robots.txt debe hablarle a los robots de AdSense")
+    sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+    if "/oposiciones/policia-local/andalucia/" in sitemap:
+        fail("el sitemap no debe listar CCAA sin calculadora")
+    if "/oposiciones/policia-local/comunidad-de-madrid/madrid/madrid/" not in sitemap:
+        fail("el sitemap debe incluir la ficha de Madrid")
 
     index = json.loads((ROOT / "js" / "data" / "pl-municipios.json").read_text(encoding="utf-8"))
     if len(index["items"]) != 8132:

@@ -44,7 +44,7 @@ def main() -> int:
             err(f".htaccess missing {needle}")
 
     sys.path.insert(0, str(ROOT / "scripts"))
-    from site_config import CSP, CSP_EMBED  # noqa: E402
+    from site_config import CSP, CSP_EMBED, CSP_EMBED_META, CSP_META  # noqa: E402
 
     headers = (ROOT / "_headers").read_text(encoding="utf-8")
     if f"Content-Security-Policy: {CSP}" not in headers:
@@ -89,8 +89,27 @@ def main() -> int:
                 err(f"{rel}: third-party ad/analytics script ({src})")
         if inline_handler.search(text):
             err(f"{rel}: inline event handler")
+        robots_meta = re.search(r'name="robots" content="([^"]+)"', text)
+        if robots_meta and "noindex" in robots_meta.group(1) and "ad-slot" in text:
+            err(f"{rel}: página noindex con hueco de publicidad")
         if 'http-equiv="Content-Security-Policy"' in text:
             csp_ok += 1
+            meta = re.search(
+                r'<meta http-equiv="Content-Security-Policy" content="([^"]*)">',
+                text,
+            )
+            if not meta:
+                err(f"{rel}: CSP meta mal formado")
+            elif "frame-ancestors" in meta.group(1):
+                err(f"{rel}: frame-ancestors no vale en meta (sale en consola)")
+            else:
+                expected = (
+                    CSP_EMBED_META
+                    if "/embed/" in str(rel).replace("\\", "/")
+                    else CSP_META
+                )
+                if meta.group(1) != expected:
+                    err(f"{rel}: CSP meta no coincide con site_config")
         reserved += text.count("ad-slot is-reserved")
         active_ads += text.count("pagead2.googlesyndication")
 

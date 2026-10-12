@@ -17,6 +17,7 @@ from site_config import (
     PROGRESO_PATH,
     PUBLISHER,
     SITE,
+    csp_for_meta,
 )
 from site_io import write as write_file
 
@@ -134,7 +135,7 @@ def head(
     csp: str | None = None,
     pin_assets: bool = False,
 ) -> str:
-    policy = csp or CSP
+    policy = csp_for_meta(csp or CSP)
     q = asset_query(pin_assets)
     css = f"{prefix}css/app.css{q}"
     boot = f"{prefix}js/theme-boot.js{q}"
@@ -326,6 +327,7 @@ def page_shell(
     tools: tuple[str, ...] = (),
     robots: str | None = None,
     pin_assets: bool = False,
+    ads: bool | None = None,
 ) -> str:
     canonical = f"{SITE}/{path}" if path else f"{SITE}/"
     extras = []
@@ -341,15 +343,19 @@ def page_shell(
         resolved = ("calculator",) + resolved
     if fisicas:
         resolved = ("fisicas",) + resolved
+    is_noindex = bool(noindex or (robots and "noindex" in robots.lower()))
+    show_ads = (not is_noindex) if ads is None else ads
+    top = f'<div class="wrap">{ad_slot("top")}</div>' if show_ads else ""
+    bottom = f'<div class="wrap">{ad_slot("bottom")}</div>' if show_ads else ""
     return f"""{head(title, description, canonical, "/", extra_head, pin_assets=pin_assets)}
 <body data-root="/">
   <a class="skip" href="#contenido">Saltar al contenido</a>
   {nav("/", path)}
-  <div class="wrap">{ad_slot("top")}</div>
+  {top}
   <main id="contenido" class="wrap">
     {body}
   </main>
-  <div class="wrap">{ad_slot("bottom")}</div>
+  {bottom}
   {footer("/")}
   {scripts("/", resolved, pin_assets=pin_assets)}
 </body>

@@ -8,8 +8,21 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260904aa"
+ASSET_V = "20260906aa"
+LASTMOD = "2026-10-12"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
+PL_CRAWL_ALLOW = (
+    "/oposiciones/policia-local/$",
+    "/oposiciones/policia-local/index.html",
+    "/oposiciones/policia-local/comunidad-de-madrid/",
+    "/oposiciones/policia-local/requisitos/",
+    "/oposiciones/policia-local/pruebas/",
+    "/oposiciones/policia-local/pruebas-fisicas/",
+    "/oposiciones/policia-local/temario/",
+    "/oposiciones/policia-local/fechas/",
+    "/oposiciones/policia-local/notas-corte/",
+    "/oposiciones/policia-local/examenes-oficiales/",
+)
 PROGRESO_PATH = "oposiciones/progreso/"
 ACADEMIAS_PATH = "oposiciones/academias/"
 DATA_DIR = ROOT / "data" / "oposiciones"
@@ -67,6 +80,16 @@ CSP_EMBED = (
     "frame-ancestors *; "
     "object-src 'none'"
 )
+
+
+def csp_for_meta(policy: str) -> str:
+    """El navegador ignora frame-ancestors en <meta> y lo escribe en consola."""
+    parts = [part.strip() for part in policy.split(";") if part.strip()]
+    return "; ".join(part for part in parts if not part.lower().startswith("frame-ancestors"))
+
+
+CSP_META = csp_for_meta(CSP)
+CSP_EMBED_META = csp_for_meta(CSP_EMBED)
 
 AD_SIZES = {
     "top": "leaderboard",
