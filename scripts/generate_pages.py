@@ -91,8 +91,8 @@ def related_cards(current: dict, all_items: list[dict], prefix: str, ads: bool =
         if family_id(item) == "policia-local":
             href = prefix + "oposiciones/policia-local/index.html"
             name = "Policía Local"
-            cta = "Elige tu ciudad"
-            kind = "Todas las ciudades. Calculadora solo con boletín oficial."
+            cta = "Ver Madrid"
+            kind = "Calculadora solo con boletín. Hoy: Policía Municipal de Madrid."
         else:
             href = prefix + live_path(item) + "index.html"
             name = item.get("family_name") or item["short_name"]
@@ -1057,7 +1057,7 @@ def build() -> None:
     <div class="hero hero-home">
       <p class="eyebrow">Error 404</p>
       <h1>Esta página no existe</h1>
-      <p class="lede">Comprueba la dirección o entra por el índice. Policía Local está partida por comunidad, provincia y municipio.</p>
+      <p class="lede">Comprueba la dirección o entra por el índice de oposiciones. Si buscabas un municipio de Policía Local sin boletín, esa ficha ya no existe.</p>
       <p class="hero-actions"><a class="button button-primary" href="/">Ir al inicio</a>
       <a class="button button-secondary" href="/oposiciones/">Ver oposiciones</a>
       <a class="button button-secondary" href="/oposiciones/policia-local/">Policía Local</a></p>

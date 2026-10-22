@@ -25,7 +25,7 @@ def search_form(scope: str = "", placeholder: str = "Madrid, Valencia, un pueblo
         <input class="input" id="pl-search" name="q" type="search" placeholder="{escape(placeholder)}" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="pl-search-results" aria-autocomplete="list"{scope_attr}>
       </form>
       <div id="pl-search-results" class="pl-results" role="listbox" hidden></div>
-      <p id="pl-search-empty" class="search-empty" hidden>No hay un municipio con ese nombre en el listado INE.</p>
+      <p id="pl-search-empty" class="search-empty" hidden>Aún no hay calculadora para esa ciudad. Solo publicamos nota con boletín oficial.</p>
       </div>
     """
 
@@ -39,31 +39,36 @@ def ready_note(muni: dict) -> str:
 def write_search_json(catalog: dict | None = None) -> None:
     payload = {
         "source": "INE · Relación de municipios y códigos a 1 de enero de 2026",
-        "items": search_index(catalog),
+        "items": search_index(catalog, published_only=True),
     }
     write(ROOT / "js" / "data" / "pl-municipios.json", json.dumps(payload, ensure_ascii=False))
+
+
+def published_municipios(catalog: dict) -> list[dict]:
+    found = []
+    for ccaa in catalog["comunidades"]:
+        for prov in ccaa["provincias"]:
+            for muni in prov["municipios"]:
+                if muni.get("ready"):
+                    found.append({"ccaa": ccaa, "prov": prov, "muni": muni})
+    return found
 
 
 def national_hub(item: dict, hub: dict, catalog: dict) -> str:
     prefix = rel_prefix(2)
     src = catalog["source"]
+    published = published_municipios(catalog)
     cards = []
-    for ccaa in catalog["comunidades"]:
-        n_muni = ccaa["n_municipios"]
-        n_prov = len(ccaa["provincias"])
+    for row in published:
+        muni = row["muni"]
+        ready = muni["ready"]
         cards.append(
-            f'<a class="card" href="{pretty_href(ccaa["path"])}">'
-            f"<h3>{escape(ccaa['nombre'])}</h3>"
-            f"<p>{n_muni} {'municipio' if n_muni == 1 else 'municipios'} · {n_prov} "
-            f"{'provincia' if n_prov == 1 else 'provincias'}</p></a>"
+            f'<a class="card" href="{pretty_href(muni["path"])}">'
+            f"<h3>{escape(muni['nombre'])}</h3>"
+            f"<p>{escape(ready['cuerpo'])} · {escape(ready['fuente'])}</p></a>"
         )
-    madrid = next(
-        muni
-        for ccaa in catalog["comunidades"]
-        for prov in ccaa["provincias"]
-        for muni in prov["municipios"]
-        if muni["ine"] == "28079"
-    )
+    madrid = next(row["muni"] for row in published if row["muni"]["ine"] == "28079")
+    n_pub = len(published)
     body = f"""
     {crumbs([
         ("Inicio", prefix + "index.html"),
@@ -72,8 +77,8 @@ def national_hub(item: dict, hub: dict, catalog: dict) -> str:
     ], f"oposiciones/{FAMILY}/")}
     <div class="hero">
       <p class="eyebrow">Policía Local · Policía Municipal · Guardia Urbana</p>
-      <h1>Policía Local de España por ciudad y municipio</h1>
-      <p class="calc-badge">{catalog['n_municipios']} municipios INE · {catalog['n_comunidades']} comunidades · calculadora solo con boletín</p>
+      <h1>Calculadora de Policía Local con boletín oficial</h1>
+      <p class="calc-badge">{n_pub} {'ciudad' if n_pub == 1 else 'ciudades'} con fórmula publicada · no hay ficha vacía por municipio</p>
       {search_form()}
       <p class="hero-actions">
         <a class="button button-primary" href="{pretty_href(madrid['path'])}">Ficha de Madrid</a>
@@ -81,21 +86,21 @@ def national_hub(item: dict, hub: dict, catalog: dict) -> str:
       </p>
     </div>
     <section class="content">
-      <p>No hay una fórmula única de Policía Local para toda España. Cada ayuntamiento publica sus bases. Este directorio lista <strong>todos los municipios</strong> de la relación oficial del INE a 1 de enero de 2026. No afirma qué pueblos tienen cuerpo propio: muchos no lo tienen.</p>
-      <p>Hoy solo hay calculadora de nota donde el boletín está recuperado: <a href="{pretty_href(madrid['path'])}">Madrid</a> (Policía Municipal, {escape(item.get('source_identifier', 'BOE'))}). El resto de fichas existe para que elijas ciudad; no se clona la fórmula de Madrid.</p>
+      <p>No hay una fórmula única de Policía Local para toda España. Cada ayuntamiento publica las suyas. En TuNotaOpo <strong>solo existe página cuando hemos leído el boletín</strong>. No se clona Madrid ni se inventa una nota genérica.</p>
+      <p>Hoy hay calculadora de <a href="{pretty_href(madrid['path'])}">Policía Municipal de Madrid</a> ({escape(item.get('source_identifier', 'BOE'))}). Si tu ciudad no sale en el buscador, todavía no hay bases recuperadas. Puedes enviar el identificador del boletín a {escape(CONTACT_EMAIL)}.</p>
       <p>Esto no es Mossos d’Esquadra, Ertzaintza, Policía Foral, Policía Nacional ni Guardia Civil.</p>
     </section>
     <section>
-      <h2 class="section-title">Comunidades y ciudades autónomas</h2>
+      <h2 class="section-title">Ciudades con calculadora</h2>
       <div class="hub-grid">{"".join(cards)}</div>
     </section>
     <section class="content">
-      <p>Fuente del listado: {ext_a(src['url'], src['title'])}. Consultado el 3 de septiembre de 2026. Códigos INE de municipio, no un censo de plantillas policiales.</p>
+      <p>El listado INE ({ext_a(src['url'], src['title'])}, consultado el 3 de septiembre de 2026) sirve para saber qué municipio es cuál. No se publica una ficha por cada código INE.</p>
     </section>
     """
     return page_shell(
-        seo_title("Policía Local por ciudad y municipio"),
-        "Directorio de Policía Local de España por comunidad, provincia y municipio (listado INE 2026). Calculadora solo si hay boletín oficial. Madrid no vale para otra ciudad.",
+        seo_title("Calculadora de Policía Local"),
+        "Calculadora de Policía Local solo con boletín oficial. Hoy Madrid (Policía Municipal). No hay ficha vacía por municipio ni fórmula copiada de otra ciudad.",
         f"oposiciones/{FAMILY}/",
         2,
         body,
@@ -105,14 +110,16 @@ def national_hub(item: dict, hub: dict, catalog: dict) -> str:
 def ccaa_page(ccaa: dict, catalog: dict) -> str:
     prefix = rel_prefix(3)
     cards = []
+    ready_total = 0
     for prov in ccaa["provincias"]:
-        n = len(prov["municipios"])
-        ready = sum(1 for muni in prov["municipios"] if muni.get("ready"))
-        extra = f" · {ready} con calculadora" if ready else ""
+        ready = [muni for muni in prov["municipios"] if muni.get("ready")]
+        if not ready:
+            continue
+        ready_total += len(ready)
         cards.append(
             f'<a class="card" href="{pretty_href(prov["path"])}">'
             f"<h3>{escape(prov['nombre'])}</h3>"
-            f"<p>{n} municipios{extra}</p></a>"
+            f"<p>{len(ready)} {'calculadora' if len(ready) == 1 else 'calculadoras'}</p></a>"
         )
     body = f"""
     {crumbs([
@@ -124,31 +131,31 @@ def ccaa_page(ccaa: dict, catalog: dict) -> str:
     <div class="hero">
       <p class="eyebrow">Policía Local · {escape(ccaa['nombre'])}</p>
       <h1>Policía Local en {escape(ccaa['nombre'])}</h1>
-      <p class="calc-badge">{ccaa['n_municipios']} municipios · listado INE 2026</p>
+      <p class="calc-badge">{ready_total} {'ciudad' if ready_total == 1 else 'ciudades'} con boletín recuperado</p>
       {search_form(ccaa["path"], f"Municipio de {ccaa['nombre']}")}
     </div>
     <section class="content">
-      <p>Cada ayuntamiento de {escape(ccaa['nombre'])} convoca la suya, si convoca. No se usa la fórmula de Madrid ni un modelo autonómico inventado.</p>
+      <p>Solo aparecen provincias y ciudades de {escape(ccaa['nombre'])} con bases leídas. No hay un listado INE de fichas vacías ni se usa la fórmula de otra ciudad.</p>
     </section>
     <section>
-      <h2 class="section-title">Provincias</h2>
+      <h2 class="section-title">Provincias con calculadora</h2>
       <div class="hub-grid">{"".join(cards)}</div>
     </section>
     """
     return page_shell(
         seo_title(f"Policía Local en {ccaa['nombre']}"),
-        f"Municipios de {ccaa['nombre']} para Policía Local. Listado INE. Calculadora solo si hay bases oficiales de ese ayuntamiento.",
+        f"Calculadoras de Policía Local en {ccaa['nombre']} con boletín oficial. Sin fichas vacías ni fórmula copiada de otra ciudad.",
         ccaa["path"],
         3,
         body,
-        noindex=True,
     )
 
 
 def provincia_page(ccaa: dict, prov: dict) -> str:
     prefix = rel_prefix(4)
+    ready = [muni for muni in prov["municipios"] if muni.get("ready")]
     items = []
-    for muni in prov["municipios"]:
+    for muni in ready:
         items.append(
             f'<li><a href="{pretty_href(muni["path"])}">{escape(muni["nombre"])}</a> {ready_note(muni)}</li>'
         )
@@ -163,28 +170,22 @@ def provincia_page(ccaa: dict, prov: dict) -> str:
     <div class="hero">
       <p class="eyebrow">Policía Local · {escape(ccaa['nombre'])}</p>
       <h1>Policía Local en la provincia de {escape(prov['nombre'])}</h1>
-      <p class="calc-badge">{len(prov['municipios'])} municipios · código INE {escape(prov['id'])}</p>
-      <form class="home-search pl-search" role="search">
-        <label for="pl-list-filter">Filtrar municipios de esta provincia</label>
-        <input class="input" id="pl-list-filter" type="search" placeholder="Nombre del municipio" autocomplete="off">
-      </form>
+      <p class="calc-badge">{len(ready)} {'ciudad' if len(ready) == 1 else 'ciudades'} con boletín · código INE {escape(prov['id'])}</p>
     </div>
     <section class="content">
-      <p>Todos los municipios de la provincia según el INE. Tener ficha no significa que haya Policía Local ni convocatoria abierta. La calculadora solo aparece si el boletín de ese ayuntamiento está recuperado.</p>
+      <p>Solo hay ficha si el boletín de ese ayuntamiento está recuperado. El resto de municipios de la provincia no tiene página.</p>
     </section>
     <section>
-      <h2 class="section-title">Municipios</h2>
+      <h2 class="section-title">Ciudades con calculadora</h2>
       <ol class="pl-muni-list" id="pl-muni-list">{"".join(items)}</ol>
-      <p id="pl-list-empty" class="search-empty" hidden>Ningún municipio de esta provincia coincide.</p>
     </section>
     """
     return page_shell(
         seo_title(f"Policía Local en la provincia de {prov['nombre']}"),
-        f"Los {len(prov['municipios'])} municipios de {prov['nombre']} ({ccaa['nombre']}) en el directorio de Policía Local. INE 2026. Sin fórmula copiada de otra ciudad.",
+        f"Calculadoras de Policía Local en la provincia de {prov['nombre']} ({ccaa['nombre']}) con boletín oficial. Sin fichas vacías.",
         prov["path"],
         4,
         body,
-        noindex=True,
     )
 
 
@@ -314,11 +315,19 @@ def write_all(item: dict, hub: dict) -> list[str]:
     write(ROOT / "oposiciones" / FAMILY / "index.html", national_hub(item, hub, catalog))
     urls = [f"{SITE}/oposiciones/{FAMILY}/"]
     for ccaa in catalog["comunidades"]:
+        ready_provs = [
+            prov for prov in ccaa["provincias"] if any(muni.get("ready") for muni in prov["municipios"])
+        ]
+        if not ready_provs:
+            continue
         write(ROOT / ccaa["path"] / "index.html", ccaa_page(ccaa, catalog))
-        for prov in ccaa["provincias"]:
+        urls.append(f"{SITE}/{ccaa['path']}")
+        for prov in ready_provs:
             write(ROOT / prov["path"] / "index.html", provincia_page(ccaa, prov))
+            urls.append(f"{SITE}/{prov['path']}")
             for muni in prov["municipios"]:
+                if not muni.get("ready"):
+                    continue
                 write(ROOT / muni["path"] / "index.html", municipio_page(item, ccaa, prov, muni))
-                if muni.get("ready"):
-                    urls.append(f"{SITE}/{muni['path']}")
+                urls.append(f"{SITE}/{muni['path']}")
     return urls

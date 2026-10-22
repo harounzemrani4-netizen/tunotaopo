@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""El directorio de Policía Local lista todos los municipios INE y no clona Madrid."""
+"""El directorio de Policía Local solo publica ciudades con boletín."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from pl_territorios import CALCULADORAS, load_catalog, tree  # noqa: E402
+from pl_territorios import CALCULADORAS, HUB_RESERVED, load_catalog, tree  # noqa: E402
 
 
 def fail(message: str) -> None:
@@ -34,41 +34,37 @@ def main() -> int:
         fail("solo Madrid puede tener calculadora hasta que haya otro boletín")
 
     built = tree()
-    paths = []
-    missing = []
-    cloned = []
-    indexed_empty = []
+    pl_root = ROOT / "oposiciones" / "policia-local"
+    extra_dirs = [
+        path.name
+        for path in pl_root.iterdir()
+        if path.is_dir() and path.name not in HUB_RESERVED
+    ]
+    if extra_dirs != ["comunidad-de-madrid"]:
+        fail(f"solo debe existir la CCAA con calculadora, hay {extra_dirs}")
+
+    empty = ROOT / "oposiciones" / "policia-local" / "andalucia" / "almeria" / "abla" / "index.html"
+    if empty.exists():
+        fail("sigue publicada una ficha INE sin boletín (Abla)")
+    if (ROOT / "oposiciones" / "policia-local" / "andalucia" / "index.html").exists():
+        fail("sigue publicada una CCAA sin calculadora")
+    if (ROOT / "oposiciones" / "policia-local" / "comunitat-valenciana" / "valencia" / "valencia" / "index.html").exists():
+        fail("sigue publicada Valencia sin boletín")
+
+    published = 0
     for ccaa in built["comunidades"]:
-        ccaa_file = ROOT / ccaa["path"] / "index.html"
-        if not ccaa_file.exists():
-            missing.append(ccaa["path"])
         for prov in ccaa["provincias"]:
-            if not (ROOT / prov["path"] / "index.html").exists():
-                missing.append(prov["path"])
             for muni in prov["municipios"]:
-                paths.append(muni["path"])
                 html_path = ROOT / muni["path"] / "index.html"
-                if not html_path.exists():
-                    missing.append(muni["path"])
+                if muni.get("ready"):
+                    published += 1
+                    if not html_path.exists():
+                        fail(f"falta la ficha publicada {muni['path']}")
                     continue
-                html = html_path.read_text(encoding="utf-8")
-                if muni["ine"] != "28079":
-                    if "id=\"oposicion-config\"" in html or 'id="calc-form"' in html:
-                        cloned.append(muni["path"])
-                    if 'name="robots" content="noindex"' not in html:
-                        indexed_empty.append(muni["path"])
-                    if "10 × (A − E/3) / T" in html or "BOAM núm. 9829" in html:
-                        cloned.append(muni["path"])
-    if len(paths) != 8132:
-        fail(f"el árbol tiene {len(paths)} municipios")
-    if len(set(paths)) != 8132:
-        fail("hay URLs de municipio repetidas")
-    if missing:
-        fail(f"faltan {len(missing)} páginas, p. ej. {missing[0]}")
-    if cloned:
-        fail(f"se clonó la calculadora de Madrid en {cloned[0]}")
-    if indexed_empty:
-        fail(f"municipio sin bases indexable: {indexed_empty[0]}")
+                if html_path.exists():
+                    fail(f"ficha sin boletín publicada: {muni['path']}")
+    if published != 1:
+        fail(f"hay {published} fichas publicadas, se esperaba 1")
 
     madrid = ROOT / "oposiciones" / "policia-local" / "comunidad-de-madrid" / "madrid" / "madrid" / "index.html"
     madrid_html = madrid.read_text(encoding="utf-8")
@@ -76,29 +72,28 @@ def main() -> int:
         fail("la ficha de Madrid no enlaza la calculadora")
     if "noindex" in madrid_html:
         fail("Madrid no debe ir noindex")
-
-    hub = (ROOT / "oposiciones" / "policia-local" / "index.html").read_text(encoding="utf-8")
-    if "8132 municipios" not in hub:
-        fail("el hub nacional no declara los 8132 municipios")
-    if "pl-search" not in hub:
-        fail("el hub nacional no tiene buscador")
-
-    empty = ROOT / "oposiciones" / "policia-local" / "comunitat-valenciana" / "valencia" / "valencia" / "index.html"
-    empty_html = empty.read_text(encoding="utf-8")
-    if "css/app.css?v=" in empty_html:
-        fail("las fichas vacías no deben versionar el CSS: si no, un hover reescribe 8000 HTML")
     if "css/app.css?v=" not in madrid_html:
         fail("Madrid sí debe versionar el CSS")
-    if "ad-slot" in empty_html:
-        fail("una ficha sin boletín no debe llevar huecos de publicidad")
     if "ad-slot" not in madrid_html:
         fail("Madrid sí puede reservar publicidad: tiene calculadora")
-    ccaa = (ROOT / "oposiciones" / "policia-local" / "andalucia" / "index.html").read_text(encoding="utf-8")
-    if "noindex" not in ccaa:
-        fail("las páginas de CCAA sin calculadora propia deben ir noindex")
+
+    hub = (ROOT / "oposiciones" / "policia-local" / "index.html").read_text(encoding="utf-8")
+    if "8132 municipios" in hub or "todos los municipios" in hub.lower():
+        fail("el hub no debe venderse como directorio de 8132 fichas")
+    if "pl-search" not in hub:
+        fail("el hub nacional no tiene buscador")
+    if "Ciudades con calculadora" not in hub:
+        fail("el hub debe listar solo ciudades con boletín")
+    if "/oposiciones/policia-local/andalucia/" in hub:
+        fail("el hub no debe enlazar CCAA sin calculadora")
+
+    ccaa = (ROOT / "oposiciones" / "policia-local" / "comunidad-de-madrid" / "index.html").read_text(encoding="utf-8")
+    if "noindex" in ccaa:
+        fail("la CCAA de Madrid tiene calculadora: no debe ir noindex")
+
     robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
     if "Disallow: /oposiciones/policia-local/" not in robots:
-        fail("robots.txt debe cerrar el árbol de fichas INE")
+        fail("robots.txt debe cerrar el árbol de fichas INE antiguas")
     if "Allow: /oposiciones/policia-local/comunidad-de-madrid/" not in robots:
         fail("robots.txt debe dejar pasar Madrid")
     if "AdsBot-Google" not in robots or "Mediapartners-Google" not in robots:
@@ -110,9 +105,11 @@ def main() -> int:
         fail("el sitemap debe incluir la ficha de Madrid")
 
     index = json.loads((ROOT / "js" / "data" / "pl-municipios.json").read_text(encoding="utf-8"))
-    if len(index["items"]) != 8132:
-        fail(f"el JSON de búsqueda tiene {len(index['items'])} filas")
-    print("[OK] directorio Policía Local: 8132 municipios INE, calculadora solo en Madrid")
+    if len(index["items"]) != 1:
+        fail(f"el JSON de búsqueda tiene {len(index['items'])} filas; solo Madrid")
+    if index["items"][0][0] != "28079":
+        fail("el JSON de búsqueda debe empezar por Madrid")
+    print("[OK] directorio Policía Local: fichas solo con boletín, calculadora en Madrid")
     return 0
 
 

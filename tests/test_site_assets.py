@@ -107,11 +107,22 @@ def main() -> int:
         / "valencia"
         / "index.html"
     )
-    empty_html = empty.read_text(encoding="utf-8")
-    if "theme-boot.js?v=" in empty_html:
-        fail("las fichas vacías no deben versionar theme-boot")
-    if "theme-toggle" not in empty_html:
-        fail("las fichas vacías también llevan toggle (mismo chrome)")
+    if empty.exists():
+        fail("no debe existir ficha de Valencia sin boletín")
+    madrid = (
+        ROOT
+        / "oposiciones"
+        / "policia-local"
+        / "comunidad-de-madrid"
+        / "madrid"
+        / "madrid"
+        / "index.html"
+    )
+    madrid_html = madrid.read_text(encoding="utf-8")
+    if "theme-boot.js?v=" not in madrid_html:
+        fail("Madrid sí debe versionar theme-boot")
+    if "theme-toggle" not in madrid_html:
+        fail("Madrid debe llevar toggle de tema")
 
     print(f"[OK] assets alineados con {ASSET_V}")
     return 0

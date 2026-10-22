@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20260906aa"
-LASTMOD = "2026-10-12"
+ASSET_V = "20261023aa"
+LASTMOD = "2026-10-23"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
 PL_CRAWL_ALLOW = (
     "/oposiciones/policia-local/$",

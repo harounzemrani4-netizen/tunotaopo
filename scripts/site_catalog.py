@@ -73,11 +73,11 @@ def catalog_cards(items: list[dict], href_prefix: str = "", *, dest: str = "calc
         badge = hub.get("process_label") or f"Proceso {year}"
         if family_id(item) == "policia-local":
             href = f"{href_prefix}oposiciones/policia-local/index.html"
-            cta = "Elige tu ciudad"
+            cta = "Ver Madrid"
             name = "Policía Local"
-            badge = "Directorio por municipio"
-            kind = "Todas las ciudades. Calculadora solo con boletín oficial."
-            source = "Listado INE 2026 · Madrid con fórmula"
+            badge = "Madrid publicada"
+            kind = "Calculadora solo con boletín. Hoy: Policía Municipal de Madrid."
+            source = "BOAM / BOE de Madrid"
         elif dest == "hub":
             href = f"{href_prefix}oposiciones/{family_id(item)}/index.html"
             cta = "Ver oposición"

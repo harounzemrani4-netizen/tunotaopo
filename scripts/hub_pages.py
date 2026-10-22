@@ -39,7 +39,7 @@ def oposiciones_index(opos: list[dict]) -> str:
     """
     return page_shell(
         seo_title("Oposiciones"),
-        "Policía Nacional, Guardia Civil, Policía Local por ciudad y municipio, Auxiliar AGE, Auxilio Judicial y Ayudantes IIPP: calculadora solo con boletín oficial.",
+        "Policía Nacional, Guardia Civil, Policía Local (hoy Madrid), Auxiliar AGE, Auxilio Judicial y Ayudantes IIPP: calculadora solo con boletín oficial.",
         "oposiciones/",
         1,
         body,

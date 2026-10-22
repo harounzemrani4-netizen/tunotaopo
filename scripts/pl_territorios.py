@@ -352,19 +352,22 @@ def tree() -> dict:
     }
 
 
-def search_index(catalog: dict | None = None) -> list[list]:
+def search_index(catalog: dict | None = None, *, published_only: bool = False) -> list[list]:
     built = catalog or tree()
     rows = []
     for ccaa in built["comunidades"]:
         for prov in ccaa["provincias"]:
             for muni in prov["municipios"]:
+                ready = bool(muni.get("ready"))
+                if published_only and not ready:
+                    continue
                 rows.append(
                     [
                         muni["ine"],
                         muni["nombre"],
                         prov["nombre"],
                         muni["path"],
-                        1 if muni.get("ready") else 0,
+                        1 if ready else 0,
                     ]
                 )
     rows.sort(key=lambda row: (row[4] * -1, slugify(row[1]), slugify(row[2])))

@@ -185,7 +185,7 @@ PAGES = {
 UPCOMING = [
     {
         "name": "Calculadoras de más Policías Locales",
-        "reason": "El directorio ya lista todos los municipios INE. Falta el boletín de cada ayuntamiento: no se clona Madrid."
+        "reason": "Solo se publica ficha si hay boletín. Madrid está; el resto espera bases oficiales, no se clona la fórmula."
     },
     {
         "name": "TAI — Técnicos Auxiliares de Informática AGE",
