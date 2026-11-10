@@ -1,14 +1,14 @@
 /* TuNotaOpo: cache de CSS, JS y motor. El HTML se pide a la red. */
-var CACHE = "tunotaopo-core-20261023aa";
+var CACHE = "tunotaopo-core-20261110aa";
 var CORE = [
   "/offline.html",
-  "/css/app.css?v=20261023aa",
-  "/js/theme-boot.js?v=20261023aa",
-  "/js/site.js?v=20261023aa",
-  "/js/components/analytics.js?v=20261023aa",
-  "/js/components/tools.js?v=20261023aa",
-  "/js/engine/scoring.js?v=20261023aa",
-  "/js/components/calculator.js?v=20261023aa",
+  "/css/app.css?v=20261110aa",
+  "/js/theme-boot.js?v=20261110aa",
+  "/js/site.js?v=20261110aa",
+  "/js/components/analytics.js?v=20261110aa",
+  "/js/components/tools.js?v=20261110aa",
+  "/js/engine/scoring.js?v=20261110aa",
+  "/js/components/calculator.js?v=20261110aa",
   "/assets/logo.svg"
 ];
 

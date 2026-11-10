@@ -8,21 +8,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = "https://tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20261023aa"
-LASTMOD = "2026-10-23"
+ASSET_V = "20261110aa"
+LASTMOD = "2026-11-10"
+REVIEWED_ON = "10 de noviembre de 2026"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
-PL_CRAWL_ALLOW = (
-    "/oposiciones/policia-local/$",
-    "/oposiciones/policia-local/index.html",
-    "/oposiciones/policia-local/comunidad-de-madrid/",
-    "/oposiciones/policia-local/requisitos/",
-    "/oposiciones/policia-local/pruebas/",
-    "/oposiciones/policia-local/pruebas-fisicas/",
-    "/oposiciones/policia-local/temario/",
-    "/oposiciones/policia-local/fechas/",
-    "/oposiciones/policia-local/notas-corte/",
-    "/oposiciones/policia-local/examenes-oficiales/",
-)
+ADSENSE_PUBLISHER = "pub-3737489302199390"
+ADSENSE_CLIENT = f"ca-{ADSENSE_PUBLISHER}"
 PROGRESO_PATH = "oposiciones/progreso/"
 ACADEMIAS_PATH = "oposiciones/academias/"
 DATA_DIR = ROOT / "data" / "oposiciones"

@@ -455,6 +455,8 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   vertical-align: top;
 }
 .plain-table th { color: var(--color-text-muted); font-size: 0.8125rem; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.hub-section { scroll-margin-top: var(--space-6); }
 .mark-apto { color: var(--color-success); }
 .mark-noapto { color: var(--color-danger); }
 .table-wrap {
@@ -1589,79 +1591,6 @@ a.card:hover .card-cta { color: var(--color-primary); }
   font-size: 0.9rem;
 }
 .search-empty { color: var(--color-text-muted); }
-.pl-search { max-width: 36rem; }
-.pl-search-wrap {
-  position: relative;
-  max-width: 36rem;
-  margin: var(--space-5) 0 0;
-}
-.pl-search-wrap .pl-search {
-  margin: 0;
-  max-width: none;
-}
-.pl-results {
-  position: absolute;
-  z-index: 8;
-  left: 0;
-  right: 0;
-  top: calc(100% + 0.35rem);
-  display: grid;
-  gap: 0.15rem;
-  margin: 0;
-  padding: 0.35rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: 0 10px 28px rgba(12, 25, 36, 0.12);
-  max-height: 18rem;
-  overflow: auto;
-}
-.pl-results:empty { display: none; }
-.pl-results a {
-  display: block;
-  padding: 0.7rem 0.85rem;
-  border: 0;
-  border-radius: calc(var(--radius) - 2px);
-  text-decoration: none;
-  color: inherit;
-  background: transparent;
-}
-.pl-results [aria-selected="true"],
-.pl-results a:hover,
-.pl-results a:focus-visible {
-  background: var(--suggest-hover-bg);
-}
-.pl-results strong { display: block; }
-.pl-results span { color: var(--color-text-muted); font-size: 0.9rem; }
-.pl-muni-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  columns: 1;
-  gap: var(--space-4);
-}
-@media (min-width: 40rem) {
-  .pl-muni-list { columns: 2; }
-}
-@media (min-width: 64rem) {
-  .pl-muni-list { columns: 3; }
-}
-.pl-muni-list li {
-  break-inside: avoid;
-  padding: 0.35rem 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.6rem;
-  align-items: baseline;
-}
-.pl-flag {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-.pl-flag-ready {
-  color: var(--color-success);
-  font-weight: 700;
-}
 .classroom-controls { margin: var(--space-3) 0 0; }
 .tool-toolbar {
   margin-top: var(--space-3);

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""El generador está partido y el directorio PL no importa generate_pages."""
+"""El generador está partido y los hubs no importan generate_pages."""
 
 from __future__ import annotations
 
@@ -29,12 +29,10 @@ def imports_of(name: str) -> set[str]:
 
 
 def main() -> int:
-    pl_imports = imports_of("pl_directorio.py")
-    if "generate_pages" in pl_imports:
-        fail("pl_directorio no debe importar generate_pages")
-    pl_src = (SCRIPTS / "pl_directorio.py").read_text(encoding="utf-8")
-    if "def _gp(" in pl_src:
-        fail("pl_directorio no debe usar el facade _gp")
+    if "generate_pages" in imports_of("hub_pages.py"):
+        fail("hub_pages no debe importar generate_pages")
+    if (SCRIPTS / "pl_directorio.py").exists():
+        fail("el directorio territorial de Policía Local no debe volver")
 
     for module in (
         "site_catalog.py",
@@ -65,11 +63,10 @@ def main() -> int:
     import hub_nav  # noqa: F401
     import hub_pages  # noqa: F401
     import hub_tools  # noqa: F401
-    import pl_directorio  # noqa: F401
     import site_catalog  # noqa: F401
     import site_widgets  # noqa: F401
 
-    print("[OK] modulos partidos y sin import circular PL -> generate_pages")
+    print("[OK] modulos partidos y sin import circular hub_pages -> generate_pages")
     return 0
 
 

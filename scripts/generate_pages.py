@@ -38,8 +38,8 @@ from site_config import (
     CONTACT_EMAIL,
     DATA_DIR,
     FEATURED_FAMILIES,
+    ADSENSE_PUBLISHER,
     LASTMOD,
-    PL_CRAWL_ALLOW,
     PROGRESO_PATH,
     ROOT,
     SITE,
@@ -194,7 +194,7 @@ def calculator_page(
     if "baremo" in hub_cfg.get("pages", []):
         extra_hub += f'<a href="{prefix}{hub}baremo/index.html">Baremo</a>'
     if "examenes" in hub_cfg.get("pages", []):
-        extra_hub += f'<a href="{prefix}{hub}examenes-oficiales/index.html">Exámenes</a>'
+        extra_hub += f'<a href="{prefix}{hub}index.html#examenes-oficiales">Exámenes</a>'
     hub_links = (
         f'<nav class="opp-links" aria-label="Esta oposición">'
         f'<a href="{prefix}{hub}index.html">Oposición</a>'
@@ -315,10 +315,27 @@ def calculadoras_index(all_items: list[dict]) -> str:
     </div>
     <div class="catalog">{catalog_cards(all_items, "../")}</div>
     {ad_slot("catalog")}
+    <section class="content">
+      <h2>Cómo puntúa cada examen</h2>
+      <p>No hay una regla común. Cada convocatoria fija cuánto vale un acierto, cuánto resta un error y qué mínimo hay que pasar. Por eso cada cuerpo tiene su calculadora y no sirve usar la de otro.</p>
+      <div class="table-scroll"><table class="plain-table">
+        <thead><tr><th>Oposición</th><th>Examen</th><th>Cómo resta el error</th><th>Mínimo de las bases</th></tr></thead>
+        <tbody>
+          <tr><td>Guardia Civil</td><td>Ortografía, gramática, 100 de conocimientos, 20 de inglés y psicotécnico</td><td>Un tercio de acierto (4 opciones) en las pruebas que puntúan</td><td>50 en conocimientos, 8 en inglés, 12 en psicotécnico; 6 errores eliminan en ortografía y gramática</td></tr>
+          <tr><td>Policía Nacional</td><td>Test de 100 preguntas con 3 opciones</td><td>Medio acierto (3 opciones)</td><td>3 sobre 10; luego pasan 1,75 aspirantes por plaza</td></tr>
+          <tr><td>Auxiliar AGE</td><td>60 preguntas + 50 de ofimática</td><td>Un tercio de acierto</td><td>Lo fija la Comisión cada año (29,00 y 21,33 en 2026)</td></tr>
+          <tr><td>Auxilio Judicial</td><td>100 de teórico + 40 de práctico</td><td>0,15 en el teórico y 0,25 en el práctico</td><td>30 y 20</td></tr>
+          <tr><td>Ayudantes IIPP</td><td>120 de test + 40 de supuestos</td><td>Un tercio de acierto</td><td>Lo fija el tribunal (67 y 26,6667 en 2026)</td></tr>
+          <tr><td>Policía Municipal de Madrid</td><td>Temario (90 %) e idioma (10 %)</td><td>Un tercio de acierto</td><td>5 en cada parte; pasan 3,5 aspirantes por plaza</td></tr>
+        </tbody>
+      </table></div>
+      <p>Las preguntas en blanco no restan en ninguna de estas convocatorias. El mínimo de las bases tampoco es la nota de corte: el corte real depende del número de plazas y de cómo salga el resto de aspirantes. Cada página de oposición muestra los cortes que ya ha publicado el tribunal.</p>
+      <p>Todas las calculadoras funcionan en tu navegador. No piden cuenta y no envían tus aciertos a ningún servidor.</p>
+    </section>
     """
     return page_shell(
         seo_title("Calculadoras de nota oposiciones"),
-        "Calculadoras de Guardia Civil, Policía Nacional, Policía Local por municipio, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE. Siempre con la convocatoria en vigor.",
+        "Calculadoras de Guardia Civil, Policía Nacional, Policía Municipal de Madrid, Ayudantes IIPP, Auxilio Judicial y Auxiliar AGE, con la penalización y los mínimos de cada convocatoria.",
         "calculadoras/",
         1,
         body,
@@ -779,6 +796,7 @@ def progreso_page(opos: list[dict]) -> str:
         2,
         body,
         tools=("progreso",),
+        noindex=True,
     )
 
 
@@ -928,12 +946,9 @@ def remove_retired_urls(published: list[dict]) -> None:
 
 
 def robots_txt() -> str:
-    allow = "".join(f"Allow: {path}\n" for path in PL_CRAWL_ALLOW)
     shared = (
         "Disallow: /research/\nDisallow: /tests/\nDisallow: /scripts/\n"
         "Disallow: /release/\nDisallow: /data/\nDisallow: /embed/\n"
-        f"{allow}"
-        "Disallow: /oposiciones/policia-local/\n"
     )
     return (
         "User-agent: *\n"
@@ -1078,7 +1093,7 @@ def build() -> None:
             if p and p not in seen_paths:
                 seen_paths.add(p)
                 urls.append(f"{SITE}/{p}")
-    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", ACADEMIAS_PATH, PROGRESO_PATH):
+    for extra in ("metodologia/", "fuentes/", "aviso-legal/", "privacidad/", "cookies/", "contacto/", ACADEMIAS_PATH):
         urls.append(f"{SITE}/{extra}")
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url in urls:
@@ -1088,11 +1103,7 @@ def build() -> None:
     sitemap.append("</urlset>")
     write(ROOT / "sitemap.xml", "\n".join(sitemap) + "\n")
     write(ROOT / "robots.txt", robots_txt())
-    write(
-        ROOT / "ads.txt",
-        "# ads.txt pendiente de Publisher ID real.\n"
-        "# No hay anuncios activos y no se publica ningún identificador inventado.\n",
-    )
+    write(ROOT / "ads.txt", f"google.com, {ADSENSE_PUBLISHER}, DIRECT, f08c47fec0942fa0\n")
 
     # .htaccess is maintained in the project root. Do not overwrite it from the skill template.
 

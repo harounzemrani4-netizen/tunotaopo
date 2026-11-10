@@ -44,7 +44,7 @@ def main() -> int:
             err(f".htaccess missing {needle}")
 
     sys.path.insert(0, str(ROOT / "scripts"))
-    from site_config import CSP, CSP_EMBED, CSP_EMBED_META, CSP_META  # noqa: E402
+    from site_config import ADSENSE_CLIENT, ADSENSE_PUBLISHER, CSP, CSP_EMBED, CSP_EMBED_META, CSP_META  # noqa: E402
 
     headers = (ROOT / "_headers").read_text(encoding="utf-8")
     if f"Content-Security-Policy: {CSP}" not in headers:
@@ -65,8 +65,11 @@ def main() -> int:
             err(f"_headers missing {needle}")
 
     ads = (ROOT / "ads.txt").read_text(encoding="utf-8")
-    if "pub-" in ads.lower() or "google.com" in ads.lower():
-        err("ads.txt must not invent a Publisher ID")
+    if ads.strip() != f"google.com, {ADSENSE_PUBLISHER}, DIRECT, f08c47fec0942fa0":
+        err("ads.txt debe tener solo la línea de Google con el Publisher ID de site_config")
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    if f'<meta name="google-adsense-account" content="{ADSENSE_CLIENT}">' not in home:
+        err("falta la etiqueta de verificación de AdSense en el inicio")
 
     forbidden_src = (
         "googlesyndication",

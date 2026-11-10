@@ -6,17 +6,6 @@ Disallow: /scripts/
 Disallow: /release/
 Disallow: /data/
 Disallow: /embed/
-Allow: /oposiciones/policia-local/$
-Allow: /oposiciones/policia-local/index.html
-Allow: /oposiciones/policia-local/comunidad-de-madrid/
-Allow: /oposiciones/policia-local/requisitos/
-Allow: /oposiciones/policia-local/pruebas/
-Allow: /oposiciones/policia-local/pruebas-fisicas/
-Allow: /oposiciones/policia-local/temario/
-Allow: /oposiciones/policia-local/fechas/
-Allow: /oposiciones/policia-local/notas-corte/
-Allow: /oposiciones/policia-local/examenes-oficiales/
-Disallow: /oposiciones/policia-local/
 
 User-agent: AdsBot-Google
 User-agent: Mediapartners-Google
@@ -26,16 +15,5 @@ Disallow: /scripts/
 Disallow: /release/
 Disallow: /data/
 Disallow: /embed/
-Allow: /oposiciones/policia-local/$
-Allow: /oposiciones/policia-local/index.html
-Allow: /oposiciones/policia-local/comunidad-de-madrid/
-Allow: /oposiciones/policia-local/requisitos/
-Allow: /oposiciones/policia-local/pruebas/
-Allow: /oposiciones/policia-local/pruebas-fisicas/
-Allow: /oposiciones/policia-local/temario/
-Allow: /oposiciones/policia-local/fechas/
-Allow: /oposiciones/policia-local/notas-corte/
-Allow: /oposiciones/policia-local/examenes-oficiales/
-Disallow: /oposiciones/policia-local/
 
 Sitemap: https://tunotaopo.es/sitemap.xml

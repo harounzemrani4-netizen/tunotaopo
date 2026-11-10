@@ -98,31 +98,11 @@ def main() -> int:
     if "js/site.js?v=" not in home:
         fail("el inicio debe versionar site.js")
 
-    empty = (
-        ROOT
-        / "oposiciones"
-        / "policia-local"
-        / "comunitat-valenciana"
-        / "valencia"
-        / "valencia"
-        / "index.html"
-    )
-    if empty.exists():
-        fail("no debe existir ficha de Valencia sin boletín")
-    madrid = (
-        ROOT
-        / "oposiciones"
-        / "policia-local"
-        / "comunidad-de-madrid"
-        / "madrid"
-        / "madrid"
-        / "index.html"
-    )
-    madrid_html = madrid.read_text(encoding="utf-8")
+    madrid_html = (ROOT / "oposiciones" / "policia-local" / "index.html").read_text(encoding="utf-8")
     if "theme-boot.js?v=" not in madrid_html:
-        fail("Madrid sí debe versionar theme-boot")
+        fail("Policía Local sí debe versionar theme-boot")
     if "theme-toggle" not in madrid_html:
-        fail("Madrid debe llevar toggle de tema")
+        fail("Policía Local debe llevar toggle de tema")
 
     print(f"[OK] assets alineados con {ASSET_V}")
     return 0

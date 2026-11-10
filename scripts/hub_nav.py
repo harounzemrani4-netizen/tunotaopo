@@ -26,24 +26,24 @@ HUB_SLUGS = {
     "notas": "notas-corte",
     "examenes": "examenes-oficiales",
 }
+HUB_ANCHORS = {"requisitos", "fechas", "notas", "examenes"}
+
+
+def hub_href(family: str, prefix: str, key: str) -> str:
+    """URL de una sección: ancla en la página de la oposición o página propia."""
+    if key in HUB_ANCHORS:
+        return f"{prefix}oposiciones/{family}/index.html#{HUB_SLUGS[key]}"
+    return f"{prefix}oposiciones/{family}/{HUB_SLUGS[key]}/index.html"
 
 
 def hub_nav(family: str, prefix: str, current: str) -> str:
     calc_folder = "auxiliar-administrativo-age" if family == "auxiliar-age" else family
-    if family == "policia-local":
-        items = [
-            ("Ciudades", f"{prefix}oposiciones/{family}/index.html", "hub"),
-            ("Calcular Madrid", f"{prefix}calculadoras/{calc_folder}/index.html", "calc"),
-        ]
-    else:
-        items = [
-            ("Resumen", f"{prefix}oposiciones/{family}/index.html", "hub"),
-            ("Calcular nota", f"{prefix}calculadoras/{calc_folder}/index.html", "calc"),
-        ]
+    items = [
+        ("Resumen", f"{prefix}oposiciones/{family}/index.html", "hub"),
+        ("Calcular nota", f"{prefix}calculadoras/{calc_folder}/index.html", "calc"),
+    ]
     for key in (HUBS.get(family) or {}).get("pages") or []:
-        items.append(
-            (NAV_LABELS[key], f"{prefix}oposiciones/{family}/{HUB_SLUGS[key]}/index.html", key)
-        )
+        items.append((NAV_LABELS[key], hub_href(family, prefix, key), key))
     bits = []
     for label, href, key in items:
         extra = ' class="is-current" aria-current="page"' if key == current else ""

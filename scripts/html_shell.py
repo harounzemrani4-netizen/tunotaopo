@@ -8,6 +8,7 @@ from xml.sax.saxutils import escape
 
 from site_config import (
     ACADEMIAS_PATH,
+    ADSENSE_CLIENT,
     AD_SIZES,
     ASSET_V,
     BRAND,
@@ -149,6 +150,7 @@ def head(
   <meta name="theme-color" content="#0c1924">
   <meta name="color-scheme" content="light dark">
   <meta name="asset-v" content="{ASSET_V}">
+  <meta name="google-adsense-account" content="{ADSENSE_CLIENT}">
   {extra}
   <title>{escape(title)}</title>
   <meta name="description" content="{escape(description)}">

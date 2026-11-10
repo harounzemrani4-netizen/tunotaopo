@@ -10,7 +10,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
+from audit_content import Text, page_for
+
 ROOT = Path(__file__).resolve().parents[1]
+MIN_WORDS = 250
+SHORT_OK = {"/aviso-legal/", "/privacidad/", "/cookies/", "/contacto/"}
 SITE = "https://tunotaopo.es"
 SKIP_DIRS = {
     "node_modules",
@@ -26,28 +30,6 @@ SKIP_DIRS = {
     "functions",
     "dist",
 }
-PL_HUB_DIRS = {
-    "requisitos",
-    "pruebas",
-    "pruebas-fisicas",
-    "temario",
-    "fechas",
-    "notas-corte",
-    "examenes-oficiales",
-}
-
-
-def is_pl_municipio_page(rel: str) -> bool:
-    parts = Path(rel).parts
-    if len(parts) != 6 or parts[0] != "oposiciones" or parts[1] != "policia-local":
-        return False
-    if parts[5] != "index.html" or parts[2] in PL_HUB_DIRS:
-        return False
-    if parts[2] == "comunidad-de-madrid" and parts[3] == "madrid" and parts[4] == "madrid":
-        return False
-    return True
-
-
 class Page(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
@@ -92,8 +74,6 @@ def html_pages() -> list[Path]:
     for path in ROOT.rglob("*.html"):
         rel = path.relative_to(ROOT)
         if any(part in SKIP_DIRS for part in rel.parts):
-            continue
-        if is_pl_municipio_page(rel.as_posix()):
             continue
         pages.append(path)
     return sorted(pages)
@@ -263,6 +243,14 @@ def main() -> int:
                 file = ROOT / "index.html"
             if not file.exists():
                 errors.append(f"sitemap apunta a archivo inexistente: {loc}")
+                continue
+        if path in SHORT_OK:
+            continue
+        text = Text()
+        text.feed(page_for(loc).read_text(encoding="utf-8"))
+        words = len(re.findall(r"\w+", " ".join(text.main)))
+        if words < MIN_WORDS:
+            errors.append(f"contenido escaso ({words} palabras < {MIN_WORDS}): {loc}")
 
     if errors:
         print(f"[FAIL] {len(errors)} comprobaciones SEO")

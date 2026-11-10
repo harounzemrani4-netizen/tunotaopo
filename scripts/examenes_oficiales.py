@@ -48,11 +48,11 @@ AGE_SEDES_2026 = [
 
 EXAMENES = {
     "policia-local": {
-        "lead": "El Ayuntamiento de Madrid publica cuestionarios y plantillas en la ficha del proceso. No hay un PDF permanente todavía de esta convocatoria. Esta calculadora es solo de Madrid: otra Policía Local tiene otro examen.",
+        "lead": "El Ayuntamiento de Madrid publica cuadernillos y plantillas en la página del proceso, en el apartado de cada ejercicio. Son de Madrid: otra Policía Local tiene otro examen.",
         "groups": [
             {
                 "year": "Convocatoria diciembre 2025 (561 plazas)",
-                "note": "El examen cultural aún no tiene fecha en el BOE. Cuando el tribunal cuelgue el PDF, el enlace oficial estará en la ficha del Ayuntamiento.",
+                "note": "Pruebas culturales del 21 de junio de 2026: cuadernillo y plantilla del 23 de junio, plantilla definitiva del 30 de julio. Psicotécnicas: cuadernillo y plantilla provisional del 10 de noviembre de 2026.",
                 "links": [
                     (
                         "https://www.madrid.es/portales/munimadrid/es/Inicio/Seguridad-y-emergencias/Policia-Municipal/Policia-del-Cuerpo-de-Policia-Municipal-del-Ayuntamiento-de-Madrid-concurso-oposicion-libre-con-reserva-de-plazas-tropa-y-marineria-convocatoria-diciembre-2025-reserva-turno-libre/?vgnextchannel=3926bb21278fe410VgnVCM1000000b205a0aRCRD&vgnextoid=987256187a8ea910VgnVCM200000f921e388RCRD",
@@ -68,7 +68,7 @@ EXAMENES = {
         "groups": [
             {
                 "year": "2026 (BAS 43)",
-                "note": "El examen aún no se ha celebrado. La previsión del Portal del Aspirante es el 26 de septiembre de 2026, acto único, salvo cambio. Cuando salga, el enlace oficial estará ahí.",
+                "note": "Examen del 26 de septiembre de 2026. El tribunal publicó la plantilla ese mismo día; el cuestionario lo descarga cada aspirante desde su inscripción en el Portal del Aspirante.",
                 "links": [(PN_PORTAL, "Portal del Aspirante")],
             },
             {
@@ -163,7 +163,7 @@ EXAMENES = {
         "groups": [
             {
                 "year": "Convocatoria 2025 (examen 23-5-2026)",
-                "note": "Ingreso libre. Modelos A y B. Las plantillas de esta página son las provisionales publicadas el 25 de mayo de 2026.",
+                "note": "Ingreso libre. Modelos A y B. Los enlaces de plantilla son los provisionales del 25 de mayo de 2026; la definitiva del 15 de octubre de 2026 está en la ficha del INAP.",
                 "links": [
                     (
                         "https://sede.inap.gob.es/sites/sede/files/public/2026-05/Cuestionario%20AUX-L%20MODELO%20A.pdf",
@@ -313,10 +313,18 @@ EXAMENES = {
         "lead": "Cuadernillos y plantillas del Ministerio de Justicia. El examen es el mismo en todas las comunidades: eliges ámbito territorial para las plazas, no un cuestionario distinto. Sí hay modelos A y B, examen de incidencias y, en 2024, una prueba selectiva adicional.",
         "groups": [
             {
-                "year": "Esta convocatoria (PJC/1549/2025)",
-                "note": "El examen de esta orden aún no está en el BOE. Cuando el tribunal publique cuestionarios, saldrán en la ficha de Auxilio Judicial.",
+                "year": "3 de octubre de 2026 (Orden PJC/1549/2025)",
+                "note": "Turno libre. Plantillas definitivas del 29 de octubre de 2026: anulan la 64 y la 69 del modelo A (16 y 21 del B) en el primer ejercicio y la 111 del A (131 del B) en el segundo; entran las de reserva.",
                 "links": [
-                    (JUSTICIA, "Ficha oficial de Auxilio Judicial"),
+                    (
+                        f"{DOC}/Acuerdo%20del%20TCU%20Auxilio%20Judicial-%20plantilla%20definitiva-%20examen%203%20de%20octubre%20de%202026.pdf",
+                        "Acuerdo del TCU (plantilla definitiva)",
+                    ),
+                    (
+                        f"{DOC}/PLANTILLA%20DEFINITIVA%20DE%20RESPUESTAS%20-%20PRIMER%20EJERCICIO%20-%20MODELO%20A_AuxJud1549.pdf",
+                        "Plantilla definitiva 1.º · modelo A",
+                    ),
+                    (JUSTICIA, "Resto de plantillas y cuadernillos en el ministerio"),
                     ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-27053", "Convocatoria en el BOE"),
                 ],
             },
@@ -408,15 +416,18 @@ EXAMENES = {
         ],
     },
     "ayudantes-iipp": {
-        "lead": "El primer ejercicio de 2026 es el 25 de octubre, en Madrid (9:00) y Las Palmas (8:00, hora canaria). Es el mismo cuestionario, no dos exámenes. Interior publica plantillas en su ficha; el cuadernillo sale cuando el tribunal lo cuelga.",
+        "lead": "El primer ejercicio de 2026 fue el 25 de octubre en Madrid (9:00) y Las Palmas (8:00, hora canaria), con el mismo cuestionario. Interior publica plantillas y acuerdos del tribunal en su ficha de acceso libre.",
         "groups": [
             {
-                "year": "2026 (esta convocatoria)",
-                "note": "Aún no hay cuestionario. Fecha y sedes: BOE-A-2026-17631.",
+                "year": "25 de octubre de 2026 (esta convocatoria)",
+                "note": "Plantilla provisional del 27 de octubre y definitiva del 30 de octubre. El 6 de noviembre el tribunal publicó el corte (67 y 26,6667 puntos directos) y los resultados.",
                 "links": [
-                    ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-17631", "Fecha y admitidos en el BOE"),
+                    (IIPP_LIBRE, "Plantillas y acuerdos en Interior"),
+                    (
+                        "https://www.interior.gob.es/opencms/pdf/servicios-al-ciudadano/empleo-publico/procesos-selectivos/cuerpos-de-instituciones-penitenciarias/cuerpo-de-ayudantes-de-instituciones-penitenciarias/Acceso-libre/Acuerdo_6_noviembre_2026.pdf",
+                        "Acuerdo de 6 de noviembre (notas de corte)",
+                    ),
                     ("https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13226", "Convocatoria"),
-                    (IIPP_LIBRE, "Ficha de acceso libre en Interior"),
                 ],
             },
             {

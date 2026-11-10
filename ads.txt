@@ -1,2 +1,1 @@
-# ads.txt pendiente de Publisher ID real.
-# No hay anuncios activos y no se publica ningún identificador inventado.
+google.com, pub-3737489302199390, DIRECT, f08c47fec0942fa0
