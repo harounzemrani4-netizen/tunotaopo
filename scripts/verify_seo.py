@@ -15,7 +15,7 @@ from audit_content import Text, page_for
 ROOT = Path(__file__).resolve().parents[1]
 MIN_WORDS = 250
 SHORT_OK = {"/aviso-legal/", "/privacidad/", "/cookies/", "/contacto/"}
-SITE = "https://tunotaopo.es"
+SITE = "https://www.tunotaopo.es"
 SKIP_DIRS = {
     "node_modules",
     "research",

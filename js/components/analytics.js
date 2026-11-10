@@ -23,7 +23,7 @@
     try {
       if (
         root.location &&
-        root.location.hostname === "tunotaopo.es" &&
+        root.location.hostname === "www.tunotaopo.es" &&
         root.navigator &&
         root.navigator.sendBeacon
       ) {

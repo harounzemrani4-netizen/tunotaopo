@@ -16,4 +16,4 @@ Disallow: /release/
 Disallow: /data/
 Disallow: /embed/
 
-Sitemap: https://tunotaopo.es/sitemap.xml
+Sitemap: https://www.tunotaopo.es/sitemap.xml

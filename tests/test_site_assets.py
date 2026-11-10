@@ -63,8 +63,8 @@ def main() -> int:
         fail("el hover del header debe usar un color visible sobre el fondo oscuro")
 
     analytics = (ROOT / "js" / "components" / "analytics.js").read_text(encoding="utf-8")
-    if 'hostname === "tunotaopo.es"' not in analytics:
-        fail("sendBeacon solo debe dispararse en tunotaopo.es")
+    if 'hostname === "www.tunotaopo.es"' not in analytics:
+        fail("sendBeacon solo debe dispararse en www.tunotaopo.es")
 
     event_api = (ROOT / "functions" / "api" / "event.js").read_text(encoding="utf-8")
     if "sameOrigin" not in event_api:

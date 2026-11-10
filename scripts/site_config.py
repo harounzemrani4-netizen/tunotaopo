@@ -5,10 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SITE = "https://tunotaopo.es"
+SITE = "https://www.tunotaopo.es"
 BRAND = "TuNotaOpo"
 BRAND_ALT = "NotaOpo"
-ASSET_V = "20261110aa"
+ASSET_V = "20261110ab"
 LASTMOD = "2026-11-10"
 REVIEWED_ON = "10 de noviembre de 2026"
 CONTACT_EMAIL = "contacto@tunotaopo.es"
