@@ -4,11 +4,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 from audit_content import Text, page_for
 
@@ -104,11 +105,8 @@ def resolve_href(page: Path, href: str) -> Path | None:
         if not path.endswith(".html"):
             return ROOT / path / "index.html"
         return ROOT / path
-    base = page.parent.as_posix() + "/"
-    joined = urljoin("file:///" + base, href)
-    local = joined.replace("file:///", "")
-    target = Path(local)
-    if target.suffix == "" or target.name == "":
+    target = Path(os.path.normpath(page.parent / href))
+    if href.endswith("/") or target.suffix == "":
         target = target / "index.html"
     return target
 
